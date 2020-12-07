@@ -8,9 +8,17 @@ public class Board {
 
     Map<Integer, Map<Integer, Tile>> tiles;
 
-    public Board() {
+    public static Board withStaticTile(Tile.TileBorder border) {
+        return new Board(Tile.drawStatic(border));
+    }
+
+    public static Board withRandomTile() {
+        return new Board(Tile.drawRandom());
+    }
+
+    private Board(Tile initialTile) {
         this.tiles = new HashMap<>();
-        setInitialTile();
+        setInitialTile(initialTile);
     }
 
     public Tile getTile(int x, int y) {
@@ -23,64 +31,120 @@ public class Board {
         throw new IllegalArgumentException(String.format("No tile was found at position (%d|%d).", x, y));
     }
 
-    public boolean insertTileToBoard(int x, int y, Tile tile) {
+    public void insertTileToBoard(int x, int y, Tile tile) {
         var innerTiles = tiles.computeIfAbsent(x, ignore -> new HashMap<>());
         if (innerTiles.containsKey(y)) {
-            return false;
+            throw new IllegalArgumentException(String.format("Position (%d|%d) is already occupied", x, y));
         }
 
         tile.insertToBoard(x, y);
 
-        if (!setNeighborsFromAndToTile(tile)) {
-            // TODO remove tile from board
-            throw new IllegalArgumentException(
-                    String.format(
-                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
-                            x,
-                            y
-                    )
-            );
-        }
+        Tile[] neighbors = getNeighborsOfTile(tile);
+
+        checkTileHasNeighbor(tile, neighbors);
+        checkMatchingBorders(tile, neighbors);
+
+        setNeighborsFromAndToTile(tile, neighbors);
 
         innerTiles.put(y, tile);
-
-        return true;
     }
 
-    private boolean setNeighborsFromAndToTile(Tile tile) {
+    private Tile[] getNeighborsOfTile(Tile tile) {
         int x = tile.getX();
         int y = tile.getY();
 
-        boolean hasNeighbors;
-        hasNeighbors = getLeftNeighbor(x, y).map(neighbor -> {
-            neighbor.setNeighbor(Tile.RIGHT, tile);
-            tile.setNeighbor(Tile.LEFT, neighbor);
-            return true;
-        }).isPresent();
+        Tile[] neighbors = new Tile[4];
 
-        hasNeighbors |= getRightNeighbor(x, y).map(neighbor -> {
-            neighbor.setNeighbor(Tile.LEFT, tile);
-            tile.setNeighbor(Tile.RIGHT, neighbor);
-            return true;
-        }).isPresent();
+        neighbors[Tile.LEFT] = getLeftNeighbor(x, y).orElse(null);
+        neighbors[Tile.RIGHT] = getRightNeighbor(x, y).orElse(null);
+        neighbors[Tile.TOP] = getTopNeighbor(x, y).orElse(null);
+        neighbors[Tile.BOTTOM] = getBottomNeighbor(x, y).orElse(null);
 
-        hasNeighbors |= getTopNeighbor(x, y).map(neighbor -> {
-            neighbor.setNeighbor(Tile.BOTTOM, tile);
-            tile.setNeighbor(Tile.TOP, neighbor);
-            return true;
-        }).isPresent();
-
-        hasNeighbors |= getBottomNeighbor(x, y).map(neighbor -> {
-            neighbor.setNeighbor(Tile.TOP, tile);
-            tile.setNeighbor(Tile.BOTTOM, neighbor);
-            return true;
-        }).isPresent();
-
-        return hasNeighbors;
+        return neighbors;
     }
 
-    private void setInitialTile() {
-        var tile = Tile.drawRandom();
+    private void checkTileHasNeighbor(Tile tile, Tile[] neighbors) {
+        boolean hasNoNeighbor = neighbors[Tile.LEFT] == null
+                && neighbors[Tile.RIGHT] == null
+                && neighbors[Tile.TOP] == null
+                && neighbors[Tile.BOTTOM] == null;
+
+        if (hasNoNeighbor) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        }
+    }
+
+    private void checkMatchingBorders(Tile tile, Tile[] neighbors) {
+        Tile.TileBorder[] tileBorders = tile.getTileBorders();
+
+        Tile leftNeighbor = neighbors[Tile.LEFT];
+        boolean leftMatching = true;
+        if (leftNeighbor != null) {
+             leftMatching = tileBorders[Tile.LEFT] == leftNeighbor.getTileBorders()[Tile.RIGHT];
+        }
+
+        Tile rightNeighbor = neighbors[Tile.RIGHT];
+        boolean rightMatching = true;
+        if (rightNeighbor != null) {
+            rightMatching = tileBorders[Tile.RIGHT] == rightNeighbor.getTileBorders()[Tile.LEFT];
+        }
+
+        Tile topNeighbor = neighbors[Tile.TOP];
+        boolean topMatching = true;
+        if (topNeighbor != null) {
+             topMatching = tileBorders[Tile.TOP] == topNeighbor.getTileBorders()[Tile.BOTTOM];
+        }
+
+        Tile bottomNeighbor = neighbors[Tile.BOTTOM];
+        boolean bottomMatching = true;
+        if (bottomNeighbor != null) {
+             bottomMatching = tileBorders[Tile.BOTTOM] == bottomNeighbor.getTileBorders()[Tile.TOP];
+        }
+
+        if (!(leftMatching && rightMatching && topMatching && bottomMatching)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Tile at position (%d|%d) has incompatible borders to its surrounding.",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        }
+    }
+
+    private void setNeighborsFromAndToTile(Tile tile, Tile[] neighbors) {
+        Tile leftNeighbor = neighbors[Tile.LEFT];
+        if (leftNeighbor != null) {
+            leftNeighbor.setNeighbor(Tile.RIGHT, tile);
+            tile.setNeighbor(Tile.LEFT, leftNeighbor);
+        }
+
+        Tile rightNeighbor = neighbors[Tile.RIGHT];
+        if (rightNeighbor != null) {
+            rightNeighbor.setNeighbor(Tile.LEFT, tile);
+            tile.setNeighbor(Tile.RIGHT, rightNeighbor);
+        }
+
+        Tile topNeighbor = neighbors[Tile.TOP];
+        if (topNeighbor != null) {
+            topNeighbor.setNeighbor(Tile.BOTTOM, tile);
+            tile.setNeighbor(Tile.TOP, topNeighbor);
+        }
+
+        Tile bottomNeighbor = neighbors[Tile.BOTTOM];
+        if (bottomNeighbor != null) {
+            bottomNeighbor.setNeighbor(Tile.TOP, tile);
+            tile.setNeighbor(Tile.BOTTOM, bottomNeighbor);
+        }
+    }
+
+    private void setInitialTile(Tile tile) {
         tile.insertToBoard(0, 0);
 
         this.tiles

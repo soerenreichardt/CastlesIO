@@ -9,7 +9,7 @@ class BoardTest {
 
     @Test
     void createsBoardWithInitialTile() {
-        var board = new Board();
+        var board = Board.withRandomTile();
         assertNotNull(board);
 
         var tile = board.getTile(0, 0);
@@ -22,21 +22,40 @@ class BoardTest {
 
     @Test
     void shouldInsertNewTiles() {
-        var board = new Board();
-        var tile = Tile.drawRandom();
+        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
+        var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
 
-        assertTrue(board.insertTileToBoard(0, 1, tile));
-        assertTrue(board.insertTileToBoard(0, 2, tile));
-        assertTrue(board.insertTileToBoard(1, 0, tile));
+        assertDoesNotThrow(() -> board.insertTileToBoard(0, 1, tile));
+        assertDoesNotThrow(() -> board.insertTileToBoard(0, 2, tile));
+        assertDoesNotThrow(() -> board.insertTileToBoard(1, 0, tile));
+    }
+
+    @Test
+    void shouldThrowWhenInsertingToOccupiedPosition() {
+        var board = Board.withRandomTile();
+        var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
+        assertThatThrownBy(() -> board.insertTileToBoard(0, 0, tile))
+                .hasMessageContaining("already occupied")
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void shouldThrowOnInsertIfNoNeighborsWereFound() {
-        var board = new Board();
+        var board = Board.withRandomTile();
         var tile = Tile.drawRandom();
 
         assertThatThrownBy(() -> board.insertTileToBoard(1, 1, tile))
                 .hasMessageContaining("no neighbors were found")
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void shouldThrowWhenInsertingWithIncompatibleBorders() {
+        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
+        var tile = Tile.drawStatic(Tile.TileBorder.CASTLE);
+
+        assertThatThrownBy(() -> board.insertTileToBoard(0, 1, tile))
+                .hasMessageContaining("incompatible borders")
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
