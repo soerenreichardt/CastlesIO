@@ -81,31 +81,10 @@ public class Board {
     }
 
     private void checkMatchingBorders(Tile tile, Tile[] neighbors) {
-        Tile.TileBorder[] tileBorders = tile.getTileBorders();
-
-        Tile leftNeighbor = neighbors[Tile.LEFT];
-        boolean leftMatching = true;
-        if (leftNeighbor != null) {
-             leftMatching = tileBorders[Tile.LEFT] == leftNeighbor.getTileBorders()[Tile.RIGHT];
-        }
-
-        Tile rightNeighbor = neighbors[Tile.RIGHT];
-        boolean rightMatching = true;
-        if (rightNeighbor != null) {
-            rightMatching = tileBorders[Tile.RIGHT] == rightNeighbor.getTileBorders()[Tile.LEFT];
-        }
-
-        Tile topNeighbor = neighbors[Tile.TOP];
-        boolean topMatching = true;
-        if (topNeighbor != null) {
-             topMatching = tileBorders[Tile.TOP] == topNeighbor.getTileBorders()[Tile.BOTTOM];
-        }
-
-        Tile bottomNeighbor = neighbors[Tile.BOTTOM];
-        boolean bottomMatching = true;
-        if (bottomNeighbor != null) {
-             bottomMatching = tileBorders[Tile.BOTTOM] == bottomNeighbor.getTileBorders()[Tile.TOP];
-        }
+        boolean leftMatching = tile.matches(neighbors[Tile.LEFT], Tile.LEFT);
+        boolean rightMatching = tile.matches(neighbors[Tile.RIGHT], Tile.RIGHT);
+        boolean topMatching = tile.matches(neighbors[Tile.TOP], Tile.TOP);
+        boolean bottomMatching = tile.matches(neighbors[Tile.BOTTOM], Tile.BOTTOM);
 
         if (!(leftMatching && rightMatching && topMatching && bottomMatching)) {
             throw new IllegalArgumentException(

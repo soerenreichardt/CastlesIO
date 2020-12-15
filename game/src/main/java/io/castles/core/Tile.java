@@ -4,6 +4,8 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.Random;
 
+import static io.castles.core.TileUtil.oppositeDirection;
+
 public class Tile {
 
     public static final int LEFT = 0;
@@ -59,6 +61,13 @@ public class Tile {
 
     public TileBorder[] getTileBorders() {
         return this.tileBorders;
+    }
+
+    public boolean matches(Tile other, int direction) {
+        if (other == null) {
+            return true;
+        }
+        return tileBorders[direction] == other.getTileBorders()[oppositeDirection(direction)];
     }
 
     protected void insertToBoard(int x, int y) {
