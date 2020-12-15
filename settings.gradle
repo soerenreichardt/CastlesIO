@@ -1,4 +1,5 @@
 rootProject.name = 'CastlesIO'
 
 include 'game'
+include 'backend'
 
