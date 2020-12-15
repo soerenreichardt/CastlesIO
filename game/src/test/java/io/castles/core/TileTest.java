@@ -1,6 +1,6 @@
-package io.carcassonne.core;
+package io.castles.core;
 
-import io.carcassonne.core.Tile.TileBorder;
+import io.castles.core.Tile.TileBorder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

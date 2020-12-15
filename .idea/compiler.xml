@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="14" />
+    <bytecodeTargetLevel target="14">
+      <module name="org.example.CarcassonneIO" target="14" />
+      <module name="org.example.CarcassonneIO.main" target="14" />
+      <module name="org.example.CarcassonneIO.test" target="14" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,4 +1,4 @@
-package io.carcassonne.core;
+package io.castles.core;
 
 import java.util.HashMap;
 import java.util.Map;

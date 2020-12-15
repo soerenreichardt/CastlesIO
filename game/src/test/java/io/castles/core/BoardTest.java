@@ -1,4 +1,4 @@
-package io.carcassonne.core;
+package io.castles.core;
 
 import org.junit.jupiter.api.Test;
 
