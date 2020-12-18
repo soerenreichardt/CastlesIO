@@ -1,13 +1,12 @@
 package io.castles.core.controller;
 
-import io.castles.core.Board;
 import io.castles.core.GameMode;
 import io.castles.core.Tile;
+import io.castles.core.service.BoardService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/board")
@@ -16,18 +15,31 @@ public class BoardController {
     @Autowired
     BeanFactory beanFactory;
 
+    @Autowired
+    BoardService boardService;
+
     GameMode gameMode;
 
     public BoardController() {
         this.gameMode = GameMode.DEBUG;
     }
 
-    @GetMapping("/new_tile")
-    Tile getNextTile() {
-        return getBoard().getNewTile();
+    @PostMapping("/new")
+    @ResponseStatus(HttpStatus.OK)
+    String createBoard(@RequestParam("game_mode") String gameMode) {
+        boardService.createBoard(GameMode.valueOf(gameMode));
+        return "Board created";
     }
 
-    private Board getBoard() {
-        return beanFactory.getBean(Board.class, gameMode);
+    @GetMapping("/new_tile")
+    @ResponseBody
+    Tile getNextTile() {
+        return boardService.getBoard().getNewTile();
+    }
+
+    @GetMapping(value = "/tile")
+    @ResponseBody
+    Tile getTile(@RequestParam("x") int x, @RequestParam("y") int y) {
+        return boardService.getBoard().getTile(x, y);
     }
 }
