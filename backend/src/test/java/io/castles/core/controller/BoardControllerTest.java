@@ -15,6 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Map;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,7 +43,10 @@ class BoardControllerTest {
     void shouldGetTileAtSpecificPosition() throws Exception {
         Mockito.when(boardService.getBoard()).thenReturn(Board.create(GameMode.DEBUG));
         String tileJson = new ObjectMapper().writer().writeValueAsString(Tile.drawStatic(Tile.TileBorder.GRAS));
-        mvc.perform(MockMvcRequestBuilders.get("/board/new_tile").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders
+                .get("/board/tile")
+                .param("x", "0")
+                .param("y", "0").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson));
     }
