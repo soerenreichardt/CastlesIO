@@ -14,9 +14,12 @@ repositories {
 dependencies {
     compile project(":game")
 
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testCompile("org.assertj:assertj-core:3.11.1")
 }
 
 test {
