@@ -16,7 +16,7 @@ public class Tile {
     public static final int NUM_BORDERS = 4;
     public static final int NUM_NEIGHBORS = 4;
 
-    private final TileBorder[] tileBorders;
+    protected final TileBorder[] tileBorders;
     protected Tile[] neighbors;
 
     private Tile delegate;
@@ -63,6 +63,10 @@ public class Tile {
         return this.tileBorders;
     }
 
+    public void rotate() {
+        delegate.rotate();
+    }
+
     public boolean matches(Tile other, int direction) {
         if (other == null) {
             return true;
@@ -106,6 +110,15 @@ public class Tile {
         protected int getY() {
             throw new UnsupportedOperationException("getY is not supported on an uninserted tile.");
         }
+
+        @Override
+        public void rotate() {
+            TileBorder leftBorder = tileBorders[LEFT];
+            tileBorders[LEFT] = tileBorders[BOTTOM];
+            tileBorders[BOTTOM] = tileBorders[RIGHT];
+            tileBorders[RIGHT] = tileBorders[TOP];
+            tileBorders[TOP] = leftBorder;
+        }
     }
 
     static class InsertedTile extends Tile {
@@ -124,20 +137,28 @@ public class Tile {
             throw new UnsupportedOperationException("Tile is already inserted to the board");
         }
 
+        @Override
         public int getX() {
             return x;
         }
 
+        @Override
         public int getY() {
             return y;
         }
 
+        @Override
         public void setNeighbor(int position, Tile tile) {
             this.neighbors[position] = tile;
         }
+
+        @Override
+        public void rotate() {
+            throw new UnsupportedOperationException("Rotate on inserted tile");
+        }
     }
 
-    enum TileBorder {
+    public enum TileBorder {
         GRAS(0),
         CASTLE(1),
         STREET(2);

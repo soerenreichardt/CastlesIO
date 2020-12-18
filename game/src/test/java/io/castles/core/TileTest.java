@@ -62,4 +62,13 @@ class TileTest {
         }
     }
 
+    @Test
+    void shouldRotateTile() {
+        var tile = Tile.drawSpecific(TileBorder.GRAS, TileBorder.GRAS, TileBorder.STREET, TileBorder.CASTLE);
+        Tile expectedRotation = Tile.drawSpecific(TileBorder.CASTLE, TileBorder.STREET, TileBorder.GRAS, TileBorder.GRAS);
+        for (int i = 0; i < tile.getTileBorders().length; i++) {
+            assertEquals(expectedRotation.getNeighbors()[i], tile.getNeighbors()[i]);
+        }
+    }
+
 }

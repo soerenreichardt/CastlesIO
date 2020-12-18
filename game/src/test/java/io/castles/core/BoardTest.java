@@ -21,6 +21,15 @@ class BoardTest {
     }
 
     @Test
+    void createBoardWithStaticTile() {
+        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
+
+        for (Tile.TileBorder tileBorder : board.getTile(0, 0).getTileBorders()) {
+            assertEquals(Tile.TileBorder.GRAS, tileBorder);
+        }
+    }
+
+    @Test
     void shouldInsertNewTiles() {
         var board = Board.withStaticTile(Tile.TileBorder.GRAS);
         var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
@@ -57,5 +66,12 @@ class BoardTest {
         assertThatThrownBy(() -> board.insertTileToBoard(0, 1, tile))
                 .hasMessageContaining("incompatible borders")
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void shouldCreateNewTiles() {
+        Board board = Board.withRandomTile();
+        Tile newTile = board.getNewTile();
+        assertNotNull(newTile);
     }
 }

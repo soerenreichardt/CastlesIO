@@ -6,19 +6,48 @@ import java.util.Optional;
 
 public class Board {
 
-    Map<Integer, Map<Integer, Tile>> tiles;
+    private final Map<Integer, Map<Integer, Tile>> tiles;
+    private final TileProducer tileProducer;
+
+    public static Board create(GameMode gameMode) {
+        if (gameMode == GameMode.DEBUG) {
+            return Board.withStaticTile(Tile.TileBorder.GRAS);
+        }
+        if (gameMode == GameMode.ORIGINAL) {
+            throw new UnsupportedOperationException(gameMode.toString());
+        }
+        if (gameMode == GameMode.RANDOM) {
+            return Board.withRandomTile();
+        }
+
+        throw new IllegalArgumentException("This should never happen. I miss exhaustiveness checks :(");
+    }
+
+    public static Board withSpecificTile(
+            Tile.TileBorder leftBoarder,
+            Tile.TileBorder rightBoarder,
+            Tile.TileBorder topBoarder,
+            Tile.TileBorder bottomBoarder
+    ) {
+        return new Board(() -> Tile.drawSpecific(leftBoarder, rightBoarder, topBoarder, bottomBoarder));
+    }
 
     public static Board withStaticTile(Tile.TileBorder border) {
-        return new Board(Tile.drawStatic(border));
+        return new Board(() -> Tile.drawStatic(border));
     }
 
     public static Board withRandomTile() {
-        return new Board(Tile.drawRandom());
+        return new Board(Tile::drawRandom);
     }
 
-    private Board(Tile initialTile) {
+    private Board(TileProducer tileProducer) {
         this.tiles = new HashMap<>();
-        setInitialTile(initialTile);
+        this.tileProducer = tileProducer;
+        setInitialTile(tileProducer.get());
+    }
+
+    public Tile getNewTile() {
+        return tileProducer.get();
     }
 
     public Tile getTile(int x, int y) {
@@ -155,5 +184,9 @@ public class Board {
             }
         }
         return Optional.empty();
+    }
+
+    interface TileProducer {
+        Tile get();
     }
 }
