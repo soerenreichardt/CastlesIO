@@ -10,7 +10,8 @@ public class BoardService {
     private Board board;
 
     public Board createBoard(GameMode gameMode) {
-        return Board.create(gameMode);
+        this.board = Board.create(gameMode);
+        return board;
     }
 
     public Board getBoard() {
