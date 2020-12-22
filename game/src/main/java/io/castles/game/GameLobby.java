@@ -2,20 +2,24 @@ package io.castles.game;
 
 import io.castles.core.GameMode;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameLobby extends IdentifiableObject {
 
     public static final int MIN_PLAYERS = 2;
     public static final int MAX_PLAYERS = 5;
 
-    private final List<Player> players;
+    private final Set<Player> players;
     private final ImmutableGameSettings.Builder settingsBuilder;
+    private final String name;
 
-    public GameLobby() {
-        this.players = new LinkedList<>();
+    public GameLobby(String name) {
+        this.name = name;
+        this.players = new HashSet<>();
         this.settingsBuilder = ImmutableGameSettings.builder();
+        this.settingsBuilder.name(name);
+        this.settingsBuilder.gameMode(GameMode.RANDOM);
     }
 
     public Game startGame() {
@@ -49,5 +53,9 @@ public class GameLobby extends IdentifiableObject {
 
     public boolean canStart() {
         return players.size() >= MIN_PLAYERS && players.size() <= MAX_PLAYERS;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

@@ -1,5 +1,6 @@
 package io.castles.game;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +20,8 @@ public class Server {
         this.activeLobbies = new ConcurrentHashMap<>();
     }
 
-    public GameLobby createGameLobby() {
-        var gameLobby = new GameLobby();
+    public GameLobby createGameLobby(String name) {
+        var gameLobby = new GameLobby(name);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         return gameLobby;
     }
@@ -43,6 +44,15 @@ public class Server {
         var gameLobby = gameLobbyById(lobbyId);
         var game = gameLobby.startGame();
         activeGames.put(game.getId(), game);
+        activeLobbies.remove(lobbyId);
         return game;
+    }
+
+    public Collection<Game> getActiveGames() {
+        return this.activeGames.values();
+    }
+
+    public Collection<GameLobby> getActiveGameLobbies() {
+        return this.activeLobbies.values();
     }
 }

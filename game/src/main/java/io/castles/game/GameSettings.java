@@ -6,4 +6,6 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface GameSettings {
     GameMode gameMode();
+
+    String name();
 }
