@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,7 +31,7 @@ class ServerControllerTest {
     void shouldCreateNewLobby() throws Exception {
         String lobbyName = "Test";
         GameLobby gameLobby = new GameLobby(lobbyName);
-        Mockito.when(server.createGameLobby(lobbyName)).thenReturn(gameLobby);
+        Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
         mvc.perform(MockMvcRequestBuilders.post("/lobby").content(lobbyName))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(gameLobby.getId().toString())));

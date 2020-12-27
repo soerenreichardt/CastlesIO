@@ -22,7 +22,7 @@ public class GameLobby extends IdentifiableObject {
         this.settingsBuilder.gameMode(GameMode.RANDOM);
     }
 
-    public Game startGame() {
+    Game startGame() {
         if (!canStart()) {
             throw new IllegalStateException("Unable to start game");
         }
