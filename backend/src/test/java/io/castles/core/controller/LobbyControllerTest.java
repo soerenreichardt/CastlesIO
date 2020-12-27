@@ -1,9 +1,8 @@
 package io.castles.core.controller;
 
+import io.castles.core.GameMode;
 import io.castles.core.util.JsonHelper;
-import io.castles.game.GameLobby;
-import io.castles.game.Player;
-import io.castles.game.Server;
+import io.castles.game.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Set;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -72,11 +74,15 @@ class LobbyControllerTest {
             gameLobby.addPlayer(new Player("" + i));
         }
 
+        Game game = new Game(ImmutableGameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
+        Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
+
         var urlTemplate = String.format("/lobby/%s/start", gameLobby.getId());
 
         assertEquals(0, server.getActiveGames().size());
         mvc.perform(MockMvcRequestBuilders.post(urlTemplate))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(game.getId().toString())));
         verify(server, times(1)).startGame(gameLobby.getId());
     }
 
