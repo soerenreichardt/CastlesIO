@@ -60,7 +60,7 @@ public class Board {
         throw new IllegalArgumentException(String.format("No tile was found at position (%d|%d).", x, y));
     }
 
-    public void insertTileToBoard(int x, int y, Tile tile) {
+    public void insertTileToBoard(Tile tile, int x, int y) {
         var innerTiles = tiles.computeIfAbsent(x, ignore -> new HashMap<>());
         if (innerTiles.containsKey(y)) {
             throw new IllegalArgumentException(String.format("Position (%d|%d) is already occupied", x, y));

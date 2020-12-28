@@ -34,16 +34,16 @@ class BoardTest {
         var board = Board.withStaticTile(Tile.TileBorder.GRAS);
         var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
 
-        assertDoesNotThrow(() -> board.insertTileToBoard(0, 1, tile));
-        assertDoesNotThrow(() -> board.insertTileToBoard(0, 2, tile));
-        assertDoesNotThrow(() -> board.insertTileToBoard(1, 0, tile));
+        assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 1));
+        assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 2));
+        assertDoesNotThrow(() -> board.insertTileToBoard(tile, 1, 0));
     }
 
     @Test
     void shouldThrowWhenInsertingToOccupiedPosition() {
         var board = Board.withRandomTile();
         var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
-        assertThatThrownBy(() -> board.insertTileToBoard(0, 0, tile))
+        assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 0))
                 .hasMessageContaining("already occupied")
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -53,7 +53,7 @@ class BoardTest {
         var board = Board.withRandomTile();
         var tile = Tile.drawRandom();
 
-        assertThatThrownBy(() -> board.insertTileToBoard(1, 1, tile))
+        assertThatThrownBy(() -> board.insertTileToBoard(tile, 1, 1))
                 .hasMessageContaining("no neighbors were found")
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -63,7 +63,7 @@ class BoardTest {
         var board = Board.withStaticTile(Tile.TileBorder.GRAS);
         var tile = Tile.drawStatic(Tile.TileBorder.CASTLE);
 
-        assertThatThrownBy(() -> board.insertTileToBoard(0, 1, tile))
+        assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 1))
                 .hasMessageContaining("incompatible borders")
                 .isInstanceOf(IllegalArgumentException.class);
     }
