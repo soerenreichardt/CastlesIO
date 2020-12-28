@@ -22,6 +22,14 @@ public class Game extends IdentifiableObject {
         this.board = Board.create(settings.gameMode());
     }
 
+    public Tile getNewTile() {
+        return this.board.getNewTile();
+    }
+
+    public Tile getTile(int x, int y) {
+        return this.board.getTile(x, y);
+    }
+
     public GameState getCurrentGameState() {
         return this.gameLogic.getGameState();
     }

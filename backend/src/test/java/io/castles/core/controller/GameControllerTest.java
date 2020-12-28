@@ -1,11 +1,10 @@
 package io.castles.core.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.castles.core.Board;
 import io.castles.core.GameMode;
 import io.castles.core.Tile;
-import io.castles.core.service.BoardService;
 import io.castles.core.util.JsonHelper;
+import io.castles.game.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,36 +15,40 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class BoardControllerTest {
+class GameControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @Autowired
-    private BoardService boardService;
+    Server server;
 
-    @Test
-    void shouldCreateNewBoard() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/board/new").param("game_mode", "DEBUG").accept(MediaType.TEXT_PLAIN))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Board created")));
+    List<Player> players;
+    Game game;
+
+    @BeforeEach
+    void setup() {
+        this.players = List.of(new Player("p1"), new Player("p2"));
+        this.game = new Game(ImmutableGameSettings.builder().gameMode(GameMode.DEBUG).name("Test").build(), Set.copyOf(players));
     }
 
     @Test
     void shouldGetTileAtSpecificPosition() throws Exception {
-        Mockito.when(boardService.getBoard()).thenReturn(Board.create(GameMode.DEBUG));
+        Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
         String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
         mvc.perform(MockMvcRequestBuilders
-                .get("/board/tile")
+                .get(String.format("/game/%s/tile", UUID.randomUUID().toString()))
                 .param("x", "0")
                 .param("y", "0").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -54,9 +57,11 @@ class BoardControllerTest {
 
     @Test
     void shouldReturnANewTile() throws Exception {
-        Mockito.when(boardService.getBoard()).thenReturn(Board.create(GameMode.DEBUG));
+        Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
         String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
-        mvc.perform(MockMvcRequestBuilders.get("/board/new_tile").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders
+                .get(String.format("/game/%s/new_tile", UUID.randomUUID().toString()))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson));
     }
