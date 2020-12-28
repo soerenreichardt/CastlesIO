@@ -2,6 +2,7 @@ package io.castles.core.controller;
 
 import io.castles.core.GameMode;
 import io.castles.core.Tile;
+import io.castles.core.model.GameStateDTO;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +65,17 @@ class GameControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson));
+    }
+
+    @Test
+    void shouldGetCurrentGameState() throws Exception {
+        Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
+        String gameStateJson = JsonHelper.serializeObject(new GameStateDTO(game.getCurrentGameState(), game.getActivePlayer()));
+        mvc.perform(MockMvcRequestBuilders
+                .get(String.format("/game/%s/state", UUID.randomUUID().toString()))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(gameStateJson));
     }
 
 }

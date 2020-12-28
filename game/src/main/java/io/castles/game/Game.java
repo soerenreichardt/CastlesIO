@@ -34,6 +34,10 @@ public class Game extends IdentifiableObject {
         return this.gameLogic.getGameState();
     }
 
+    public Player getActivePlayer() {
+        return this.gameLogic.getActivePlayer();
+    }
+
     public void placeTile(Tile tile, int x, int y) {
         this.board.insertTileToBoard(tile, x, y);
         this.gameLogic.nextPhase();
