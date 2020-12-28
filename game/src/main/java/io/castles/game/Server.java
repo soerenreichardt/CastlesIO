@@ -1,5 +1,7 @@
 package io.castles.game;
 
+import org.jetbrains.annotations.TestOnly;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -54,5 +56,11 @@ public class Server {
 
     public Collection<GameLobby> getActiveGameLobbies() {
         return this.activeLobbies.values();
+    }
+
+    @TestOnly
+    void reset() {
+        activeLobbies.clear();
+        activeGames.clear();
     }
 }
