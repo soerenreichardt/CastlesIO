@@ -1,13 +1,11 @@
 package io.castles.game;
 
 import io.castles.core.Board;
+import io.castles.core.Tile;
 
 import java.util.*;
 
 public class Game extends IdentifiableObject {
-
-    private final List<Player> players;
-    private Player activePlayer;
 
     private final GameLogic gameLogic;
 
@@ -20,18 +18,16 @@ public class Game extends IdentifiableObject {
         // necessary if a player leaves the game while the
         // game is running. A set might trigger a rehash and
         // shuffle the order of players.
-        this.players = new LinkedList<>(players);
-        this.gameLogic = new GameLogic(settings.gameMode());
+        this.gameLogic = new GameLogic(settings.gameMode(), new LinkedList<>(players));
         this.board = Board.create(settings.gameMode());
-        this.activePlayer = chooseRandomStartPlayer();
     }
 
     public GameState getCurrentGameState() {
         return this.gameLogic.getGameState();
     }
 
-    private Player chooseRandomStartPlayer() {
-        Random rand = new Random();
-        return players.get(rand.nextInt(players.size()));
+    public void placeTile(Tile tile, int x, int y) {
+        this.board.insertTileToBoard(tile, x, y);
+        this.gameLogic.nextPhase();
     }
 }
