@@ -1,5 +1,8 @@
-package io.castles.core;
+package io.castles.core.model;
 
+import io.castles.core.Board;
+import io.castles.core.GameMode;
+import io.castles.core.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;

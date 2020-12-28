@@ -5,6 +5,7 @@ import io.castles.core.Board;
 import io.castles.core.GameMode;
 import io.castles.core.Tile;
 import io.castles.core.service.BoardService;
+import io.castles.core.util.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ class BoardControllerTest {
     @Test
     void shouldGetTileAtSpecificPosition() throws Exception {
         Mockito.when(boardService.getBoard()).thenReturn(Board.create(GameMode.DEBUG));
-        String tileJson = new ObjectMapper().writer().writeValueAsString(Tile.drawStatic(Tile.TileBorder.GRAS));
+        String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
         mvc.perform(MockMvcRequestBuilders
                 .get("/board/tile")
                 .param("x", "0")
@@ -54,7 +55,7 @@ class BoardControllerTest {
     @Test
     void shouldReturnANewTile() throws Exception {
         Mockito.when(boardService.getBoard()).thenReturn(Board.create(GameMode.DEBUG));
-        String tileJson = new ObjectMapper().writer().writeValueAsString(Tile.drawStatic(Tile.TileBorder.GRAS));
+        String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
         mvc.perform(MockMvcRequestBuilders.get("/board/new_tile").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson));
