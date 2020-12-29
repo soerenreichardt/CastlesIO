@@ -3,6 +3,7 @@ package io.castles.core.controller;
 import io.castles.core.GameMode;
 import io.castles.core.Tile;
 import io.castles.core.model.GameStateDTO;
+import io.castles.core.model.TileDTO;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +49,8 @@ class GameControllerTest {
     @Test
     void shouldGetTileAtSpecificPosition() throws Exception {
         Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
-        String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
+        Tile tile = game.getTile(0, 0);
+        String tileJson = JsonHelper.serializeObject(new TileDTO(tile.getId(), tile.getTileBorders()));
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/tile", UUID.randomUUID().toString()))
                 .param("x", "0")
@@ -58,8 +61,11 @@ class GameControllerTest {
 
     @Test
     void shouldReturnANewTile() throws Exception {
-        Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
-        String tileJson = JsonHelper.serializeObject(Tile.drawStatic(Tile.TileBorder.GRAS));
+        Game gameMock = Mockito.mock(Game.class);
+        Mockito.when(server.gameById(any(UUID.class))).thenReturn(gameMock);
+        Tile tile = Tile.drawStatic(Tile.TileBorder.GRAS);
+        Mockito.when(gameMock.getNewTile()).thenReturn(tile);
+        String tileJson = JsonHelper.serializeObject(new TileDTO(tile.getId(), tile.getTileBorders()));
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/new_tile", UUID.randomUUID().toString()))
                 .accept(MediaType.APPLICATION_JSON))
@@ -78,4 +84,20 @@ class GameControllerTest {
                 .andExpect(content().string(gameStateJson));
     }
 
+    @Test
+    void shouldInsertTile() throws Exception {
+        Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
+        TileDTO tile = new TileDTO(UUID.randomUUID(), Tile.drawStatic(Tile.TileBorder.GRAS).getTileBorders());
+
+        String tileJson = JsonHelper.serializeObject(tile);
+        mvc.perform(MockMvcRequestBuilders
+                .post(String.format("/game/%s/tile", UUID.randomUUID().toString()))
+                .param("x", "0")
+                .param("y", "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(tileJson))
+                .andExpect(status().isOk());
+
+        assertEquals(tile.toTile(), game.getTile(0, 1));
+    }
 }
