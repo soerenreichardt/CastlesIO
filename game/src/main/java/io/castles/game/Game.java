@@ -39,7 +39,14 @@ public class Game extends IdentifiableObject {
     }
 
     public void placeTile(Tile tile, int x, int y) {
+        validateAction(GameState.PLACE_TILE);
         this.board.insertTileToBoard(tile, x, y);
         this.gameLogic.nextPhase();
+    }
+
+    private void validateAction(GameState expectedState) throws IllegalStateException {
+        if (expectedState != getCurrentGameState()) {
+            throw new IllegalStateException(String.format("Expected GameState to be %s, but was %s", expectedState, getCurrentGameState()));
+        }
     }
 }
