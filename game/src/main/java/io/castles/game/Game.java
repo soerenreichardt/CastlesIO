@@ -18,8 +18,8 @@ public class Game extends IdentifiableObject {
         // necessary if a player leaves the game while the
         // game is running. A set might trigger a rehash and
         // shuffle the order of players.
-        this.gameLogic = new GameLogic(settings.gameMode(), new LinkedList<>(players));
-        this.board = Board.create(settings.gameMode());
+        this.gameLogic = new GameLogic(settings.getGameMode(), new LinkedList<>(players));
+        this.board = Board.create(settings.getGameMode());
     }
 
     public Tile getNewTile() {

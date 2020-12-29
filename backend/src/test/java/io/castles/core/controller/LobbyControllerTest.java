@@ -3,6 +3,7 @@ package io.castles.core.controller;
 import io.castles.core.GameMode;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
+import io.castles.game.GameSettings.GameSettingsBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ class LobbyControllerTest {
             gameLobby.addPlayer(new Player("" + i));
         }
 
-        Game game = new Game(ImmutableGameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
+        Game game = new Game(GameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
         Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
 
         var urlTemplate = String.format("/lobby/%s/start", gameLobby.getId());

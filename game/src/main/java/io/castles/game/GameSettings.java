@@ -1,11 +1,14 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
-import org.immutables.value.Value;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Value;
 
-@Value.Immutable
-public interface GameSettings {
-    GameMode gameMode();
-
-    String name();
+@Value
+@Builder
+@Getter
+public class GameSettings {
+    GameMode gameMode;
+    String name;
 }

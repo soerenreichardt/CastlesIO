@@ -1,6 +1,7 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.game.GameSettings.GameSettingsBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,13 +12,13 @@ public class GameLobby extends IdentifiableObject {
     public static final int MAX_PLAYERS = 5;
 
     private final Set<Player> players;
-    private final ImmutableGameSettings.Builder settingsBuilder;
+    private final GameSettingsBuilder settingsBuilder;
     private final String name;
 
     public GameLobby(String name) {
         this.name = name;
         this.players = new HashSet<>();
-        this.settingsBuilder = ImmutableGameSettings.builder();
+        this.settingsBuilder = GameSettings.builder();
         this.settingsBuilder.name(name);
         this.settingsBuilder.gameMode(GameMode.RANDOM);
     }
