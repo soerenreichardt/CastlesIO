@@ -94,18 +94,6 @@ public class Tile extends IdentifiableObject {
         delegate.rotate();
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) return true;
-//        if (!(obj instanceof Tile)) return false;
-//        return delegate.equals(((Tile)obj).delegate);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return delegate.hashCode();
-//    }
-
     @EqualsAndHashCode
     abstract static class AbstractTile {
         protected final TileBorder[] tileBorders;
