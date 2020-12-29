@@ -3,6 +3,8 @@ package io.castles.core;
 import io.castles.core.Tile.TileBorder;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,9 +68,20 @@ class TileTest {
     void shouldRotateTile() {
         var tile = Tile.drawSpecific(TileBorder.GRAS, TileBorder.GRAS, TileBorder.STREET, TileBorder.CASTLE);
         Tile expectedRotation = Tile.drawSpecific(TileBorder.CASTLE, TileBorder.STREET, TileBorder.GRAS, TileBorder.GRAS);
+        tile.rotate();
         for (int i = 0; i < tile.getTileBorders().length; i++) {
-            assertEquals(expectedRotation.getNeighbors()[i], tile.getNeighbors()[i]);
+            assertEquals(expectedRotation.getTileBorders()[i], tile.getTileBorders()[i]);
         }
+    }
+
+    @Test
+    void shouldEqualSimilarTiles() {
+        var id = UUID.randomUUID();
+        Tile templateTile = Tile.drawStatic(TileBorder.GRAS);
+        Tile tile = new Tile(id, templateTile.getTileBorders());
+
+        assertEquals(tile, new Tile(id, templateTile.getTileBorders()));
+        assertNotEquals(tile, new Tile(UUID.randomUUID(), templateTile.getTileBorders()));
     }
 
 }
