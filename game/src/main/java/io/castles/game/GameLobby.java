@@ -4,7 +4,10 @@ import io.castles.core.GameMode;
 import io.castles.game.GameSettings.GameSettingsBuilder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GameLobby extends IdentifiableObject {
 
@@ -43,6 +46,26 @@ public class GameLobby extends IdentifiableObject {
             throw new IllegalArgumentException(String.format("Player %s was not found in the list of players %s", player, players));
         }
     }
+
+    public void removePlayer(UUID playerId) {
+        Player playerToRemove = getPlayerById(playerId);
+        boolean removed = this.players.remove(playerToRemove);
+        if (!removed) {
+            throw new IllegalArgumentException(String.format("Player %s was not found in the list of players %s", playerToRemove, players));
+        }
+    }
+
+    private Player getPlayerById(UUID playerId) {
+         List<Player> matchingPlayers = this.players.stream()
+             .filter(player -> player.getId().equals(playerId))
+             .collect(Collectors.toList());
+
+         if (matchingPlayers.isEmpty())
+             throw new IllegalArgumentException(String.format("Player with if %s was not found in the list of players %s", playerId, players));
+
+         return matchingPlayers.get(0);
+    }
+
 
     public int getNumPlayers() {
         return players.size();

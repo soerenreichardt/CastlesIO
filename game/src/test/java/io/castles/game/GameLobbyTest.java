@@ -3,6 +3,8 @@ package io.castles.game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,6 +50,13 @@ class GameLobbyTest {
     @Test
     void shouldThrowWhenRemovingNonExistentPlayer() {
         assertThatThrownBy(() -> gameLobby.removePlayer(new Player("p1")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("was not found");
+    }
+
+    @Test
+    void shouldThrowWhenRemovingNonExistentPlayerById() {
+        assertThatThrownBy(() -> gameLobby.removePlayer(UUID.randomUUID()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("was not found");
     }
