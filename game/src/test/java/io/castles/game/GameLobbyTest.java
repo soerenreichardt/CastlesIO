@@ -3,6 +3,7 @@ package io.castles.game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -30,7 +31,7 @@ class GameLobbyTest {
         assertEquals(2, gameLobby.getNumPlayers());
         gameLobby.removePlayer(p1);
         assertEquals(1, gameLobby.getNumPlayers());
-        gameLobby.removePlayer(p2);
+        gameLobby.removePlayer(p2.getId());
         assertEquals(0, gameLobby.getNumPlayers());
     }
 
@@ -57,7 +58,7 @@ class GameLobbyTest {
     @Test
     void shouldThrowWhenRemovingNonExistentPlayerById() {
         assertThatThrownBy(() -> gameLobby.removePlayer(UUID.randomUUID()))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("was not found");
     }
 
