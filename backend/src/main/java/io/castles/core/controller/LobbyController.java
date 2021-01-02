@@ -1,7 +1,7 @@
 package io.castles.core.controller;
 
-import io.castles.core.model.PlayerDTO;
 import io.castles.game.GameLobby;
+import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +16,17 @@ public class LobbyController {
     Server server;
 
     @PutMapping("/join")
-    void addPlayer(@PathVariable("id") UUID id, @RequestBody PlayerDTO player) {
+    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) {
         GameLobby gameLobby = server.gameLobbyById(id);
-        gameLobby.addPlayer(player.toPlayer()); // TODO: exception handling
+        Player player = new Player(playerName);
+        gameLobby.addPlayer(player); // TODO: exception handling
+        return player.getId();
     }
 
     @DeleteMapping("/leave")
-    void removePlayer(@PathVariable("id") UUID id, @RequestBody PlayerDTO player) {
+    void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {
         GameLobby gameLobby = server.gameLobbyById(id);
-        gameLobby.removePlayer(player.toPlayer()); // TODO: exception handling
+        gameLobby.removePlayer(playerId); // TODO: exception handling
     }
 
     @PostMapping("/start")

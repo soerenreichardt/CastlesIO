@@ -3,8 +3,8 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.game.GameSettings.GameSettingsBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameLobby extends IdentifiableObject {
 
@@ -43,6 +43,18 @@ public class GameLobby extends IdentifiableObject {
             throw new IllegalArgumentException(String.format("Player %s was not found in the list of players %s", player, players));
         }
     }
+
+    public void removePlayer(UUID playerId) {
+        removePlayer(getPlayerById(playerId));
+    }
+
+    private Player getPlayerById(UUID playerId) {
+        return this.players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
 
     public int getNumPlayers() {
         return players.size();

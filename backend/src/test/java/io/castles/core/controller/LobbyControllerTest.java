@@ -40,13 +40,12 @@ class LobbyControllerTest {
     void shouldJoinAsPlayer() throws Exception {
         var gameLobby = new GameLobby("Test");
         var player = new Player("p1");
-        var playerJson = JsonHelper.serializeObject(player);
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
 
         assertEquals(0, gameLobby.getNumPlayers());
-        mvc.perform(MockMvcRequestBuilders.put(urlTemplate).contentType(MediaType.APPLICATION_JSON).content(playerJson))
+        mvc.perform(MockMvcRequestBuilders.put(urlTemplate).param("playerName", "Foo Bar"))
                 .andExpect(status().isOk());
         assertEquals(1, gameLobby.getNumPlayers());
     }
@@ -55,7 +54,6 @@ class LobbyControllerTest {
     void shouldRemovePlayer() throws Exception {
         var gameLobby = new GameLobby("Test");
         var player = new Player("p1");
-        var playerJson = JsonHelper.serializeObject(player);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
 
         gameLobby.addPlayer(player);
@@ -63,7 +61,7 @@ class LobbyControllerTest {
         var urlTemplate = String.format("/lobby/%s/leave", gameLobby.getId());
 
         assertEquals(1, gameLobby.getNumPlayers());
-        mvc.perform(MockMvcRequestBuilders.delete(urlTemplate).contentType(MediaType.APPLICATION_JSON).content(playerJson))
+        mvc.perform(MockMvcRequestBuilders.delete(urlTemplate).param("playerId", player.getId().toString()))
                 .andExpect(status().isOk());
         assertEquals(0, gameLobby.getNumPlayers());
     }
