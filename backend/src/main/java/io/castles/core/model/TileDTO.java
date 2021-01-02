@@ -1,7 +1,7 @@
 package io.castles.core.model;
 
-import io.castles.core.Tile;
-import io.castles.core.Tile.TileBorder;
+import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileBorder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

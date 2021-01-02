@@ -1,4 +1,4 @@
-package io.castles.core;
+package io.castles.core.tile;
 
 import io.castles.game.IdentifiableObject;
 import lombok.EqualsAndHashCode;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Random;
 import java.util.UUID;
 
-import static io.castles.core.TileUtil.oppositeDirection;
+import static io.castles.core.tile.TileUtil.oppositeDirection;
 
 @EqualsAndHashCode(callSuper = true)
 public class Tile extends IdentifiableObject {
@@ -74,7 +74,7 @@ public class Tile extends IdentifiableObject {
         return delegate.tileBorders()[direction] == other.getTileBorders()[oppositeDirection(direction)];
     }
 
-    protected void insertToBoard(int x, int y) {
+    public void insertToBoard(int x, int y) {
         this.delegate = new InsertedTile(delegate.tileBorders(), x, y);
     }
 
@@ -92,27 +92,6 @@ public class Tile extends IdentifiableObject {
 
     public void rotate() {
         delegate.rotate();
-    }
-
-    @EqualsAndHashCode
-    abstract static class AbstractTile {
-        protected final TileBorder[] tileBorders;
-
-        AbstractTile(TileBorder[] tileBorders) {
-            this.tileBorders = tileBorders;
-        }
-
-        abstract void setNeighbor(int position, Tile tile);
-
-        abstract int getX();
-
-        abstract int getY();
-
-        abstract void rotate();
-
-        abstract TileBorder[] tileBorders();
-
-        abstract Tile[] neighbors();
     }
 
     static class DrawnTile extends AbstractTile {
@@ -202,32 +181,6 @@ public class Tile extends IdentifiableObject {
         @Override
         public Tile[] neighbors() {
             return neighbors;
-        }
-    }
-
-    public enum TileBorder {
-        GRAS(0),
-        CASTLE(1),
-        STREET(2);
-
-        private final int id;
-
-        TileBorder(int id) {
-            this.id = id;
-        }
-
-        int getId() {
-            return id;
-        }
-
-        static TileBorder getById(int id) {
-            for (TileBorder tileBorder : values()) {
-                if (tileBorder.getId() == id) {
-                    return tileBorder;
-                }
-            }
-
-            throw new IllegalArgumentException(String.format("Id %d is not within range (0,%d)", id, values().length));
         }
     }
 }

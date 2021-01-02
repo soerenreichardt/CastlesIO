@@ -1,6 +1,6 @@
 package io.castles.core.controller;
 
-import io.castles.core.Tile;
+import io.castles.core.tile.Tile;
 import io.castles.core.model.GameStateDTO;
 import io.castles.core.model.TileDTO;
 import io.castles.game.Game;

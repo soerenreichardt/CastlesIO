@@ -1,5 +1,8 @@
 package io.castles.core;
 
+import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileBorder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +14,7 @@ public class Board {
 
     public static Board create(GameMode gameMode) {
         if (gameMode == GameMode.DEBUG) {
-            return Board.withStaticTile(Tile.TileBorder.GRAS);
+            return Board.withStaticTile(TileBorder.GRAS);
         }
         if (gameMode == GameMode.ORIGINAL) {
             throw new UnsupportedOperationException(gameMode.toString());
@@ -24,15 +27,15 @@ public class Board {
     }
 
     public static Board withSpecificTile(
-            Tile.TileBorder leftBoarder,
-            Tile.TileBorder rightBoarder,
-            Tile.TileBorder topBoarder,
-            Tile.TileBorder bottomBoarder
+            TileBorder leftBoarder,
+            TileBorder rightBoarder,
+            TileBorder topBoarder,
+            TileBorder bottomBoarder
     ) {
         return new Board(() -> Tile.drawSpecific(leftBoarder, rightBoarder, topBoarder, bottomBoarder));
     }
 
-    public static Board withStaticTile(Tile.TileBorder border) {
+    public static Board withStaticTile(TileBorder border) {
         return new Board(() -> Tile.drawStatic(border));
     }
 

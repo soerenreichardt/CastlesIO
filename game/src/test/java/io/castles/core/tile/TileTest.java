@@ -1,6 +1,5 @@
-package io.castles.core;
+package io.castles.core.tile;
 
-import io.castles.core.Tile.TileBorder;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

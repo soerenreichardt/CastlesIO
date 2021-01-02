@@ -1,5 +1,7 @@
 package io.castles.core;
 
+import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileBorder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -22,17 +24,17 @@ class BoardTest {
 
     @Test
     void createBoardWithStaticTile() {
-        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
+        var board = Board.withStaticTile(TileBorder.GRAS);
 
-        for (Tile.TileBorder tileBorder : board.getTile(0, 0).getTileBorders()) {
-            assertEquals(Tile.TileBorder.GRAS, tileBorder);
+        for (TileBorder tileBorder : board.getTile(0, 0).getTileBorders()) {
+            assertEquals(TileBorder.GRAS, tileBorder);
         }
     }
 
     @Test
     void shouldInsertNewTiles() {
-        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
-        var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
+        var board = Board.withStaticTile(TileBorder.GRAS);
+        var tile = Tile.drawStatic(TileBorder.GRAS);
 
         assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 1));
         assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 2));
@@ -42,7 +44,7 @@ class BoardTest {
     @Test
     void shouldThrowWhenInsertingToOccupiedPosition() {
         var board = Board.withRandomTile();
-        var tile = Tile.drawStatic(Tile.TileBorder.GRAS);
+        var tile = Tile.drawStatic(TileBorder.GRAS);
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 0))
                 .hasMessageContaining("already occupied")
                 .isInstanceOf(IllegalArgumentException.class);
@@ -60,8 +62,8 @@ class BoardTest {
 
     @Test
     void shouldThrowWhenInsertingWithIncompatibleBorders() {
-        var board = Board.withStaticTile(Tile.TileBorder.GRAS);
-        var tile = Tile.drawStatic(Tile.TileBorder.CASTLE);
+        var board = Board.withStaticTile(TileBorder.GRAS);
+        var tile = Tile.drawStatic(TileBorder.CASTLE);
 
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 1))
                 .hasMessageContaining("incompatible borders")

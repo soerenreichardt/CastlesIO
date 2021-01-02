@@ -1,4 +1,4 @@
-package io.castles.core;
+package io.castles.core.tile;
 
 public final class TileUtil {
 
