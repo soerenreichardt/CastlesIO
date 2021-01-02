@@ -7,75 +7,92 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Random;
 import java.util.UUID;
 
+import static io.castles.core.tile.TileLayout.BOTTOM;
+import static io.castles.core.tile.TileLayout.LEFT;
+import static io.castles.core.tile.TileLayout.NUM_EDGES;
+import static io.castles.core.tile.TileLayout.NUM_NEIGHBORS;
+import static io.castles.core.tile.TileLayout.RIGHT;
+import static io.castles.core.tile.TileLayout.TOP;
 import static io.castles.core.tile.TileUtil.oppositeDirection;
 
 @EqualsAndHashCode(callSuper = true)
 public class Tile extends IdentifiableObject {
 
-    public static final int LEFT = 0;
-    public static final int RIGHT = 1;
-    public static final int TOP = 2;
-    public static final int BOTTOM = 3;
-
-    public static final int NUM_BORDERS = 4;
-    public static final int NUM_NEIGHBORS = 4;
-
     private AbstractTile delegate;
 
     public static Tile drawRandom() {
-        TileContent[] tileContents = new TileContent[NUM_BORDERS];
         Random rng = new Random();
-        for (int i = 0; i < tileContents.length; i++) {
-            tileContents[i] = TileContent.getById(rng.nextInt(TileContent.values().length));
+        TileLayout.Builder builder = TileLayout.builder();
+        for (int direction = 0; direction < NUM_EDGES; direction++) {
+            TileContent tileContent = TileContent.getById(rng.nextInt(TileContent.values().length));
+            builder.withContent(tileContent).connectedOnEdges(direction);
         }
-        return new Tile(new DrawnTile(tileContents));
+        return new Tile(builder.build());
     }
 
     @TestOnly
-    public static Tile drawStatic(TileContent border) {
-        return new Tile(new DrawnTile(new TileContent[]{ border, border, border, border }));
+    public static Tile drawStatic(TileContent content) {
+        var tileLayout = TileLayout.builder()
+                .withContent(content)
+                .connectedOnEdges(LEFT, RIGHT, TOP, BOTTOM)
+                .build();
+        return new Tile(tileLayout);
     }
 
     @TestOnly
     public static Tile drawSpecific(
-            TileContent leftBorder,
-            TileContent rightBorder,
-            TileContent topBorder,
-            TileContent bottomBorder
+            TileContent leftEdgeContent,
+            TileContent rightEdgeContent,
+            TileContent topEdgeContent,
+            TileContent bottomEdgeContent
     ) {
-        return new Tile(new DrawnTile(new TileContent[]{ leftBorder, rightBorder, topBorder, bottomBorder }));
+        var tileLayout = TileLayout.builder()
+                .withContent(leftEdgeContent)
+                .connectedOnEdges(LEFT)
+                .withContent(rightEdgeContent)
+                .connectedOnEdges(RIGHT)
+                .withContent(topEdgeContent)
+                .connectedOnEdges(TOP)
+                .withContent(bottomEdgeContent)
+                .connectedOnEdges(BOTTOM)
+                .build();
+        return new Tile(tileLayout);
     }
 
-    private Tile(AbstractTile delegate) {
-        this.delegate = delegate;
+    private Tile(TileLayout tileLayout) {
+        this.delegate = new DrawnTile(tileLayout);
     }
 
     /**
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(UUID id, TileContent[] tileContents) {
+    public Tile(UUID id, TileLayout tileLayout) {
         super(id);
-        this.delegate = new DrawnTile(tileContents);
+        this.delegate = new DrawnTile(tileLayout);
     }
 
     public Tile[] getNeighbors() {
         return delegate.neighbors();
     }
 
-    public TileContent[] getTileBorders() {
-        return delegate.tileBorders();
+    public TileContent[] getTileEdges() {
+        return delegate.getTileEdges();
+    }
+
+    public TileLayout getTileLayout() {
+        return delegate.getTileLayout();
     }
 
     public boolean matches(Tile other, int direction) {
         if (other == null) {
             return true;
         }
-        return delegate.tileBorders()[direction] == other.getTileBorders()[oppositeDirection(direction)];
+        return delegate.getTileEdges()[direction] == other.getTileEdges()[oppositeDirection(direction)];
     }
 
     public void insertToBoard(int x, int y) {
-        this.delegate = new InsertedTile(delegate.tileBorders(), x, y);
+        this.delegate = new InsertedTile(delegate.getTileLayout(), x, y);
     }
 
     public void setNeighbor(int position, Tile tile) {
@@ -96,8 +113,8 @@ public class Tile extends IdentifiableObject {
 
     static class DrawnTile extends AbstractTile {
 
-        protected DrawnTile(TileContent[] tileContents) {
-            super(tileContents);
+        protected DrawnTile(TileLayout tileLayout) {
+            super(tileLayout);
         }
 
         @Override
@@ -117,16 +134,7 @@ public class Tile extends IdentifiableObject {
 
         @Override
         public void rotate() {
-            TileContent leftBorder = tileContents[LEFT];
-            tileContents[LEFT] = tileContents[BOTTOM];
-            tileContents[BOTTOM] = tileContents[RIGHT];
-            tileContents[RIGHT] = tileContents[TOP];
-            tileContents[TOP] = leftBorder;
-        }
-
-        @Override
-        public TileContent[] tileBorders() {
-            return tileContents;
+            this.tileLayout.rotate();
         }
 
         @Override
@@ -142,12 +150,12 @@ public class Tile extends IdentifiableObject {
         private final int x;
         private final int y;
 
-        public InsertedTile(TileContent[] tileContents, int x, int y) {
-            this(tileContents, new Tile[NUM_NEIGHBORS], x, y);
+        public InsertedTile(TileLayout tileLayout, int x, int y) {
+            this(tileLayout, new Tile[NUM_NEIGHBORS], x, y);
         }
 
-        public InsertedTile(TileContent[] tileContents, Tile[] neighbors, int x, int y) {
-            super(tileContents);
+        public InsertedTile(TileLayout tileLayout, Tile[] neighbors, int x, int y) {
+            super(tileLayout);
             this.x = x;
             this.y = y;
             this.neighbors = neighbors;
@@ -171,11 +179,6 @@ public class Tile extends IdentifiableObject {
         @Override
         public void rotate() {
             throw new UnsupportedOperationException("Rotate on inserted tile");
-        }
-
-        @Override
-        public TileContent[] tileBorders() {
-            return tileContents;
         }
 
         @Override

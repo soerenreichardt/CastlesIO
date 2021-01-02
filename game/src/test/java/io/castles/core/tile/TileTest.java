@@ -13,7 +13,7 @@ class TileTest {
     void shouldCreateRandomTile() {
         var tile = Tile.drawRandom();
         assertNotNull(tile);
-        for (TileContent tileContent : tile.getTileBorders()) {
+        for (TileContent tileContent : tile.getTileEdges()) {
             assertNotNull(tileContent);
         }
     }
@@ -21,12 +21,12 @@ class TileTest {
     @Test
     void shouldCreateSpecificTile() {
         Tile tile = Tile.drawSpecific(TileContent.GRAS, TileContent.CASTLE, TileContent.STREET, null);
-        TileContent[] tileContents = tile.getTileBorders();
+        TileContent[] tileContents = tile.getTileEdges();
         assertNotNull(tileContents);
-        assertEquals(TileContent.GRAS, tileContents[Tile.LEFT]);
-        assertEquals(TileContent.CASTLE, tileContents[Tile.RIGHT]);
-        assertEquals(TileContent.STREET, tileContents[Tile.TOP]);
-        assertNull(tileContents[Tile.BOTTOM]);
+        assertEquals(TileContent.GRAS, tileContents[TileLayout.LEFT]);
+        assertEquals(TileContent.CASTLE, tileContents[TileLayout.RIGHT]);
+        assertEquals(TileContent.STREET, tileContents[TileLayout.TOP]);
+        assertNull(tileContents[TileLayout.BOTTOM]);
     }
 
     @Test
@@ -53,12 +53,12 @@ class TileTest {
     @Test
     void bordersShouldStayTheSameWhenInsertingToBoard() {
         Tile tile = Tile.drawStatic(TileContent.GRAS);
-        for (TileContent tileContent : tile.getTileBorders()) {
+        for (TileContent tileContent : tile.getTileEdges()) {
             assertEquals(TileContent.GRAS, tileContent);
         }
 
         tile.insertToBoard(0, 1);
-        for (TileContent tileContent : tile.getTileBorders()) {
+        for (TileContent tileContent : tile.getTileEdges()) {
             assertEquals(TileContent.GRAS, tileContent);
         }
     }
@@ -68,8 +68,8 @@ class TileTest {
         var tile = Tile.drawSpecific(TileContent.GRAS, TileContent.GRAS, TileContent.STREET, TileContent.CASTLE);
         Tile expectedRotation = Tile.drawSpecific(TileContent.CASTLE, TileContent.STREET, TileContent.GRAS, TileContent.GRAS);
         tile.rotate();
-        for (int i = 0; i < tile.getTileBorders().length; i++) {
-            assertEquals(expectedRotation.getTileBorders()[i], tile.getTileBorders()[i]);
+        for (int i = 0; i < tile.getTileEdges().length; i++) {
+            assertEquals(expectedRotation.getTileEdges()[i], tile.getTileEdges()[i]);
         }
     }
 
@@ -77,10 +77,10 @@ class TileTest {
     void shouldEqualSimilarTiles() {
         var id = UUID.randomUUID();
         Tile templateTile = Tile.drawStatic(TileContent.GRAS);
-        Tile tile = new Tile(id, templateTile.getTileBorders());
+        Tile tile = new Tile(id, templateTile.getTileLayout());
 
-        assertEquals(tile, new Tile(id, templateTile.getTileBorders()));
-        assertNotEquals(tile, new Tile(UUID.randomUUID(), templateTile.getTileBorders()));
+        assertEquals(tile, new Tile(id, templateTile.getTileLayout()));
+        assertNotEquals(tile, new Tile(UUID.randomUUID(), templateTile.getTileLayout()));
     }
 
 }

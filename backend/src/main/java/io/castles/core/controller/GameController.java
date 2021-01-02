@@ -1,8 +1,8 @@
 package io.castles.core.controller;
 
-import io.castles.core.tile.Tile;
 import io.castles.core.model.GameStateDTO;
 import io.castles.core.model.TileDTO;
+import io.castles.core.tile.Tile;
 import io.castles.game.Game;
 import io.castles.game.Server;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class GameController {
     TileDTO getNextTile(@PathVariable("id") UUID id) {
         Game game = server.gameById(id);
         Tile newTile = game.getNewTile();
-        return new TileDTO(newTile.getId(), newTile.getTileBorders());
+        return TileDTO.from(newTile);
     }
 
     @GetMapping(value = "/tile")
@@ -30,7 +30,7 @@ public class GameController {
     TileDTO getTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y) {
         Game game = server.gameById(id);
         Tile tile = game.getTile(x, y);
-        return new TileDTO(tile.getId(), tile.getTileBorders());
+        return TileDTO.from(tile);
     }
 
     @GetMapping(value = "/state")

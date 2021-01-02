@@ -26,7 +26,7 @@ class BoardTest {
     void createBoardWithStaticTile() {
         var board = Board.withStaticTile(TileContent.GRAS);
 
-        for (TileContent tileContent : board.getTile(0, 0).getTileBorders()) {
+        for (TileContent tileContent : board.getTile(0, 0).getTileEdges()) {
             assertEquals(TileContent.GRAS, tileContent);
         }
     }
