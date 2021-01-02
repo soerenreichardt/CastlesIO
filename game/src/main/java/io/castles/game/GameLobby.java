@@ -45,18 +45,14 @@ public class GameLobby extends IdentifiableObject {
     }
 
     public void removePlayer(UUID playerId) {
-        Player playerToRemove = getPlayerById(playerId);
-        removePlayer(playerToRemove);
+        removePlayer(getPlayerById(playerId));
     }
 
     private Player getPlayerById(UUID playerId) {
-        try {
-            return this.players.stream()
-                    .filter(player -> player.getId().equals(playerId))
-                    .findFirst().get();
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players));
-        }
+        return this.players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
     }
 
 
