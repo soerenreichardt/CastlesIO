@@ -23,27 +23,27 @@ public class Tile extends IdentifiableObject {
     private AbstractTile delegate;
 
     public static Tile drawRandom() {
-        TileBorder[] tileBorders = new TileBorder[NUM_BORDERS];
+        TileContent[] tileContents = new TileContent[NUM_BORDERS];
         Random rng = new Random();
-        for (int i = 0; i < tileBorders.length; i++) {
-            tileBorders[i] = TileBorder.getById(rng.nextInt(TileBorder.values().length));
+        for (int i = 0; i < tileContents.length; i++) {
+            tileContents[i] = TileContent.getById(rng.nextInt(TileContent.values().length));
         }
-        return new Tile(new DrawnTile(tileBorders));
+        return new Tile(new DrawnTile(tileContents));
     }
 
     @TestOnly
-    public static Tile drawStatic(TileBorder border) {
-        return new Tile(new DrawnTile(new TileBorder[]{ border, border, border, border }));
+    public static Tile drawStatic(TileContent border) {
+        return new Tile(new DrawnTile(new TileContent[]{ border, border, border, border }));
     }
 
     @TestOnly
     public static Tile drawSpecific(
-            TileBorder leftBorder,
-            TileBorder rightBorder,
-            TileBorder topBorder,
-            TileBorder bottomBorder
+            TileContent leftBorder,
+            TileContent rightBorder,
+            TileContent topBorder,
+            TileContent bottomBorder
     ) {
-        return new Tile(new DrawnTile(new TileBorder[]{ leftBorder, rightBorder, topBorder, bottomBorder }));
+        return new Tile(new DrawnTile(new TileContent[]{ leftBorder, rightBorder, topBorder, bottomBorder }));
     }
 
     private Tile(AbstractTile delegate) {
@@ -54,16 +54,16 @@ public class Tile extends IdentifiableObject {
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(UUID id, TileBorder[] tileBorders) {
+    public Tile(UUID id, TileContent[] tileContents) {
         super(id);
-        this.delegate = new DrawnTile(tileBorders);
+        this.delegate = new DrawnTile(tileContents);
     }
 
     public Tile[] getNeighbors() {
         return delegate.neighbors();
     }
 
-    public TileBorder[] getTileBorders() {
+    public TileContent[] getTileBorders() {
         return delegate.tileBorders();
     }
 
@@ -96,8 +96,8 @@ public class Tile extends IdentifiableObject {
 
     static class DrawnTile extends AbstractTile {
 
-        protected DrawnTile(TileBorder[] tileBorders) {
-            super(tileBorders);
+        protected DrawnTile(TileContent[] tileContents) {
+            super(tileContents);
         }
 
         @Override
@@ -117,16 +117,16 @@ public class Tile extends IdentifiableObject {
 
         @Override
         public void rotate() {
-            TileBorder leftBorder = tileBorders[LEFT];
-            tileBorders[LEFT] = tileBorders[BOTTOM];
-            tileBorders[BOTTOM] = tileBorders[RIGHT];
-            tileBorders[RIGHT] = tileBorders[TOP];
-            tileBorders[TOP] = leftBorder;
+            TileContent leftBorder = tileContents[LEFT];
+            tileContents[LEFT] = tileContents[BOTTOM];
+            tileContents[BOTTOM] = tileContents[RIGHT];
+            tileContents[RIGHT] = tileContents[TOP];
+            tileContents[TOP] = leftBorder;
         }
 
         @Override
-        public TileBorder[] tileBorders() {
-            return tileBorders;
+        public TileContent[] tileBorders() {
+            return tileContents;
         }
 
         @Override
@@ -142,12 +142,12 @@ public class Tile extends IdentifiableObject {
         private final int x;
         private final int y;
 
-        public InsertedTile(TileBorder[] tileBorders, int x, int y) {
-            this(tileBorders, new Tile[NUM_NEIGHBORS], x, y);
+        public InsertedTile(TileContent[] tileContents, int x, int y) {
+            this(tileContents, new Tile[NUM_NEIGHBORS], x, y);
         }
 
-        public InsertedTile(TileBorder[] tileBorders, Tile[] neighbors, int x, int y) {
-            super(tileBorders);
+        public InsertedTile(TileContent[] tileContents, Tile[] neighbors, int x, int y) {
+            super(tileContents);
             this.x = x;
             this.y = y;
             this.neighbors = neighbors;
@@ -174,8 +174,8 @@ public class Tile extends IdentifiableObject {
         }
 
         @Override
-        public TileBorder[] tileBorders() {
-            return tileBorders;
+        public TileContent[] tileBorders() {
+            return tileContents;
         }
 
         @Override

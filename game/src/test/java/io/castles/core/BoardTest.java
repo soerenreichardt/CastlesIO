@@ -1,7 +1,7 @@
 package io.castles.core;
 
 import io.castles.core.tile.Tile;
-import io.castles.core.tile.TileBorder;
+import io.castles.core.tile.TileContent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -24,17 +24,17 @@ class BoardTest {
 
     @Test
     void createBoardWithStaticTile() {
-        var board = Board.withStaticTile(TileBorder.GRAS);
+        var board = Board.withStaticTile(TileContent.GRAS);
 
-        for (TileBorder tileBorder : board.getTile(0, 0).getTileBorders()) {
-            assertEquals(TileBorder.GRAS, tileBorder);
+        for (TileContent tileContent : board.getTile(0, 0).getTileBorders()) {
+            assertEquals(TileContent.GRAS, tileContent);
         }
     }
 
     @Test
     void shouldInsertNewTiles() {
-        var board = Board.withStaticTile(TileBorder.GRAS);
-        var tile = Tile.drawStatic(TileBorder.GRAS);
+        var board = Board.withStaticTile(TileContent.GRAS);
+        var tile = Tile.drawStatic(TileContent.GRAS);
 
         assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 1));
         assertDoesNotThrow(() -> board.insertTileToBoard(tile, 0, 2));
@@ -44,7 +44,7 @@ class BoardTest {
     @Test
     void shouldThrowWhenInsertingToOccupiedPosition() {
         var board = Board.withRandomTile();
-        var tile = Tile.drawStatic(TileBorder.GRAS);
+        var tile = Tile.drawStatic(TileContent.GRAS);
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 0))
                 .hasMessageContaining("already occupied")
                 .isInstanceOf(IllegalArgumentException.class);
@@ -62,8 +62,8 @@ class BoardTest {
 
     @Test
     void shouldThrowWhenInsertingWithIncompatibleBorders() {
-        var board = Board.withStaticTile(TileBorder.GRAS);
-        var tile = Tile.drawStatic(TileBorder.CASTLE);
+        var board = Board.withStaticTile(TileContent.GRAS);
+        var tile = Tile.drawStatic(TileContent.CASTLE);
 
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 1))
                 .hasMessageContaining("incompatible borders")

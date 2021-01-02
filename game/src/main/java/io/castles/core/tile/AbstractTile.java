@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 abstract class AbstractTile {
-    protected final TileBorder[] tileBorders;
+    protected final TileContent[] tileContents;
 
-    AbstractTile(TileBorder[] tileBorders) {
-        this.tileBorders = tileBorders;
+    AbstractTile(TileContent[] tileContents) {
+        this.tileContents = tileContents;
     }
 
     abstract void setNeighbor(int position, Tile tile);
@@ -18,7 +18,7 @@ abstract class AbstractTile {
 
     abstract void rotate();
 
-    abstract TileBorder[] tileBorders();
+    abstract TileContent[] tileBorders();
 
     abstract Tile[] neighbors();
 

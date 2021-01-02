@@ -1,13 +1,13 @@
 package io.castles.core.tile;
 
-public enum TileBorder {
+public enum TileContent {
     GRAS(0),
     CASTLE(1),
     STREET(2);
 
     private final int id;
 
-    TileBorder(int id) {
+    TileContent(int id) {
         this.id = id;
     }
 
@@ -15,10 +15,10 @@ public enum TileBorder {
         return id;
     }
 
-    static TileBorder getById(int id) {
-        for (TileBorder tileBorder : values()) {
-            if (tileBorder.getId() == id) {
-                return tileBorder;
+    static TileContent getById(int id) {
+        for (TileContent tileContent : values()) {
+            if (tileContent.getId() == id) {
+                return tileContent;
             }
         }
 
