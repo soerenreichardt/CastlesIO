@@ -1,5 +1,6 @@
 package io.castles.game;
 
+import io.castles.core.GameMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,8 @@ class ServerTest {
     @Test
     void shouldStartAGameAndRemoveFromLobbies() {
         GameLobby gameLobby = server.createGameLobby("Test");
+        gameLobby.setGameMode(GameMode.DEBUG);
+
         gameLobby.addPlayer(new Player("p1"));
         gameLobby.addPlayer(new Player("p2"));
 
