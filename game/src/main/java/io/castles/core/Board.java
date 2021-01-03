@@ -4,21 +4,22 @@ import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Board {
 
     private final Map<Integer, Map<Integer, Tile>> tiles;
     private final TileProducer tileProducer;
 
-    public static Board create(GameMode gameMode) {
+    public static Board create(GameMode gameMode, Optional<List<Tile>> tileList) {
         if (gameMode == GameMode.DEBUG) {
             return Board.withStaticTile(TileContent.GRAS);
         }
         if (gameMode == GameMode.ORIGINAL) {
-            throw new UnsupportedOperationException(gameMode.toString());
+            List<Tile> tiles = tileList.orElseThrow(
+                    () -> new IllegalStateException(String.format("No list of tiles was specified for game mode %s", gameMode))
+            );
+            return Board.withPredefinedTiles(tiles);
         }
         if (gameMode == GameMode.RANDOM) {
             return Board.withRandomTile();
@@ -27,13 +28,9 @@ public class Board {
         throw new IllegalArgumentException("This should never happen. I miss exhaustiveness checks :(");
     }
 
-    public static Board withSpecificTile(
-            TileContent leftBoarder,
-            TileContent rightBoarder,
-            TileContent topBoarder,
-            TileContent bottomBoarder
-    ) {
-        return new Board(() -> Tile.drawSpecific(leftBoarder, rightBoarder, topBoarder, bottomBoarder));
+    public static Board withPredefinedTiles(List<Tile> tiles) {
+        var rng = new Random();
+        return new Board(() -> tiles.get(rng.nextInt(tiles.size())));
     }
 
     public static Board withStaticTile(TileContent border) {

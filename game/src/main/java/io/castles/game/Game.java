@@ -19,7 +19,7 @@ public class Game extends IdentifiableObject {
         // game is running. A set might trigger a rehash and
         // shuffle the order of players.
         this.gameLogic = new GameLogic(settings.getGameMode(), new LinkedList<>(players));
-        this.board = Board.create(settings.getGameMode());
+        this.board = Board.create(settings.getGameMode(), settings.getTileList());
     }
 
     public Tile getNewTile() {
