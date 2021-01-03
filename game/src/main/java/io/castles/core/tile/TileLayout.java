@@ -2,14 +2,12 @@ package io.castles.core.tile;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@EqualsAndHashCode
 public class TileLayout {
 
     public static final int LEFT = 0;
@@ -21,25 +19,27 @@ public class TileLayout {
     public static final int NUM_EDGES = 4;
     public static final int NUM_NEIGHBORS = 4;
 
-    private final List<PositionedContent> content;
+    private final List<PositionedContent> layout;
 
+    @EqualsAndHashCode.Exclude
     private int rotation;
+    @EqualsAndHashCode.Exclude
     private final int[] activeRotation;
 
-    public TileLayout(List<PositionedContent> content, int rotation) {
-        this(content);
+    public TileLayout(List<PositionedContent> layout, int rotation) {
+        this(layout);
         rotate(rotation);
     }
 
-    public TileLayout(List<PositionedContent> content) {
-        this.content = content;
+    public TileLayout(List<PositionedContent> layout) {
+        this.layout = layout;
         this.rotation = 0;
         this.activeRotation = new int[]{ LEFT, TOP, RIGHT, BOTTOM };
     }
 
     public TileContent[] getTileEdges() {
         var tileContents = new TileContent[NUM_EDGES];
-        for (PositionedContent positionedContent : content) {
+        for (PositionedContent positionedContent : layout) {
             var tileContent = positionedContent.getContent();
             for (int tileEdge : positionedContent.getTileEdges()) {
                 var direction = activeRotation[tileEdge];
@@ -49,8 +49,8 @@ public class TileLayout {
         return tileContents;
     }
 
-    public List<PositionedContent> getContent() {
-        return this.content;
+    public List<PositionedContent> getLayout() {
+        return this.layout;
     }
 
     public int getRotation() {
@@ -77,6 +77,7 @@ public class TileLayout {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @EqualsAndHashCode
     public static class PositionedContent {
         TileContent content;
         List<Integer> tileEdges;
@@ -85,7 +86,7 @@ public class TileLayout {
             return new Builder(outerBuilder, content);
         }
 
-        static class Builder {
+        public static class Builder {
             private final TileLayout.Builder outerBuilder;
             private final TileContent content;
             private final List<Integer> tileEdges;
@@ -105,13 +106,15 @@ public class TileLayout {
         }
     }
 
-    static class Builder {
+    public static class Builder {
         private final List<PositionedContent> tileLayout;
         private final Set<Integer> seenEdges;
+        private Optional<Integer> rotation;
 
         Builder() {
             this.tileLayout = new ArrayList<>();
             this.seenEdges = new HashSet<>();
+            this.rotation = Optional.empty();
         }
 
         public PositionedContent.Builder withContent(TileContent tileContent) {
@@ -124,7 +127,15 @@ public class TileLayout {
             return this;
         }
 
+        public Builder withRotation(int rotation) {
+            this.rotation = Optional.of(rotation);
+            return this;
+        }
+
         public TileLayout build() {
+            if (this.rotation.isPresent()) {
+                return new TileLayout(tileLayout, rotation.get());
+            }
             return new TileLayout(tileLayout);
         }
 

@@ -41,7 +41,7 @@ public class Board {
     }
 
     public static Board withRandomTile() {
-        return new Board(Tile::drawRandom);
+        return new Board(Tile::drawRandomFromPredefined);
     }
 
     private Board(TileProducer tileProducer) {

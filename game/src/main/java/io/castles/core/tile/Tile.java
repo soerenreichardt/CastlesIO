@@ -1,26 +1,24 @@
 package io.castles.core.tile;
 
-import io.castles.game.IdentifiableObject;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Random;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayout.BOTTOM;
-import static io.castles.core.tile.TileLayout.LEFT;
-import static io.castles.core.tile.TileLayout.NUM_EDGES;
-import static io.castles.core.tile.TileLayout.NUM_NEIGHBORS;
-import static io.castles.core.tile.TileLayout.RIGHT;
-import static io.castles.core.tile.TileLayout.TOP;
+import static io.castles.core.tile.TileLayout.*;
 import static io.castles.core.tile.TileUtil.oppositeDirection;
 
-@EqualsAndHashCode(callSuper = true)
-public class Tile extends IdentifiableObject {
+@EqualsAndHashCode
+public class Tile {
 
+    private static final long RESERVED_IDS = 20;
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(RESERVED_IDS);
+
+    private final long id;
     private AbstractTile delegate;
 
-    public static Tile drawRandom() {
+    public static Tile drawRandomFromPredefined() {
         Random rng = new Random();
         TileLayout.Builder builder = TileLayout.builder();
         for (int direction = 0; direction < NUM_EDGES; direction++) {
@@ -60,15 +58,15 @@ public class Tile extends IdentifiableObject {
     }
 
     private Tile(TileLayout tileLayout) {
-        this.delegate = new DrawnTile(tileLayout);
+        this(getNewId(), tileLayout);
     }
 
     /**
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(UUID id, TileLayout tileLayout) {
-        super(id);
+    public Tile(long id, TileLayout tileLayout) {
+        this.id = id;
         this.delegate = new DrawnTile(tileLayout);
     }
 
@@ -109,6 +107,14 @@ public class Tile extends IdentifiableObject {
 
     public void rotate() {
         delegate.rotate();
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public static long getNewId() {
+        return ID_GENERATOR.getAndIncrement();
     }
 
     static class DrawnTile extends AbstractTile {

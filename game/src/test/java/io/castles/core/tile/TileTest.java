@@ -11,7 +11,7 @@ class TileTest {
 
     @Test
     void shouldCreateRandomTile() {
-        var tile = Tile.drawRandom();
+        var tile = Tile.drawRandomFromPredefined();
         assertNotNull(tile);
         for (TileContent tileContent : tile.getTileEdges()) {
             assertNotNull(tileContent);
@@ -31,7 +31,7 @@ class TileTest {
 
     @Test
     void shouldInsertATileToTheBoard() {
-        var tile = Tile.drawRandom();
+        var tile = Tile.drawRandomFromPredefined();
         assertThatThrownBy(tile::getX)
                 .hasMessageContaining("getX is not supported on an uninserted tile")
                 .isInstanceOf(UnsupportedOperationException.class);
@@ -75,12 +75,25 @@ class TileTest {
 
     @Test
     void shouldEqualSimilarTiles() {
-        var id = UUID.randomUUID();
+        var id = Tile.getNewId();
         Tile templateTile = Tile.drawStatic(TileContent.GRAS);
         Tile tile = new Tile(id, templateTile.getTileLayout());
 
         assertEquals(tile, new Tile(id, templateTile.getTileLayout()));
-        assertNotEquals(tile, new Tile(UUID.randomUUID(), templateTile.getTileLayout()));
+        assertNotEquals(tile, new Tile(Tile.getNewId(), templateTile.getTileLayout()));
+    }
+
+    @Test
+    void shouldNotEqualDifferentTiles() {
+        var id = Tile.getNewId();
+        var template1 = Tile.drawStatic(TileContent.GRAS);
+        var template2 = Tile.drawStatic(TileContent.CASTLE);
+
+        Tile tile1 = new Tile(id, template1.getTileLayout());
+        Tile tile2 = new Tile(id, template2.getTileLayout());
+
+        tile2.rotate();
+        assertNotEquals(tile1, tile2);
     }
 
 }
