@@ -20,7 +20,6 @@ public class GameLobby extends IdentifiableObject {
         this.players = new HashSet<>();
         this.settingsBuilder = GameSettings.builder();
         this.settingsBuilder.name(name);
-        this.settingsBuilder.gameMode(GameMode.RANDOM);
     }
 
     Game startGame() {

@@ -13,7 +13,8 @@ import java.util.Optional;
 @Builder
 @Getter
 public class GameSettings {
-    GameMode gameMode;
+    @Builder.Default
+    GameMode gameMode = GameMode.ORIGINAL;
     String name;
     @Builder.Default
     Optional<List<Tile>> tileList = Optional.empty();

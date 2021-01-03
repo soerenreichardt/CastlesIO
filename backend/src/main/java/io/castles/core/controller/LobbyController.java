@@ -36,7 +36,6 @@ public class LobbyController {
     UUID startGame(@PathVariable("id") UUID id) throws IOException {
         var gameLobby = server.gameLobbyById(id);
         // TODO: the tile list should be configurable in future
-        gameLobby.setGameMode(GameMode.ORIGINAL);
         gameLobby.setTileList(new JsonTileLoader().getTilesFromResource());
         return server.startGame(id).getId();
     }
