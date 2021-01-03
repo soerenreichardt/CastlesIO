@@ -1,10 +1,10 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Tile;
 import io.castles.game.GameSettings.GameSettingsBuilder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameLobby extends IdentifiableObject {
 
@@ -20,7 +20,6 @@ public class GameLobby extends IdentifiableObject {
         this.players = new HashSet<>();
         this.settingsBuilder = GameSettings.builder();
         this.settingsBuilder.name(name);
-        this.settingsBuilder.gameMode(GameMode.RANDOM);
     }
 
     Game startGame() {
@@ -62,6 +61,10 @@ public class GameLobby extends IdentifiableObject {
 
     public void setGameMode(GameMode gameMode) {
         this.settingsBuilder.gameMode(gameMode);
+    }
+
+    public void setTileList(List<Tile> tiles) {
+        this.settingsBuilder.tileList(Optional.of(tiles));
     }
 
     public boolean canStart() {

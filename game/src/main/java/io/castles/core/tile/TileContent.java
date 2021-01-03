@@ -3,7 +3,8 @@ package io.castles.core.tile;
 public enum TileContent {
     GRAS(0),
     CASTLE(1),
-    STREET(2);
+    STREET(2),
+    CHURCH(3);
 
     private final int id;
 

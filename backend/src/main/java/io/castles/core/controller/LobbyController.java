@@ -1,11 +1,14 @@
 package io.castles.core.controller;
 
+import io.castles.core.GameMode;
+import io.castles.core.util.JsonTileLoader;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -30,7 +33,10 @@ public class LobbyController {
     }
 
     @PostMapping("/start")
-    UUID startGame(@PathVariable("id") UUID id) {
+    UUID startGame(@PathVariable("id") UUID id) throws IOException {
+        var gameLobby = server.gameLobbyById(id);
+        // TODO: the tile list should be configurable in future
+        gameLobby.setTileList(new JsonTileLoader().getTilesFromResource());
         return server.startGame(id).getId();
     }
 

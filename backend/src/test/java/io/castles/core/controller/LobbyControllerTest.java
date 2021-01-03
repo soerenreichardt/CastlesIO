@@ -74,6 +74,7 @@ class LobbyControllerTest {
         }
 
         Game game = new Game(GameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
+        Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
 
         var urlTemplate = String.format("/lobby/%s/start", gameLobby.getId());

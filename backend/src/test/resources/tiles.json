@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "tileLayout": {
+      "rotation": 2,
+      "layout": [
+        {
+          "content": "GRAS",
+          "tileEdges": [0, 1]
+        },
+        {
+          "content": "CASTLE",
+          "tileEdges": [2, 3]
+        }
+      ]
+    }
+  }
+]

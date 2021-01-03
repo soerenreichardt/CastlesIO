@@ -1,20 +1,24 @@
 package io.castles.core.model;
 
 import io.castles.core.tile.TileLayout;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TileLayoutDTO {
-    List<TileLayout.PositionedContent> tileLayout;
+    List<TileLayout.PositionedContent> layout;
     int rotation;
 
     public TileLayout toTileLayout() {
-        return new TileLayout(tileLayout, rotation);
+        return new TileLayout(layout, rotation);
     }
 
     public static TileLayoutDTO from(TileLayout tileLayout) {
-        return new TileLayoutDTO(tileLayout.getContent(), tileLayout.getRotation());
+        return new TileLayoutDTO(tileLayout.getLayout(), tileLayout.getRotation());
     }
 }

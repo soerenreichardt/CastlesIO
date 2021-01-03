@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TileDTO {
-    UUID id;
+    long id;
     TileLayoutDTO tileLayout;
 
     public Tile toTile() {
