@@ -1,7 +1,7 @@
 package io.castles.game;
 
 import io.castles.core.Board;
-import io.castles.core.Tile;
+import io.castles.core.tile.Tile;
 
 import java.util.*;
 

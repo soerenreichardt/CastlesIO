@@ -1,7 +1,6 @@
 package io.castles.core.model;
 
-import io.castles.core.Tile;
-import io.castles.core.Tile.TileBorder;
+import io.castles.core.tile.Tile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,9 +12,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TileDTO {
     UUID id;
-    TileBorder[] tileBorders;
+    TileLayoutDTO tileLayout;
 
     public Tile toTile() {
-        return new Tile(id, tileBorders);
+        return new Tile(id, tileLayout.toTileLayout());
+    }
+
+    public static TileDTO from(Tile tile) {
+        return new TileDTO(tile.getId(), TileLayoutDTO.from(tile.getTileLayout()));
     }
 }

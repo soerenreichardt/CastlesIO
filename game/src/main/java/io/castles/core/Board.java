@@ -1,5 +1,9 @@
 package io.castles.core;
 
+import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileContent;
+import io.castles.core.tile.TileLayout;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +15,7 @@ public class Board {
 
     public static Board create(GameMode gameMode) {
         if (gameMode == GameMode.DEBUG) {
-            return Board.withStaticTile(Tile.TileBorder.GRAS);
+            return Board.withStaticTile(TileContent.GRAS);
         }
         if (gameMode == GameMode.ORIGINAL) {
             throw new UnsupportedOperationException(gameMode.toString());
@@ -24,15 +28,15 @@ public class Board {
     }
 
     public static Board withSpecificTile(
-            Tile.TileBorder leftBoarder,
-            Tile.TileBorder rightBoarder,
-            Tile.TileBorder topBoarder,
-            Tile.TileBorder bottomBoarder
+            TileContent leftBoarder,
+            TileContent rightBoarder,
+            TileContent topBoarder,
+            TileContent bottomBoarder
     ) {
         return new Board(() -> Tile.drawSpecific(leftBoarder, rightBoarder, topBoarder, bottomBoarder));
     }
 
-    public static Board withStaticTile(Tile.TileBorder border) {
+    public static Board withStaticTile(TileContent border) {
         return new Board(() -> Tile.drawStatic(border));
     }
 
@@ -84,19 +88,19 @@ public class Board {
 
         Tile[] neighbors = new Tile[4];
 
-        neighbors[Tile.LEFT] = getLeftNeighbor(x, y).orElse(null);
-        neighbors[Tile.RIGHT] = getRightNeighbor(x, y).orElse(null);
-        neighbors[Tile.TOP] = getTopNeighbor(x, y).orElse(null);
-        neighbors[Tile.BOTTOM] = getBottomNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.LEFT] = getLeftNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.RIGHT] = getRightNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.TOP] = getTopNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.BOTTOM] = getBottomNeighbor(x, y).orElse(null);
 
         return neighbors;
     }
 
     private void checkTileHasNeighbor(Tile tile, Tile[] neighbors) {
-        boolean hasNoNeighbor = neighbors[Tile.LEFT] == null
-                && neighbors[Tile.RIGHT] == null
-                && neighbors[Tile.TOP] == null
-                && neighbors[Tile.BOTTOM] == null;
+        boolean hasNoNeighbor = neighbors[TileLayout.LEFT] == null
+                && neighbors[TileLayout.RIGHT] == null
+                && neighbors[TileLayout.TOP] == null
+                && neighbors[TileLayout.BOTTOM] == null;
 
         if (hasNoNeighbor) {
             throw new IllegalArgumentException(
@@ -110,10 +114,10 @@ public class Board {
     }
 
     private void checkMatchingBorders(Tile tile, Tile[] neighbors) {
-        boolean leftMatching = tile.matches(neighbors[Tile.LEFT], Tile.LEFT);
-        boolean rightMatching = tile.matches(neighbors[Tile.RIGHT], Tile.RIGHT);
-        boolean topMatching = tile.matches(neighbors[Tile.TOP], Tile.TOP);
-        boolean bottomMatching = tile.matches(neighbors[Tile.BOTTOM], Tile.BOTTOM);
+        boolean leftMatching = tile.matches(neighbors[TileLayout.LEFT], TileLayout.LEFT);
+        boolean rightMatching = tile.matches(neighbors[TileLayout.RIGHT], TileLayout.RIGHT);
+        boolean topMatching = tile.matches(neighbors[TileLayout.TOP], TileLayout.TOP);
+        boolean bottomMatching = tile.matches(neighbors[TileLayout.BOTTOM], TileLayout.BOTTOM);
 
         if (!(leftMatching && rightMatching && topMatching && bottomMatching)) {
             throw new IllegalArgumentException(
@@ -127,28 +131,28 @@ public class Board {
     }
 
     private void setNeighborsFromAndToTile(Tile tile, Tile[] neighbors) {
-        Tile leftNeighbor = neighbors[Tile.LEFT];
+        Tile leftNeighbor = neighbors[TileLayout.LEFT];
         if (leftNeighbor != null) {
-            leftNeighbor.setNeighbor(Tile.RIGHT, tile);
-            tile.setNeighbor(Tile.LEFT, leftNeighbor);
+            leftNeighbor.setNeighbor(TileLayout.RIGHT, tile);
+            tile.setNeighbor(TileLayout.LEFT, leftNeighbor);
         }
 
-        Tile rightNeighbor = neighbors[Tile.RIGHT];
+        Tile rightNeighbor = neighbors[TileLayout.RIGHT];
         if (rightNeighbor != null) {
-            rightNeighbor.setNeighbor(Tile.LEFT, tile);
-            tile.setNeighbor(Tile.RIGHT, rightNeighbor);
+            rightNeighbor.setNeighbor(TileLayout.LEFT, tile);
+            tile.setNeighbor(TileLayout.RIGHT, rightNeighbor);
         }
 
-        Tile topNeighbor = neighbors[Tile.TOP];
+        Tile topNeighbor = neighbors[TileLayout.TOP];
         if (topNeighbor != null) {
-            topNeighbor.setNeighbor(Tile.BOTTOM, tile);
-            tile.setNeighbor(Tile.TOP, topNeighbor);
+            topNeighbor.setNeighbor(TileLayout.BOTTOM, tile);
+            tile.setNeighbor(TileLayout.TOP, topNeighbor);
         }
 
-        Tile bottomNeighbor = neighbors[Tile.BOTTOM];
+        Tile bottomNeighbor = neighbors[TileLayout.BOTTOM];
         if (bottomNeighbor != null) {
-            bottomNeighbor.setNeighbor(Tile.TOP, tile);
-            tile.setNeighbor(Tile.BOTTOM, bottomNeighbor);
+            bottomNeighbor.setNeighbor(TileLayout.TOP, tile);
+            tile.setNeighbor(TileLayout.BOTTOM, bottomNeighbor);
         }
     }
 
