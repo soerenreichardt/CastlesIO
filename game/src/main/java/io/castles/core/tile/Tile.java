@@ -18,7 +18,7 @@ public class Tile {
     private final long id;
     private AbstractTile delegate;
 
-    public static Tile drawRandomFromPredefined() {
+    public static Tile drawRandom() {
         Random rng = new Random();
         TileLayout.Builder builder = TileLayout.builder();
         for (int direction = 0; direction < NUM_EDGES; direction++) {

@@ -53,7 +53,7 @@ class BoardTest {
     @Test
     void shouldThrowOnInsertIfNoNeighborsWereFound() {
         var board = Board.withRandomTile();
-        var tile = Tile.drawRandomFromPredefined();
+        var tile = Tile.drawRandom();
 
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 1, 1))
                 .hasMessageContaining("no neighbors were found")

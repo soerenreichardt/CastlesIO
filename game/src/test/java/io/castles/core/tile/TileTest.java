@@ -2,8 +2,6 @@ package io.castles.core.tile;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +9,7 @@ class TileTest {
 
     @Test
     void shouldCreateRandomTile() {
-        var tile = Tile.drawRandomFromPredefined();
+        var tile = Tile.drawRandom();
         assertNotNull(tile);
         for (TileContent tileContent : tile.getTileEdges()) {
             assertNotNull(tileContent);
@@ -31,7 +29,7 @@ class TileTest {
 
     @Test
     void shouldInsertATileToTheBoard() {
-        var tile = Tile.drawRandomFromPredefined();
+        var tile = Tile.drawRandom();
         assertThatThrownBy(tile::getX)
                 .hasMessageContaining("getX is not supported on an uninserted tile")
                 .isInstanceOf(UnsupportedOperationException.class);
