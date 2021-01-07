@@ -42,7 +42,11 @@
         },
         {
           "content": "CASTLE",
-          "tileEdges": [0, 2]
+          "tileEdges": [0]
+        },
+        {
+          "content": "CASTLE",
+          "tileEdges": [2]
         }
       ]
     }
