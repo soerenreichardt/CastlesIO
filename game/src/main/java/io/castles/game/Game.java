@@ -10,9 +10,10 @@ public class Game extends IdentifiableObject {
     private final GameLogic gameLogic;
 
     private final Board board;
-    private GameSettings settings;
+    private final GameSettings settings;
 
-    public Game(GameSettings settings, Set<Player> players) {
+    public Game(UUID lobbyId, GameSettings settings, Set<Player> players) {
+        super(lobbyId);
         this.settings = settings;
         // Transforming the players set into a list might be
         // necessary if a player leaves the game while the
@@ -36,6 +37,14 @@ public class Game extends IdentifiableObject {
 
     public Player getActivePlayer() {
         return this.gameLogic.getActivePlayer();
+    }
+
+    public List<Player> getPlayers() {
+        return this.gameLogic.getPlayers();
+    }
+
+    public GameSettings getSettings() {
+        return this.settings;
     }
 
     public void placeTile(Tile tile, int x, int y) {

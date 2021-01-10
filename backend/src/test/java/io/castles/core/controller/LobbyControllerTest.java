@@ -1,6 +1,7 @@
 package io.castles.core.controller;
 
 import io.castles.core.GameMode;
+import io.castles.core.service.SseEmitterService;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
 import io.castles.game.GameSettings.GameSettingsBuilder;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +38,9 @@ class LobbyControllerTest {
 
     @Autowired
     private Server server;
+
+    @Autowired
+    private SseEmitterService emitterService;
 
     @Test
     void shouldJoinAsPlayer() throws Exception {
@@ -73,7 +79,7 @@ class LobbyControllerTest {
             gameLobby.addPlayer(new Player("" + i));
         }
 
-        Game game = new Game(GameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
+        Game game = new Game(gameLobby.getId(), GameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
 
@@ -84,6 +90,22 @@ class LobbyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(game.getId().toString())));
         verify(server, times(1)).startGame(gameLobby.getId());
+    }
+
+    @Test
+    void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
+        var gameLobby = new GameLobby("Test");
+        var emitter = new SseEmitter();
+        Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
+        Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
+        Mockito.when(emitterService.getEmitterById(any(UUID.class))).thenReturn(emitter);
+
+        var urlTemplate = String.format("/lobby/%s/subscribe", gameLobby.getId());
+
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(content().string(containsString(String.format("subscribed to emitter %s", gameLobby.getId()))));
     }
 
     // TODO: exception handling

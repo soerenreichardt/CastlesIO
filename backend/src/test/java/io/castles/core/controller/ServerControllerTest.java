@@ -32,7 +32,7 @@ class ServerControllerTest {
         String lobbyName = "Test";
         GameLobby gameLobby = new GameLobby(lobbyName);
         Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
-        mvc.perform(MockMvcRequestBuilders.post("/lobby").content(lobbyName))
+        mvc.perform(MockMvcRequestBuilders.post("/lobby").param("lobbyName", lobbyName))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(gameLobby.getId().toString())));
     }

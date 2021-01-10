@@ -3,9 +3,8 @@ package io.castles.core.controller;
 import io.castles.core.model.GameStateDTO;
 import io.castles.core.model.TileDTO;
 import io.castles.core.tile.Tile;
+import io.castles.core.service.GameService;
 import io.castles.game.Game;
-import io.castles.game.Server;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -15,13 +14,16 @@ import java.util.UUID;
 @RequestMapping("/game/{id}")
 public class GameController {
 
-    @Autowired
-    Server server;
+    private final GameService gameService;
+
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @GetMapping("/new_tile")
     @ResponseBody
     TileDTO getNextTile(@PathVariable("id") UUID id) {
-        Game game = server.gameById(id);
+        Game game = gameService.gameById(id);
         Tile newTile = game.getNewTile();
         return TileDTO.from(newTile);
     }
@@ -29,7 +31,7 @@ public class GameController {
     @GetMapping(value = "/tile")
     @ResponseBody
     TileDTO getTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y) {
-        Game game = server.gameById(id);
+        Game game = gameService.gameById(id);
         Tile tile = game.getTile(x, y);
         return TileDTO.from(tile);
     }
@@ -37,13 +39,13 @@ public class GameController {
     @GetMapping(value = "/state")
     @ResponseBody
     GameStateDTO getGameState(@PathVariable("id") UUID id) {
-        Game game = server.gameById(id);
+        Game game = gameService.gameById(id);
         return new GameStateDTO(game.getCurrentGameState(), game.getActivePlayer());
     }
 
     @PostMapping(value = "/tile")
     void insertTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
-        Game game = server.gameById(id);
+        Game game = gameService.gameById(id);
         game.placeTile(tile.toTile(), x, y);
     }
 }
