@@ -1,5 +1,6 @@
 package io.castles.core;
 
+import io.castles.core.board.Board;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import org.junit.jupiter.api.Test;

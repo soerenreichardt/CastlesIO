@@ -1,5 +1,6 @@
-package io.castles.core;
+package io.castles.core.board;
 
+import io.castles.core.GameMode;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
