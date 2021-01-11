@@ -14,4 +14,8 @@ public class PlayerDTO {
     public Player toPlayer() {
         return new Player(id, name);
     }
+
+    public static PlayerDTO from(Player player) {
+        return new PlayerDTO(player.getId(), player.getName());
+    }
 }

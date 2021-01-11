@@ -1,8 +1,7 @@
 package io.castles.core.controller;
 
-import io.castles.game.GameLobby;
+import io.castles.core.service.SseEmitterService;
 import io.castles.game.Server;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,13 @@ import java.util.UUID;
 @RequestMapping("/")
 public class ServerController {
 
-    @Autowired
-    Server server;
+    private final Server server;
+    private final SseEmitterService emitterService;
+
+    public ServerController(Server server, SseEmitterService emitterService) {
+        this.server = server;
+        this.emitterService = emitterService;
+    }
 
     @GetMapping("/status")
     @ResponseBody
@@ -24,8 +28,9 @@ public class ServerController {
 
     @PostMapping("/lobby")
     @ResponseBody
-    UUID createLobby(@RequestBody String name) {
-        GameLobby gameLobby = server.createGameLobby(name);
-        return gameLobby.getId();
+    UUID createLobby(@RequestParam("lobbyName") String name) {
+        var gameLobbyId = this.server.createGameLobby(name).getId();
+        this.emitterService.createEmitter(gameLobbyId);
+        return gameLobbyId;
     }
 }

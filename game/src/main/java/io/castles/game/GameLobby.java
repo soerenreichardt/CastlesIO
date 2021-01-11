@@ -26,7 +26,7 @@ public class GameLobby extends IdentifiableObject {
         if (!canStart()) {
             throw new IllegalStateException("Unable to start game");
         }
-        return new Game(this.settingsBuilder.build(), this.players);
+        return new Game(getId(), this.settingsBuilder.build(), this.players);
     }
 
     public void addPlayer(Player player) {

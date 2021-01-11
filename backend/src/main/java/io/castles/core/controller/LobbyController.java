@@ -1,12 +1,13 @@
 package io.castles.core.controller;
 
-import io.castles.core.GameMode;
-import io.castles.core.util.JsonTileLoader;
+import io.castles.core.service.GameService;
+import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -16,11 +17,18 @@ import java.util.UUID;
 @RequestMapping("/lobby/{id}")
 public class LobbyController {
 
-    @Autowired
-    Server server;
+    private final Server server;
+    private final GameService gameService;
+    private final SseEmitterService emitterService;
+
+    public LobbyController(Server server, GameService gameService, SseEmitterService emitterService) {
+        this.server = server;
+        this.gameService = gameService;
+        this.emitterService = emitterService;
+    }
 
     @PutMapping("/join")
-    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) {
+    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) throws IOException {
         GameLobby gameLobby = server.gameLobbyById(id);
         Player player = new Player(playerName);
         gameLobby.addPlayer(player); // TODO: exception handling
@@ -35,10 +43,13 @@ public class LobbyController {
 
     @PostMapping("/start")
     UUID startGame(@PathVariable("id") UUID id) throws IOException {
-        var gameLobby = server.gameLobbyById(id);
-        // TODO: the tile list should be configurable in future
-        gameLobby.setTileList(new JsonTileLoader().getTilesFromResource());
-        return server.startGame(id).getId();
+        return gameService.createGame(id).getId();
     }
 
+    @GetMapping("/subscribe")
+    SseEmitter subscribe(@PathVariable("id") UUID id) throws IOException {
+        var sseEmitter = this.emitterService.getEmitterById(id);
+        sseEmitter.send(String.format("Successfully subscribed to emitter %s", id));
+        return sseEmitter;
+    }
 }
