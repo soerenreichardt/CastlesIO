@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseEmitterService {
 
-    public static final long EMITTER_TIMEOUT = 1000L;
     private final Map<UUID, SseEmitter> sseEmitters;
 
     public SseEmitterService() {
@@ -18,7 +17,7 @@ public class SseEmitterService {
     }
 
     public void createEmitter(UUID id) {
-        SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
+        SseEmitter sseEmitter = new SseEmitter();
         this.sseEmitters.put(id, sseEmitter);
         sseEmitter.onCompletion(() -> sseEmitters.remove(id));
     }

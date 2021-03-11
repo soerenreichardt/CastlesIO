@@ -5,7 +5,6 @@ import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
