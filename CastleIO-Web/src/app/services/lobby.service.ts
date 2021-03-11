@@ -9,7 +9,6 @@ import {Observable} from 'rxjs';
 export class LobbyService {
     baseUrl = environment.backendUrl + 'lobby/';
     lobbyUrl: string;
-    lobbyEventSource: EventSource;
 
     constructor(private http: HttpClient) {
     }
@@ -36,8 +35,8 @@ export class LobbyService {
         return this.http.post<string>(this.lobbyUrl + 'start/', {});
     }
 
-    setLobbyBackendUrl(lobbyId: string): void {
+    subscribeToLobbyUpdates(lobbyId: string): EventSource {
         this.lobbyUrl = this.baseUrl + lobbyId + '/';
-        this.lobbyEventSource = new EventSource(this.lobbyUrl + 'subscribe/');
+        return new EventSource(this.lobbyUrl + 'subscribe/');
     }
 }

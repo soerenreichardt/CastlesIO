@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LobbyService} from '../services/lobby.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
@@ -7,10 +7,13 @@ import {ActivatedRoute, Router} from '@angular/router';
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.scss']
 })
-export class LobbyComponent implements OnInit {
+export class LobbyComponent implements OnInit, OnDestroy {
     playerName: string;
     lobbyId: string;
     playerId: string;
+    sseDataLog: string[] = [];
+
+    sseEventSource: EventSource;
 
     constructor(private lobbyService: LobbyService,
                 private activatedRoute: ActivatedRoute,
@@ -19,7 +22,15 @@ export class LobbyComponent implements OnInit {
 
     ngOnInit(): void {
         this.lobbyId = this.activatedRoute.snapshot.params.id;
-        this.lobbyService.setLobbyBackendUrl(this.lobbyId);
+        console.log('lobby id is ', this.lobbyId);
+        this.sseEventSource = this.lobbyService.subscribeToLobbyUpdates(this.lobbyId);
+        this.sseEventSource.onmessage = message => {
+            this.sseDataLog.push(message.data);
+        };
+    }
+
+    ngOnDestroy(): void {
+        this.sseEventSource.close();
     }
 
     joinLobby(): void {
