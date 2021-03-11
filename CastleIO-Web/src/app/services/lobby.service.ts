@@ -16,7 +16,7 @@ export class LobbyService {
 
     // returns playerId
     joinLobby(playerName: string): Observable<string> {
-        return this.http.put<string>(this.lobbyUrl, {}, {
+        return this.http.put<string>(this.lobbyUrl + 'join/', {}, {
             params: {
                 playerName
             }
@@ -24,7 +24,7 @@ export class LobbyService {
     }
 
     leaveLobby(playerId: string): Observable<void> {
-        return this.http.delete<void>(this.lobbyUrl, {
+        return this.http.delete<void>(this.lobbyUrl + 'leave/', {
             params: {
                 playerId
             }
@@ -33,7 +33,7 @@ export class LobbyService {
 
     // returns gameId
     startGame(): Observable<string> {
-        return this.http.post<string>(this.lobbyUrl, {});
+        return this.http.post<string>(this.lobbyUrl + 'start/', {});
     }
 
     setLobbyBackendUrl(lobbyId: string): void {
