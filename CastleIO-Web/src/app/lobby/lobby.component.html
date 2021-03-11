@@ -1,0 +1,10 @@
+<form name="playerForm" (ngSubmit)="joinLobby()">
+    <input type="text" [(ngModel)]="playerName" name="playerName">
+    <button type="submit">Join Game</button>
+</form>
+
+<pre>
+    only for debugging
+    LobbyID: {{lobbyId}}
+    PlayerID: {{playerId}}
+</pre>
