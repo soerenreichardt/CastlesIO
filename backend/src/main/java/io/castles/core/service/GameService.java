@@ -3,6 +3,7 @@ package io.castles.core.service;
 import io.castles.core.model.GameStartDTO;
 import io.castles.core.util.JsonTileLoader;
 import io.castles.game.Game;
+import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,9 @@ public class GameService {
                 game.getSettings(),
                 game.getTile(0, 0)
         );
-        this.emitterService.getEmitterById(gameId).send(gameStartDTO, MediaType.APPLICATION_JSON);
+        for (Player player : game.getPlayers()) {
+            this.emitterService.getEmitterByIds(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
+        }
         return game;
     }
 

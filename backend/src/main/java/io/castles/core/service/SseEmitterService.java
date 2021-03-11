@@ -11,19 +11,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseEmitterService {
 
     public static final long EMITTER_TIMEOUT = 1000L;
-    private final Map<UUID, SseEmitter> sseEmitters;
+    private final Map<UUID, Map<UUID, SseEmitter>> sseEmitters;
 
     public SseEmitterService() {
         this.sseEmitters = new ConcurrentHashMap<>();
     }
 
-    public void createEmitter(UUID id) {
+    public void createPlayerEmitterForLobby(UUID lobbyId, UUID playerId) {
         SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
-        this.sseEmitters.put(id, sseEmitter);
-        sseEmitter.onCompletion(() -> sseEmitters.remove(id));
+        sseEmitter.onCompletion(() -> sseEmitters.get(lobbyId).remove(playerId));
+        Map<UUID, SseEmitter> lobbyEmitters = sseEmitters.computeIfAbsent(lobbyId, id -> new ConcurrentHashMap<>());
+        lobbyEmitters.put(playerId, sseEmitter);
     }
 
-    public SseEmitter getEmitterById(UUID id) {
-        return this.sseEmitters.get(id);
+    public SseEmitter getEmitterByIds(UUID lobbyId, UUID playerId) {
+        return this.sseEmitters.get(lobbyId).get(playerId);
     }
 }

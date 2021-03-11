@@ -1,6 +1,5 @@
 package io.castles.core.controller;
 
-import io.castles.core.service.SseEmitterService;
 import io.castles.game.Server;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +12,9 @@ import java.util.UUID;
 public class ServerController {
 
     private final Server server;
-    private final SseEmitterService emitterService;
 
-    public ServerController(Server server, SseEmitterService emitterService) {
+    public ServerController(Server server) {
         this.server = server;
-        this.emitterService = emitterService;
     }
 
     @GetMapping("/status")
@@ -29,8 +26,6 @@ public class ServerController {
     @PostMapping("/lobby")
     @ResponseBody
     UUID createLobby(@RequestParam("lobbyName") String name) {
-        var gameLobbyId = this.server.createGameLobby(name).getId();
-        this.emitterService.createEmitter(gameLobbyId);
-        return gameLobbyId;
+        return this.server.createGameLobby(name).getId();
     }
 }
