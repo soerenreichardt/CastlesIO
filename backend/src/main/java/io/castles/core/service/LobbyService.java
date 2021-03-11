@@ -1,9 +1,10 @@
 package io.castles.core.service;
 
+import io.castles.core.model.LobbyStateDTO;
+import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -19,12 +20,18 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public SseEmitter joinLobby(UUID id, String playerName) throws IOException {
+    public UUID joinLobby(UUID id, String playerName) throws IOException {
         var gameLobby = server.gameLobbyById(id);
         var player = new Player(playerName);
         gameLobby.addPlayer(player); // TODO: exception handling
-        var sseEmitter = this.emitterService.getEmitterByIds(gameLobby.getId(), player.getId());
-        sseEmitter.send(player.getId());
-        return sseEmitter;
+
+        updateLobbyState(gameLobby);
+
+        return player.getId();
+    }
+
+    public void updateLobbyState(GameLobby gameLobby) throws IOException{
+        var sseEmitter = this.emitterService.getEmitterById(gameLobby.getId());
+        sseEmitter.send(LobbyStateDTO.from(gameLobby));
     }
 }

@@ -105,7 +105,7 @@ class LobbyControllerTest {
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).param("playerId", player.getId().toString()).contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
-                .andExpect(content().string(containsString(String.format("subscribed to emitter %s", gameLobby.getId()))));
+                .andExpect(content().string(containsString(String.format("{\"playerNames\":[],\"lobbyName\":\"%s\"}", gameLobby.getName()))));
     }
 
     // TODO: exception handling

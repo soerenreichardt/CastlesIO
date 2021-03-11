@@ -5,6 +5,7 @@ import io.castles.core.tile.Tile;
 import io.castles.game.GameSettings.GameSettingsBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameLobby extends IdentifiableObject {
 
@@ -73,5 +74,9 @@ public class GameLobby extends IdentifiableObject {
 
     public String getName() {
         return this.name;
+    }
+
+    public List<String> getPlayerNames() {
+        return this.players.stream().map(Player::getName).collect(Collectors.toList());
     }
 }
