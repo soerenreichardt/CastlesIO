@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseEmitterService {
 
-    public static final long EMITTER_TIMEOUT = 1000L;
+    public static final long EMITTER_TIMEOUT = 3600000L; //1h in milliseconds
     private final Map<UUID, Map<UUID, SseEmitter>> sseEmitters;
 
     public SseEmitterService() {
