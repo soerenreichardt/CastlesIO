@@ -3,6 +3,8 @@ package io.castles.core.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +26,17 @@ public class SseEmitterService {
         lobbyEmitters.put(playerId, sseEmitter);
     }
 
-    public SseEmitter getEmitterByIds(UUID lobbyId, UUID playerId) {
+    public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
         return this.sseEmitters.get(lobbyId).get(playerId);
     }
+
+    public List<SseEmitter> getAllLobbyEmitters(UUID lobbyId) {
+        Map<UUID, SseEmitter> lobbyEmitterMap = this.sseEmitters.get(lobbyId);
+        if (lobbyEmitterMap == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(lobbyEmitterMap.values());
+        }
+    }
+
 }

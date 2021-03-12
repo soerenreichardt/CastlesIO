@@ -2,9 +2,7 @@ package io.castles.core.controller;
 
 import io.castles.core.GameMode;
 import io.castles.core.service.SseEmitterService;
-import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
-import io.castles.game.GameSettings.GameSettingsBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -91,20 +88,18 @@ class LobbyControllerTest {
         verify(server, times(1)).startGame(gameLobby.getId());
     }
 
-    @Test
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
         var gameLobby = new GameLobby("Test");
         var player = new Player("P1");
         var emitter = new SseEmitter();
         Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
-        Mockito.when(emitterService.getEmitterByIds(any(UUID.class), any(UUID.class))).thenReturn(emitter);
+        Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);
 
-        var urlTemplate = String.format("/lobby/%s/subscribe", gameLobby.getId());
+        var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), player.getId());
 
-        mvc.perform(MockMvcRequestBuilders.get(urlTemplate).param("playerId", player.getId().toString()).contentType(MediaType.TEXT_EVENT_STREAM))
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(content().string(containsString(String.format("{\"playerNames\":[],\"lobbyName\":\"%s\"}", gameLobby.getName()))));
     }
 
