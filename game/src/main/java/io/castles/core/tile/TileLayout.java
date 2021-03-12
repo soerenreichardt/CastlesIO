@@ -2,6 +2,8 @@ package io.castles.core.tile;
 
 public interface TileLayout {
 
+    int NUM_EDGES = 4;
+
     int LEFT = 0;
     int TOP = 1;
     int RIGHT = 2;

@@ -1,6 +1,6 @@
 package io.castles.core.tile;
 
-public class MatrixTileLayout implements TileLayout {
+public class MatrixTileLayout extends AbstractTileLayout {
 
     private final Matrix<TileContent> contentMatrix;
 
@@ -9,35 +9,31 @@ public class MatrixTileLayout implements TileLayout {
     }
 
     @Override
-    public boolean matches(TileLayout other, int direction) {
+    protected boolean matchesTileWithAppliedRotation(TileLayout other, int rotatedDirection) {
         return false;
     }
 
     @Override
-    public void rotate() {
-
-    }
-
-    TileContent[] getTileContentEdge(int direction) {
-        int edgeLength = direction == LEFT || direction == RIGHT
+    protected TileContent[] getTileContentEdgeWithAppliedRotation(int rotatedDirection) {
+        int edgeLength = rotatedDirection == LEFT || rotatedDirection == RIGHT
                 ? contentMatrix.getRows()
                 : contentMatrix.getColumns();
         TileContent[] edge = new TileContent[edgeLength];
 
-        if (direction == LEFT) {
+        if (rotatedDirection == LEFT) {
             for (int i = 0; i < edgeLength; i++) {
                 edge[i] = contentMatrix.get(i, 0);
             }
         }
-        if (direction == RIGHT) {
+        if (rotatedDirection == RIGHT) {
             for (int i = 0; i < edgeLength; i++) {
                 edge[i] = contentMatrix.get(i, contentMatrix.getColumns() - 1);
             }
         }
-        if (direction == TOP) {
+        if (rotatedDirection == TOP) {
             System.arraycopy(contentMatrix.getValues(), 0, edge, 0, edgeLength);
         }
-        if (direction == BOTTOM) {
+        if (rotatedDirection == BOTTOM) {
             System.arraycopy(contentMatrix.getValues(), contentMatrix.getValues().length - contentMatrix.getColumns(), edge, 0, edgeLength);
         }
 
