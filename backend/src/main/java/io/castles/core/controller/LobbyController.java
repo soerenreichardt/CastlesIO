@@ -4,6 +4,7 @@ import io.castles.core.service.GameService;
 import io.castles.core.service.LobbyService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
+import io.castles.game.Player;
 import io.castles.game.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,14 @@ public class LobbyController {
 
     @PutMapping("/join")
     UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) {
-        var playerId = lobbyService.joinLobby(id, playerName);
-        emitterService.createPlayerEmitterForLobby(id, playerId);
-        return playerId;
+        var player = new Player(playerName);
+        try {
+            lobbyService.joinLobby(id, player);
+        } catch (IOException e) {
+            // TODO: exception handling
+            throw new RuntimeException(e);
+        }
+        return player.getId();
     }
 
     @DeleteMapping("/leave")
@@ -45,7 +51,12 @@ public class LobbyController {
     SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
         var sseEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
-        lobbyService.updateLobbyState(gameLobby);
+        try {
+            lobbyService.updateLobbyState(gameLobby);
+        } catch (IOException e) {
+            // TODO: exception handling
+            throw new RuntimeException(e);
+        }
         return sseEmitter;
     }
 }

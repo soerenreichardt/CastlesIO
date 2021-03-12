@@ -20,24 +20,20 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public UUID joinLobby(UUID id, String playerName) {
+    public void joinLobby(UUID id, Player player) throws IOException {
         var gameLobby = server.gameLobbyById(id);
-        var player = new Player(playerName);
         gameLobby.addPlayer(player); // TODO: exception handling
 
-        updateLobbyState(gameLobby);
+        var playerId = player.getId();
+        emitterService.createPlayerEmitterForLobby(id, playerId);
 
-        return player.getId();
+        updateLobbyState(gameLobby);
     }
 
-    public void updateLobbyState(GameLobby gameLobby) {
+    public void updateLobbyState(GameLobby gameLobby) throws IOException {
         var lobbySseEmitters = this.emitterService.getAllLobbyEmitters(gameLobby.getId());
-        lobbySseEmitters.forEach((sseEmitter -> {
-            try {
-                sseEmitter.send(LobbyStateDTO.from(gameLobby));
-            } catch (IOException e) {
-                throw new RuntimeException("sseEmitter send throw an IOException", e);
-            }
-        }));
+        for (var playerSseEmitter : lobbySseEmitters) {
+            playerSseEmitter.send(LobbyStateDTO.from(gameLobby));
+        }
     }
 }
