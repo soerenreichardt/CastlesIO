@@ -2,7 +2,7 @@ package io.castles.core;
 
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
-import io.castles.core.tile.TileLayoutImpl;
+import io.castles.core.tile.TileLayout;
 
 import java.util.*;
 
@@ -85,19 +85,19 @@ public class Board {
 
         Tile[] neighbors = new Tile[4];
 
-        neighbors[TileLayoutImpl.LEFT] = getLeftNeighbor(x, y).orElse(null);
-        neighbors[TileLayoutImpl.RIGHT] = getRightNeighbor(x, y).orElse(null);
-        neighbors[TileLayoutImpl.TOP] = getTopNeighbor(x, y).orElse(null);
-        neighbors[TileLayoutImpl.BOTTOM] = getBottomNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.LEFT] = getLeftNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.RIGHT] = getRightNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.TOP] = getTopNeighbor(x, y).orElse(null);
+        neighbors[TileLayout.BOTTOM] = getBottomNeighbor(x, y).orElse(null);
 
         return neighbors;
     }
 
     private void checkTileHasNeighbor(Tile tile, Tile[] neighbors) {
-        boolean hasNoNeighbor = neighbors[TileLayoutImpl.LEFT] == null
-                && neighbors[TileLayoutImpl.RIGHT] == null
-                && neighbors[TileLayoutImpl.TOP] == null
-                && neighbors[TileLayoutImpl.BOTTOM] == null;
+        boolean hasNoNeighbor = neighbors[TileLayout.LEFT] == null
+                && neighbors[TileLayout.RIGHT] == null
+                && neighbors[TileLayout.TOP] == null
+                && neighbors[TileLayout.BOTTOM] == null;
 
         if (hasNoNeighbor) {
             throw new IllegalArgumentException(
@@ -111,10 +111,10 @@ public class Board {
     }
 
     private void checkMatchingBorders(Tile tile, Tile[] neighbors) {
-        boolean leftMatching = tile.matches(neighbors[TileLayoutImpl.LEFT], TileLayoutImpl.LEFT);
-        boolean rightMatching = tile.matches(neighbors[TileLayoutImpl.RIGHT], TileLayoutImpl.RIGHT);
-        boolean topMatching = tile.matches(neighbors[TileLayoutImpl.TOP], TileLayoutImpl.TOP);
-        boolean bottomMatching = tile.matches(neighbors[TileLayoutImpl.BOTTOM], TileLayoutImpl.BOTTOM);
+        boolean leftMatching = tile.matches(neighbors[TileLayout.LEFT], TileLayout.LEFT);
+        boolean rightMatching = tile.matches(neighbors[TileLayout.RIGHT], TileLayout.RIGHT);
+        boolean topMatching = tile.matches(neighbors[TileLayout.TOP], TileLayout.TOP);
+        boolean bottomMatching = tile.matches(neighbors[TileLayout.BOTTOM], TileLayout.BOTTOM);
 
         if (!(leftMatching && rightMatching && topMatching && bottomMatching)) {
             throw new IllegalArgumentException(
@@ -128,28 +128,28 @@ public class Board {
     }
 
     private void setNeighborsFromAndToTile(Tile tile, Tile[] neighbors) {
-        Tile leftNeighbor = neighbors[TileLayoutImpl.LEFT];
+        Tile leftNeighbor = neighbors[TileLayout.LEFT];
         if (leftNeighbor != null) {
-            leftNeighbor.setNeighbor(TileLayoutImpl.RIGHT, tile);
-            tile.setNeighbor(TileLayoutImpl.LEFT, leftNeighbor);
+            leftNeighbor.setNeighbor(TileLayout.RIGHT, tile);
+            tile.setNeighbor(TileLayout.LEFT, leftNeighbor);
         }
 
-        Tile rightNeighbor = neighbors[TileLayoutImpl.RIGHT];
+        Tile rightNeighbor = neighbors[TileLayout.RIGHT];
         if (rightNeighbor != null) {
-            rightNeighbor.setNeighbor(TileLayoutImpl.LEFT, tile);
-            tile.setNeighbor(TileLayoutImpl.RIGHT, rightNeighbor);
+            rightNeighbor.setNeighbor(TileLayout.LEFT, tile);
+            tile.setNeighbor(TileLayout.RIGHT, rightNeighbor);
         }
 
-        Tile topNeighbor = neighbors[TileLayoutImpl.TOP];
+        Tile topNeighbor = neighbors[TileLayout.TOP];
         if (topNeighbor != null) {
-            topNeighbor.setNeighbor(TileLayoutImpl.BOTTOM, tile);
-            tile.setNeighbor(TileLayoutImpl.TOP, topNeighbor);
+            topNeighbor.setNeighbor(TileLayout.BOTTOM, tile);
+            tile.setNeighbor(TileLayout.TOP, topNeighbor);
         }
 
-        Tile bottomNeighbor = neighbors[TileLayoutImpl.BOTTOM];
+        Tile bottomNeighbor = neighbors[TileLayout.BOTTOM];
         if (bottomNeighbor != null) {
-            bottomNeighbor.setNeighbor(TileLayoutImpl.TOP, tile);
-            tile.setNeighbor(TileLayoutImpl.BOTTOM, bottomNeighbor);
+            bottomNeighbor.setNeighbor(TileLayout.TOP, tile);
+            tile.setNeighbor(TileLayout.BOTTOM, bottomNeighbor);
         }
     }
 

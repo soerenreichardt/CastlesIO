@@ -2,6 +2,7 @@ package io.castles.core.util;
 
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
+import io.castles.core.tile.TileLayout;
 import io.castles.core.tile.TileLayoutImpl;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +17,8 @@ class JsonTileLoaderTest {
     void shouldLoadTileFromJson() throws IOException {
         var tileLoader = new JsonTileLoader();
         var expectedTileLayout = TileLayoutImpl.builder()
-                .withContent(TileContent.GRAS).connectedOnEdges(TileLayoutImpl.LEFT, TileLayoutImpl.TOP)
-                .withContent(TileContent.CASTLE).connectedOnEdges(TileLayoutImpl.RIGHT, TileLayoutImpl.BOTTOM)
+                .withContent(TileContent.GRAS).connectedOnEdges(TileLayout.LEFT, TileLayout.TOP)
+                .withContent(TileContent.CASTLE).connectedOnEdges(TileLayout.RIGHT, TileLayout.BOTTOM)
                 .build();
         var expectedTile = new Tile(1, expectedTileLayout);
         List<Tile> tiles = tileLoader.getTilesFromResource("tiles.json");

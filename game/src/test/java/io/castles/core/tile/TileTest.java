@@ -21,10 +21,10 @@ class TileTest {
         Tile tile = Tile.drawSpecific(TileContent.GRAS, TileContent.CASTLE, TileContent.STREET, null);
         TileContent[] tileContents = tile.getTileEdges();
         assertNotNull(tileContents);
-        assertEquals(TileContent.GRAS, tileContents[TileLayoutImpl.LEFT]);
-        assertEquals(TileContent.CASTLE, tileContents[TileLayoutImpl.RIGHT]);
-        assertEquals(TileContent.STREET, tileContents[TileLayoutImpl.TOP]);
-        assertNull(tileContents[TileLayoutImpl.BOTTOM]);
+        assertEquals(TileContent.GRAS, tileContents[TileLayout.LEFT]);
+        assertEquals(TileContent.CASTLE, tileContents[TileLayout.RIGHT]);
+        assertEquals(TileContent.STREET, tileContents[TileLayout.TOP]);
+        assertNull(tileContents[TileLayout.BOTTOM]);
     }
 
     @Test

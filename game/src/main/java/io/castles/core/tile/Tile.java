@@ -6,7 +6,9 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayoutImpl.*;
+import static io.castles.core.tile.TileLayout.*;
+import static io.castles.core.tile.TileLayoutImpl.NUM_EDGES;
+import static io.castles.core.tile.TileLayoutImpl.NUM_NEIGHBORS;
 import static io.castles.core.tile.TileUtil.oppositeDirection;
 
 @EqualsAndHashCode

@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.*;
 
+import static io.castles.core.tile.TileLayout.*;
+
 @EqualsAndHashCode
 public class TileLayoutImpl {
-
-    public static final int LEFT = 0;
-    public static final int TOP = 1;
-    public static final int RIGHT = 2;
-    public static final int BOTTOM = 3;
-    public static final int MIDDLE = 4;
 
     public static final int NUM_EDGES = 4;
     public static final int NUM_NEIGHBORS = 4;
