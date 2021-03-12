@@ -45,7 +45,6 @@ class LobbyControllerTest {
     @Test
     void shouldJoinAsPlayer() throws Exception {
         var gameLobby = new GameLobby("Test");
-        var player = new Player("p1");
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
@@ -95,14 +94,15 @@ class LobbyControllerTest {
     @Test
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
         var gameLobby = new GameLobby("Test");
+        var player = new Player("P1");
         var emitter = new SseEmitter();
         Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
-        Mockito.when(emitterService.getEmitterById(any(UUID.class))).thenReturn(emitter);
+        Mockito.when(emitterService.getEmitterByIds(any(UUID.class), any(UUID.class))).thenReturn(emitter);
 
         var urlTemplate = String.format("/lobby/%s/subscribe", gameLobby.getId());
 
-        mvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate).param("playerId", player.getId().toString()).contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(content().string(containsString(String.format("subscribed to emitter %s", gameLobby.getId()))));

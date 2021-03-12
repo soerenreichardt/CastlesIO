@@ -5,7 +5,6 @@ import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -32,6 +31,7 @@ public class LobbyController {
         GameLobby gameLobby = server.gameLobbyById(id);
         Player player = new Player(playerName);
         gameLobby.addPlayer(player); // TODO: exception handling
+        emitterService.createPlayerEmitterForLobby(gameLobby.getId(), player.getId());
         return player.getId();
     }
 
@@ -47,8 +47,8 @@ public class LobbyController {
     }
 
     @GetMapping("/subscribe")
-    SseEmitter subscribe(@PathVariable("id") UUID id) throws IOException {
-        var sseEmitter = this.emitterService.getEmitterById(id);
+    SseEmitter subscribe(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) throws IOException {
+        var sseEmitter = this.emitterService.getEmitterByIds(id, playerId);
         sseEmitter.send(String.format("Successfully subscribed to emitter %s", id));
         return sseEmitter;
     }

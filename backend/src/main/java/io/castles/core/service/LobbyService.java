@@ -23,7 +23,7 @@ public class LobbyService {
         var gameLobby = server.gameLobbyById(id);
         var player = new Player(playerName);
         gameLobby.addPlayer(player); // TODO: exception handling
-        var sseEmitter = this.emitterService.getEmitterById(id);
+        var sseEmitter = this.emitterService.getEmitterByIds(gameLobby.getId(), player.getId());
         sseEmitter.send(player.getId());
         return sseEmitter;
     }
