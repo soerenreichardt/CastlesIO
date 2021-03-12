@@ -35,8 +35,11 @@ export class LobbyService {
         return this.http.post<string>(this.lobbyUrl + 'start/', {});
     }
 
-    subscribeToLobbyUpdates(lobbyId: string): EventSource {
+    subscribeToLobbyUpdates(lobbyId: string, playerId: string): EventSource {
+        return new EventSource(this.lobbyUrl + 'subscribe/' + playerId);
+    }
+
+    setLobbyUrl(lobbyId: string): void {
         this.lobbyUrl = this.baseUrl + lobbyId + '/';
-        return new EventSource(this.lobbyUrl + 'subscribe/');
     }
 }
