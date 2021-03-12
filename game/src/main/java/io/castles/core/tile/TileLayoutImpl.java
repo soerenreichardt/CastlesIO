@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.*;
 
 @EqualsAndHashCode
-public class TileLayout {
+public class TileLayoutImpl {
 
     public static final int LEFT = 0;
     public static final int TOP = 1;
@@ -26,12 +26,12 @@ public class TileLayout {
     @EqualsAndHashCode.Exclude
     private final int[] activeRotation;
 
-    public TileLayout(List<PositionedContent> layout, int rotation) {
+    public TileLayoutImpl(List<PositionedContent> layout, int rotation) {
         this(layout);
         rotate(rotation);
     }
 
-    public TileLayout(List<PositionedContent> layout) {
+    public TileLayoutImpl(List<PositionedContent> layout) {
         this.layout = layout;
         this.rotation = 0;
         this.activeRotation = new int[]{ LEFT, TOP, RIGHT, BOTTOM };
@@ -82,22 +82,22 @@ public class TileLayout {
         TileContent content;
         List<Integer> tileEdges;
 
-        static Builder builder(TileLayout.Builder outerBuilder, TileContent content) {
+        static Builder builder(TileLayoutImpl.Builder outerBuilder, TileContent content) {
             return new Builder(outerBuilder, content);
         }
 
         public static class Builder {
-            private final TileLayout.Builder outerBuilder;
+            private final TileLayoutImpl.Builder outerBuilder;
             private final TileContent content;
             private final List<Integer> tileEdges;
 
-            Builder(TileLayout.Builder outerBuilder, TileContent content) {
+            Builder(TileLayoutImpl.Builder outerBuilder, TileContent content) {
                 this.outerBuilder = outerBuilder;
                 this.content = content;
                 this.tileEdges = new ArrayList<>();
             }
 
-            public TileLayout.Builder connectedOnEdges(int... edges) {
+            public TileLayoutImpl.Builder connectedOnEdges(int... edges) {
                 for (int edge : edges) {
                     this.tileEdges.add(edge);
                 }
@@ -132,11 +132,11 @@ public class TileLayout {
             return this;
         }
 
-        public TileLayout build() {
+        public TileLayoutImpl build() {
             if (this.rotation.isPresent()) {
-                return new TileLayout(tileLayout, rotation.get());
+                return new TileLayoutImpl(tileLayout, rotation.get());
             }
-            return new TileLayout(tileLayout);
+            return new TileLayoutImpl(tileLayout);
         }
 
         private void validateEdges(PositionedContent positionedContent) {

@@ -4,9 +4,9 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 abstract class AbstractTile {
-    protected final TileLayout tileLayout;
+    protected final TileLayoutImpl tileLayout;
 
-    AbstractTile(TileLayout tileLayout) {
+    AbstractTile(TileLayoutImpl tileLayout) {
         this.tileLayout = tileLayout;
     }
 
@@ -18,7 +18,7 @@ abstract class AbstractTile {
 
     abstract void rotate();
 
-    TileLayout getTileLayout() {
+    TileLayoutImpl getTileLayout() {
         return this.tileLayout;
     }
 

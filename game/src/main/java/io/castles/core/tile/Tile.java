@@ -6,7 +6,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayout.*;
+import static io.castles.core.tile.TileLayoutImpl.*;
 import static io.castles.core.tile.TileUtil.oppositeDirection;
 
 @EqualsAndHashCode
@@ -20,7 +20,7 @@ public class Tile {
 
     public static Tile drawRandom() {
         Random rng = new Random();
-        TileLayout.Builder builder = TileLayout.builder();
+        TileLayoutImpl.Builder builder = TileLayoutImpl.builder();
         for (int direction = 0; direction < NUM_EDGES; direction++) {
             TileContent tileContent = TileContent.getById(rng.nextInt(TileContent.values().length));
             builder.withContent(tileContent).connectedOnEdges(direction);
@@ -30,7 +30,7 @@ public class Tile {
 
     @TestOnly
     public static Tile drawStatic(TileContent content) {
-        var tileLayout = TileLayout.builder()
+        var tileLayout = TileLayoutImpl.builder()
                 .withContent(content)
                 .connectedOnEdges(LEFT, RIGHT, TOP, BOTTOM)
                 .build();
@@ -44,7 +44,7 @@ public class Tile {
             TileContent topEdgeContent,
             TileContent bottomEdgeContent
     ) {
-        var tileLayout = TileLayout.builder()
+        var tileLayout = TileLayoutImpl.builder()
                 .withContent(leftEdgeContent)
                 .connectedOnEdges(LEFT)
                 .withContent(rightEdgeContent)
@@ -57,7 +57,7 @@ public class Tile {
         return new Tile(tileLayout);
     }
 
-    private Tile(TileLayout tileLayout) {
+    private Tile(TileLayoutImpl tileLayout) {
         this(getNewId(), tileLayout);
     }
 
@@ -65,7 +65,7 @@ public class Tile {
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(long id, TileLayout tileLayout) {
+    public Tile(long id, TileLayoutImpl tileLayout) {
         this.id = id;
         this.delegate = new DrawnTile(tileLayout);
     }
@@ -78,7 +78,7 @@ public class Tile {
         return delegate.getTileEdges();
     }
 
-    public TileLayout getTileLayout() {
+    public TileLayoutImpl getTileLayout() {
         return delegate.getTileLayout();
     }
 
@@ -119,7 +119,7 @@ public class Tile {
 
     static class DrawnTile extends AbstractTile {
 
-        protected DrawnTile(TileLayout tileLayout) {
+        protected DrawnTile(TileLayoutImpl tileLayout) {
             super(tileLayout);
         }
 
@@ -156,11 +156,11 @@ public class Tile {
         private final int x;
         private final int y;
 
-        public InsertedTile(TileLayout tileLayout, int x, int y) {
+        public InsertedTile(TileLayoutImpl tileLayout, int x, int y) {
             this(tileLayout, new Tile[NUM_NEIGHBORS], x, y);
         }
 
-        public InsertedTile(TileLayout tileLayout, Tile[] neighbors, int x, int y) {
+        public InsertedTile(TileLayoutImpl tileLayout, Tile[] neighbors, int x, int y) {
             super(tileLayout);
             this.x = x;
             this.y = y;
