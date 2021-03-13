@@ -10,7 +10,7 @@ public abstract class AbstractTileLayout<T extends AbstractTileLayout<T>> implem
         this.rotation = 0;
     }
 
-    protected abstract boolean matchesTileWithAppliedRotation(T other, int rotatedDirection);
+    protected abstract boolean matchesTileWithAppliedRotation(TileContent[] otherTileContentEdge, int rotatedDirection);
 
     protected abstract TileContent[] getTileContentEdgeWithAppliedRotation(int rotatedDirection);
 
@@ -23,7 +23,8 @@ public abstract class AbstractTileLayout<T extends AbstractTileLayout<T>> implem
 
     @Override
     public boolean matches(T other, int direction) {
-        return matchesTileWithAppliedRotation(other, rotatedDirection(direction));
+        var otherTileContentEdge = other.getTileContentEdge(TileSupport.oppositeDirection(direction));
+        return matchesTileWithAppliedRotation(otherTileContentEdge, rotatedDirection(direction));
     }
 
     public int getRotation() {

@@ -1,8 +1,10 @@
 package io.castles.core.tile;
 
+import org.assertj.core.api.AbstractBooleanAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
@@ -68,9 +70,39 @@ class MatrixTileLayoutTest {
         tileLayout.rotate();
         tileLayout.rotate();
 
-        MatrixTileLayout other = new MatrixTileLayout(matrix);
+        var other = new MatrixTileLayout(matrix);
         other.rotate(3);
         assertThat(tileLayout).isEqualTo(other);
+
+        var negativeRotationLayout = new MatrixTileLayout(matrix);
+        negativeRotationLayout.rotate(-1);
+        assertThat(other).isEqualTo(negativeRotationLayout);
     }
 
+    @ParameterizedTest
+    @CsvSource({ "0, true", "1, false", "2, true", "3, false" })
+    void shouldMatchOtherTile(int direction, boolean shouldMatch) {
+        var tileLayout = new MatrixTileLayout(matrix);
+        var otherTileLayout = new MatrixTileLayout(matrix);
+
+        AbstractBooleanAssert<?> booleanAssert = assertThat(tileLayout.matches(otherTileLayout, direction));
+        if (shouldMatch) {
+            booleanAssert.isTrue();
+        } else {
+            booleanAssert.isFalse();
+        }
+    }
+
+    @Test
+    void shouldMatchOtherTileWithRotation() {
+        var tileLayout = new MatrixTileLayout(matrix);
+        var otherTileLayout = new MatrixTileLayout(matrix);
+
+        for (int i = 0; i < TileLayout.NUM_EDGES; i++) {
+            tileLayout.rotate(1);
+            otherTileLayout.rotate(-1);
+
+            assertThat(tileLayout.matches(otherTileLayout, TileLayout.RIGHT)).isTrue();
+        }
+    }
 }

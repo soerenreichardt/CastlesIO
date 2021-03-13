@@ -12,8 +12,30 @@ public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
     }
 
     @Override
-    protected boolean matchesTileWithAppliedRotation(TileLayout other, int rotatedDirection) {
-        return false;
+    protected boolean matchesTileWithAppliedRotation(TileContent[] otherTileEdge, int rotatedDirection) {
+        TileContent[] tileEdge = getTileContentEdgeWithAppliedRotation(rotatedDirection);
+        if (tileEdge.length == otherTileEdge.length) {
+            for (int i = 0; i < tileEdge.length; i++) {
+                if (tileEdge[i] != otherTileEdge[i]) {
+                    return false;
+                }
+            }
+        } else {
+            var baseContent = tileEdge[0];
+            for (int i = 1; i < tileEdge.length; i++) {
+                if (tileEdge[i] != baseContent) {
+                    return false;
+                }
+            }
+            var otherBaseContent = otherTileEdge[0];
+            for (int i = 1; i < otherTileEdge.length; i++) {
+                if (otherTileEdge[i] != otherBaseContent) {
+                    return false;
+                }
+            }
+            return baseContent == otherBaseContent;
+        }
+        return true;
     }
 
     @Override

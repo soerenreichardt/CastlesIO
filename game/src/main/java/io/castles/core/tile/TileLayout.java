@@ -15,7 +15,10 @@ public interface TileLayout<SELF extends TileLayout<SELF>> {
     void rotate();
 
     default void rotate(int times) {
-        for (int i = 0; i < times; i++) {
+        if (times < 0) {
+            times = NUM_EDGES - (Math.abs(times) % NUM_EDGES);
+        }
+        for (int i = 0; i < (times % NUM_EDGES); i++) {
             rotate();
         }
     }
