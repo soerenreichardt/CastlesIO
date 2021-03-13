@@ -5,9 +5,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayout.*;
 import static io.castles.core.tile.TileLayoutImpl.NUM_NEIGHBORS;
-import static io.castles.core.tile.TileUtil.oppositeDirection;
 
 @EqualsAndHashCode
 public class Tile {
@@ -16,14 +14,11 @@ public class Tile {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(RESERVED_IDS);
 
     private final long id;
-    private AbstractTile delegate;
+    private AbstractTile<MatrixTileLayout> delegate;
 
     @TestOnly
     public static Tile drawStatic(TileContent content) {
-        var tileLayout = TileLayoutImpl.builder()
-                .withContent(content)
-                .connectedOnEdges(LEFT, RIGHT, TOP, BOTTOM)
-                .build();
+        var tileLayout = MatrixTileLayout.builder().setAll(content);
         return new Tile(tileLayout);
     }
 
@@ -34,20 +29,17 @@ public class Tile {
             TileContent topEdgeContent,
             TileContent bottomEdgeContent
     ) {
-        var tileLayout = TileLayoutImpl.builder()
-                .withContent(leftEdgeContent)
-                .connectedOnEdges(LEFT)
-                .withContent(rightEdgeContent)
-                .connectedOnEdges(RIGHT)
-                .withContent(topEdgeContent)
-                .connectedOnEdges(TOP)
-                .withContent(bottomEdgeContent)
-                .connectedOnEdges(BOTTOM)
+        var tileLayout = MatrixTileLayout.builder()
+                .setBackground(TileContent.GRAS)
+                .setTopEdge(topEdgeContent)
+                .setBottomEdge(bottomEdgeContent)
+                .setLeftEdge(leftEdgeContent)
+                .setRightEdge(rightEdgeContent)
                 .build();
         return new Tile(tileLayout);
     }
 
-    private Tile(TileLayoutImpl tileLayout) {
+    private Tile(MatrixTileLayout tileLayout) {
         this(getNewId(), tileLayout);
     }
 
@@ -55,7 +47,7 @@ public class Tile {
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(long id, TileLayoutImpl tileLayout) {
+    public Tile(long id, MatrixTileLayout tileLayout) {
         this.id = id;
         this.delegate = new DrawnTile(tileLayout);
     }
@@ -68,7 +60,7 @@ public class Tile {
         return delegate.getTileEdges();
     }
 
-    public TileLayoutImpl getTileLayout() {
+    public MatrixTileLayout getTileLayout() {
         return delegate.getTileLayout();
     }
 
@@ -76,7 +68,7 @@ public class Tile {
         if (other == null) {
             return true;
         }
-        return delegate.getTileEdges()[direction] == other.getTileEdges()[oppositeDirection(direction)];
+        return delegate.getTileLayout().matches(other.getTileLayout(), direction);
     }
 
     public void insertToBoard(int x, int y) {
@@ -107,9 +99,9 @@ public class Tile {
         return ID_GENERATOR.getAndIncrement();
     }
 
-    static class DrawnTile extends AbstractTile {
+    static class DrawnTile extends AbstractTile<MatrixTileLayout> {
 
-        protected DrawnTile(TileLayoutImpl tileLayout) {
+        protected DrawnTile(MatrixTileLayout tileLayout) {
             super(tileLayout);
         }
 
@@ -139,18 +131,18 @@ public class Tile {
         }
     }
 
-    static class InsertedTile extends AbstractTile {
+    static class InsertedTile extends AbstractTile<MatrixTileLayout> {
 
         private final Tile[] neighbors;
 
         private final int x;
         private final int y;
 
-        public InsertedTile(TileLayoutImpl tileLayout, int x, int y) {
+        public InsertedTile(MatrixTileLayout tileLayout, int x, int y) {
             this(tileLayout, new Tile[NUM_NEIGHBORS], x, y);
         }
 
-        public InsertedTile(TileLayoutImpl tileLayout, Tile[] neighbors, int x, int y) {
+        public InsertedTile(MatrixTileLayout tileLayout, Tile[] neighbors, int x, int y) {
             super(tileLayout);
             this.x = x;
             this.y = y;
