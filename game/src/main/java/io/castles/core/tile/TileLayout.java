@@ -3,6 +3,7 @@ package io.castles.core.tile;
 public interface TileLayout<SELF extends TileLayout<SELF, CONTENT>, CONTENT> {
 
     int NUM_EDGES = 4;
+    int NUM_NEIGHBORS = 4;
 
     int LEFT = 0;
     int TOP = 1;

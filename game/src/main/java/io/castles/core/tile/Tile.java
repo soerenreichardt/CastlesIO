@@ -5,7 +5,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayoutImpl.NUM_NEIGHBORS;
+import static io.castles.core.tile.TileLayout.NUM_NEIGHBORS;
 
 @EqualsAndHashCode
 public class Tile {
