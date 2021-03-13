@@ -21,9 +21,6 @@ public class Board {
             );
             return Board.withPredefinedTiles(tiles);
         }
-        if (gameMode == GameMode.RANDOM) {
-            return Board.withRandomTile();
-        }
 
         throw new IllegalArgumentException("This should never happen. I miss exhaustiveness checks :(");
     }
@@ -35,10 +32,6 @@ public class Board {
 
     public static Board withStaticTile(TileContent border) {
         return new Board(() -> Tile.drawStatic(border));
-    }
-
-    public static Board withRandomTile() {
-        return new Board(Tile::drawRandom);
     }
 
     private Board(TileProducer tileProducer) {

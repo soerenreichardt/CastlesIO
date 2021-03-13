@@ -3,11 +3,9 @@ package io.castles.core.tile;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.castles.core.tile.TileLayout.*;
-import static io.castles.core.tile.TileLayoutImpl.NUM_EDGES;
 import static io.castles.core.tile.TileLayoutImpl.NUM_NEIGHBORS;
 import static io.castles.core.tile.TileUtil.oppositeDirection;
 
@@ -19,16 +17,6 @@ public class Tile {
 
     private final long id;
     private AbstractTile delegate;
-
-    public static Tile drawRandom() {
-        Random rng = new Random();
-        TileLayoutImpl.Builder builder = TileLayoutImpl.builder();
-        for (int direction = 0; direction < NUM_EDGES; direction++) {
-            TileContent tileContent = TileContent.getById(rng.nextInt(TileContent.values().length));
-            builder.withContent(tileContent).connectedOnEdges(direction);
-        }
-        return new Tile(builder.build());
-    }
 
     @TestOnly
     public static Tile drawStatic(TileContent content) {
