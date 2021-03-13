@@ -1,6 +1,9 @@
 package io.castles.core.tile;
 
-public class MatrixTileLayout extends AbstractTileLayout {
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = false)
+public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
 
     private final Matrix<TileContent> contentMatrix;
 
