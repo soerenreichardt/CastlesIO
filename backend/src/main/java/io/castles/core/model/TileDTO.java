@@ -17,6 +17,9 @@ public class TileDTO {
     }
 
     public static TileDTO from(Tile tile) {
-        return new TileDTO(tile.getId(), TileLayoutDTO.from(tile.getTileLayout()));
+        return new TileDTO(
+                tile.getId(),
+                TileLayoutDTO.from(tile.getTileLayout())
+        );
     }
 }

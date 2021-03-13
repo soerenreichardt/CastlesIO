@@ -1,18 +1,17 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "tileLayout": {
       "rotation": 2,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   }
 ]

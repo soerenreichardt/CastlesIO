@@ -5,11 +5,17 @@ import lombok.EqualsAndHashCode;
 import java.util.Arrays;
 
 @EqualsAndHashCode(callSuper = false)
-public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
+public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout, Matrix<TileContent>> {
 
     static final int DEFAULT_DIMENSIONS = 3;
 
     private final Matrix<TileContent> contentMatrix;
+
+    public static MatrixTileLayout createWithRotation(Matrix<TileContent> contentMatrix, int rotation) {
+        MatrixTileLayout matrixTileLayout = new MatrixTileLayout(contentMatrix);
+        matrixTileLayout.rotate(rotation);
+        return matrixTileLayout;
+    }
 
     public MatrixTileLayout(Matrix<TileContent> contentMatrix) {
         assert contentMatrix.getColumns() % 2 == 1;
@@ -77,6 +83,11 @@ public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
         int centerRowIndex = (contentMatrix.getRows() / 2);
         int centerColumnIndex = (contentMatrix.getColumns() / 2);
         return contentMatrix.get(centerRowIndex, centerColumnIndex);
+    }
+
+    @Override
+    public Matrix<TileContent> getContent() {
+        return contentMatrix;
     }
 
     public static Builder<MatrixTileLayout> builder() {

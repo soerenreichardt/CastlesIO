@@ -1,6 +1,6 @@
 package io.castles.core.tile;
 
-public abstract class AbstractTileLayout<T extends AbstractTileLayout<T>> implements TileLayout<T> {
+public abstract class AbstractTileLayout<T extends AbstractTileLayout<T, C>, C> implements TileLayout<T, C> {
 
     protected int[] activeRotation;
     private int rotation;

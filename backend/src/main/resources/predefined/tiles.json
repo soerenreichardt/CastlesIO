@@ -3,324 +3,285 @@
     "id": 1,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 2,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 3,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 3, 4]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 4,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1, 2, 3]
-        },
-        {
-          "content": "CHURCH",
-          "tileEdges": [4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 5,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1, 3]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2]
-        },
-        {
-          "content": "CHURCH",
-          "tileEdges": [4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 6,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 7,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 8,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 2, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 9,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [0]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 10,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 11,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 12,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 13,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [1]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 14,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 15,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 16,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 17,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 4]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 18,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [1, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 19,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 3]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "GRAS", "CASTLE",
+          "GRAS", "CASTLE", "CASTLE"
+        ]
+      }
     }
   }
 ]

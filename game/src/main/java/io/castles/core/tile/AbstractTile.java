@@ -3,7 +3,7 @@ package io.castles.core.tile;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-abstract class AbstractTile<T extends TileLayout<T>> {
+abstract class AbstractTile<T extends TileLayout<T, ?>> {
     protected final T tileLayout;
 
     AbstractTile(T tileLayout) {
