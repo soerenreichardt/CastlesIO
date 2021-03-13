@@ -3,14 +3,13 @@ package io.castles.core.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SseEmitterService {
 
-    public static final long EMITTER_TIMEOUT = 1000L;
+    public static final long EMITTER_TIMEOUT = 3600000L; //1h in milliseconds
     private final Map<UUID, Map<UUID, SseEmitter>> sseEmitters;
 
     public SseEmitterService() {
@@ -24,7 +23,15 @@ public class SseEmitterService {
         lobbyEmitters.put(playerId, sseEmitter);
     }
 
-    public SseEmitter getEmitterByIds(UUID lobbyId, UUID playerId) {
+    public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
         return this.sseEmitters.get(lobbyId).get(playerId);
     }
+
+    public Collection<SseEmitter> getAllLobbyEmitters(UUID lobbyId) {
+        if (this.sseEmitters.containsKey(lobbyId)) {
+            return this.sseEmitters.get(lobbyId).values();
+        }
+        return List.of();
+    }
+
 }

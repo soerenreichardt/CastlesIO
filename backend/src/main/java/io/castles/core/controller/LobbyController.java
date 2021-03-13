@@ -1,10 +1,12 @@
 package io.castles.core.controller;
 
 import io.castles.core.service.GameService;
+import io.castles.core.service.LobbyService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -14,24 +16,23 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/lobby/{id}")
+@RequiredArgsConstructor
 public class LobbyController {
 
     private final Server server;
     private final GameService gameService;
     private final SseEmitterService emitterService;
-
-    public LobbyController(Server server, GameService gameService, SseEmitterService emitterService) {
-        this.server = server;
-        this.gameService = gameService;
-        this.emitterService = emitterService;
-    }
+    private final LobbyService lobbyService;
 
     @PutMapping("/join")
-    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) throws IOException {
-        GameLobby gameLobby = server.gameLobbyById(id);
-        Player player = new Player(playerName);
-        gameLobby.addPlayer(player); // TODO: exception handling
-        emitterService.createPlayerEmitterForLobby(gameLobby.getId(), player.getId());
+    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) {
+        var player = new Player(playerName);
+        try {
+            lobbyService.joinLobby(id, player);
+        } catch (IOException e) {
+            // TODO: exception handling
+            throw new RuntimeException(e);
+        }
         return player.getId();
     }
 
@@ -46,10 +47,16 @@ public class LobbyController {
         return gameService.createGame(id).getId();
     }
 
-    @GetMapping("/subscribe")
-    SseEmitter subscribe(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) throws IOException {
-        var sseEmitter = this.emitterService.getEmitterByIds(id, playerId);
-        sseEmitter.send(String.format("Successfully subscribed to emitter %s", id));
+    @GetMapping("/subscribe/{playerId}")
+    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
+        var gameLobby = server.gameLobbyById(id);
+        var sseEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
+        try {
+            lobbyService.updateLobbyState(gameLobby);
+        } catch (IOException e) {
+            // TODO: exception handling
+            throw new RuntimeException(e);
+        }
         return sseEmitter;
     }
 }

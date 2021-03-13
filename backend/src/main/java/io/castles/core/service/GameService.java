@@ -39,7 +39,7 @@ public class GameService {
                 game.getTile(0, 0)
         );
         for (Player player : game.getPlayers()) {
-            this.emitterService.getEmitterByIds(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
+            this.emitterService.getLobbyEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
         }
         return game;
     }
