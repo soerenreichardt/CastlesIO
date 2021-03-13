@@ -1,6 +1,6 @@
 package io.castles.core.tile;
 
-public abstract class AbstractTileLayout implements TileLayout {
+public abstract class AbstractTileLayout<T extends AbstractTileLayout<T>> implements TileLayout<T> {
 
     protected int[] activeRotation;
     private int rotation;
@@ -10,7 +10,7 @@ public abstract class AbstractTileLayout implements TileLayout {
         this.rotation = 0;
     }
 
-    protected abstract boolean matchesTileWithAppliedRotation(TileLayout other, int rotatedDirection);
+    protected abstract boolean matchesTileWithAppliedRotation(T other, int rotatedDirection);
 
     protected abstract TileContent[] getTileContentEdgeWithAppliedRotation(int rotatedDirection);
 
@@ -22,7 +22,7 @@ public abstract class AbstractTileLayout implements TileLayout {
     }
 
     @Override
-    public boolean matches(TileLayout other, int direction) {
+    public boolean matches(T other, int direction) {
         return matchesTileWithAppliedRotation(other, rotatedDirection(direction));
     }
 

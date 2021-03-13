@@ -1,6 +1,6 @@
 package io.castles.core.tile;
 
-public interface TileLayout {
+public interface TileLayout<SELF extends TileLayout<SELF>> {
 
     int NUM_EDGES = 4;
 
@@ -10,7 +10,7 @@ public interface TileLayout {
     int BOTTOM = 3;
     int MIDDLE = 4;
 
-    boolean matches(TileLayout other, int direction);
+    boolean matches(SELF other, int direction);
 
     void rotate();
 
