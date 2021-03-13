@@ -27,12 +27,13 @@ public abstract class AbstractTileLayout<T extends AbstractTileLayout<T>> implem
         return matchesTileWithAppliedRotation(otherTileContentEdge, rotatedDirection(direction));
     }
 
-    public int getRotation() {
-        return this.rotation;
+    @Override
+    public TileContent[] getTileContentEdge(int direction) {
+        return getTileContentEdgeWithAppliedRotation(rotatedDirection(direction));
     }
 
-    TileContent[] getTileContentEdge(int direction) {
-        return getTileContentEdgeWithAppliedRotation(rotatedDirection(direction));
+    public int getRotation() {
+        return this.rotation;
     }
 
     private int rotatedDirection(int direction) {

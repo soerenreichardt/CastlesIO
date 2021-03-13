@@ -2,12 +2,19 @@ package io.castles.core.tile;
 
 import lombok.EqualsAndHashCode;
 
+import java.util.Arrays;
+
 @EqualsAndHashCode(callSuper = false)
 public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
+
+    static final int DEFAULT_DIMENSIONS = 3;
 
     private final Matrix<TileContent> contentMatrix;
 
     public MatrixTileLayout(Matrix<TileContent> contentMatrix) {
+        assert contentMatrix.getColumns() % 2 == 1;
+        assert contentMatrix.getRows() % 2 == 1;
+
         this.contentMatrix = contentMatrix;
     }
 
@@ -63,5 +70,78 @@ public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout> {
         }
 
         return edge;
+    }
+
+    @Override
+    public TileContent getCenter() {
+        int centerRowIndex = (contentMatrix.getRows() / 2);
+        int centerColumnIndex = (contentMatrix.getColumns() / 2);
+        return contentMatrix.get(centerRowIndex, centerColumnIndex);
+    }
+
+    public static Builder<MatrixTileLayout> builder() {
+        return new MatrixTileLayoutBuilder();
+    }
+
+    static final class MatrixTileLayoutBuilder implements Builder<MatrixTileLayout> {
+
+        private final TileContent[] values;
+
+        public MatrixTileLayoutBuilder() {
+            this.values = new TileContent[DEFAULT_DIMENSIONS * DEFAULT_DIMENSIONS];
+        }
+
+        @Override
+        public MatrixTileLayoutBuilder setBackground(TileContent content) {
+            Arrays.fill(values, content);
+            return this;
+        }
+
+        @Override
+        public MatrixTileLayoutBuilder setLeftEdge(TileContent content) {
+            values[0] = content;
+            values[3] = content;
+            values[6] = content;
+            return this;
+        }
+
+        @Override
+        public MatrixTileLayoutBuilder setRightEdge(TileContent content) {
+            values[2] = content;
+            values[5] = content;
+            values[8] = content;
+            return this;
+        }
+
+        @Override
+        public MatrixTileLayoutBuilder setTopEdge(TileContent content) {
+            values[0] = content;
+            values[1] = content;
+            values[2] = content;
+            return this;
+        }
+
+        @Override
+        public MatrixTileLayoutBuilder setBottomEdge(TileContent content) {
+            values[6] = content;
+            values[7] = content;
+            values[8] = content;
+            return this;
+        }
+
+        @Override
+        public MatrixTileLayout setAll(TileContent content) {
+            return new MatrixTileLayout(new Matrix<>(1, 1, new TileContent[]{ content }));
+        }
+
+        @Override
+        public MatrixTileLayout setValues(int rows, int columns, TileContent[] contents) {
+            return new MatrixTileLayout(new Matrix<>(rows, columns, contents));
+        }
+
+        @Override
+        public MatrixTileLayout build() {
+            return new MatrixTileLayout(new Matrix<>(DEFAULT_DIMENSIONS, DEFAULT_DIMENSIONS, values));
+        }
     }
 }

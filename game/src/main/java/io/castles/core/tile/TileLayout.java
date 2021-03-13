@@ -12,6 +12,10 @@ public interface TileLayout<SELF extends TileLayout<SELF>> {
 
     boolean matches(SELF other, int direction);
 
+    TileContent[] getTileContentEdge(int direction);
+
+    TileContent getCenter();
+
     void rotate();
 
     default void rotate(int times) {
@@ -21,5 +25,17 @@ public interface TileLayout<SELF extends TileLayout<SELF>> {
         for (int i = 0; i < (times % NUM_EDGES); i++) {
             rotate();
         }
+    }
+
+    interface Builder<T> {
+        Builder<T> setBackground(TileContent content);
+        Builder<T> setLeftEdge(TileContent content);
+        Builder<T> setRightEdge(TileContent content);
+        Builder<T> setTopEdge(TileContent content);
+        Builder<T> setBottomEdge(TileContent content);
+        T setAll(TileContent content);
+        T setValues(int rows, int columns, TileContent[] contents);
+
+        T build();
     }
 }

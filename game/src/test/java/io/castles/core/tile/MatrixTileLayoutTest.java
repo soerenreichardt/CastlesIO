@@ -40,6 +40,12 @@ class MatrixTileLayoutTest {
     }
 
     @Test
+    void shouldGetCenterContent() {
+        var tileLayout = new MatrixTileLayout(matrix);
+        assertThat(tileLayout.getCenter()).isEqualTo(TileContent.STREET);
+    }
+
+    @Test
     void shouldBeEqualToSimilarMatrixTileLayout() {
         assertThat(new MatrixTileLayout(matrix)).isEqualTo(new MatrixTileLayout(matrix));
     }
@@ -104,5 +110,21 @@ class MatrixTileLayoutTest {
 
             assertThat(tileLayout.matches(otherTileLayout, TileLayout.RIGHT)).isTrue();
         }
+    }
+
+    @Test
+    void shouldCreateTileLayoutWithBuilder() {
+        var uniformLayout = MatrixTileLayout.builder().setAll(TileContent.GRAS);
+        assertThat(uniformLayout).isEqualTo(new MatrixTileLayout(new Matrix<>(1, 1, new TileContent[]{TileContent.GRAS})));
+
+        var matrixTileLayout = MatrixTileLayout.builder()
+                .setBackground(TileContent.GRAS)
+                .setLeftEdge(TileContent.CASTLE)
+                .setRightEdge(TileContent.CASTLE)
+                .build();
+
+        assertThat(matrixTileLayout.getCenter()).isEqualTo(TileContent.GRAS);
+        assertThat(matrixTileLayout.getTileContentEdge(TileLayout.LEFT)).allMatch(content -> content == TileContent.CASTLE);
+        assertThat(matrixTileLayout.getTileContentEdge(TileLayout.RIGHT)).allMatch(content -> content == TileContent.CASTLE);
     }
 }
