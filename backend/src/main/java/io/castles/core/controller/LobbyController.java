@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.PublicLobbyDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.service.LobbyService;
 import io.castles.core.service.SseEmitterService;
@@ -35,6 +36,13 @@ public class LobbyController {
         }
         return player.getId();
     }
+
+    @GetMapping("/info")
+    PublicLobbyDTO getPublicLobbyInfo(@PathVariable("id") UUID id) {
+        GameLobby gameLobby = server.gameLobbyById(id);
+        return PublicLobbyDTO.from(gameLobby);
+    }
+
 
     @DeleteMapping("/leave")
     void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {

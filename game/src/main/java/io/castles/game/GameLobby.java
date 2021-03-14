@@ -76,6 +76,10 @@ public class GameLobby extends IdentifiableObject {
         return this.name;
     }
 
+    public Number getMaxPlayers() {
+        return MAX_PLAYERS;
+    }
+
     public List<String> getPlayerNames() {
         return this.players.stream().map(Player::getName).collect(Collectors.toList());
     }
