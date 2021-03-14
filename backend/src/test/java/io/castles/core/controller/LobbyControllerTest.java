@@ -40,6 +40,20 @@ class LobbyControllerTest {
     private SseEmitterService emitterService;
 
     @Test
+    void shouldGetPublicLobbyInfo() throws Exception {
+        var gameLobby = new GameLobby("Test");
+
+        Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
+        var urlTemplate = String.format("/lobby/%s/info", gameLobby.getId());
+
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(String.format("\"name\":\"%s\"", gameLobby.getName()))))
+                .andExpect(content().string(containsString(String.format("\"numPlayers\":%s", gameLobby.getNumPlayers()))))
+                .andExpect(content().string(containsString(String.format("\"maxPlayers\":%s", gameLobby.getMaxPlayers()))));
+    }
+
+    @Test
     void shouldJoinAsPlayer() throws Exception {
         var gameLobby = new GameLobby("Test");
 
