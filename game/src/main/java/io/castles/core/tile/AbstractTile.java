@@ -3,10 +3,10 @@ package io.castles.core.tile;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-abstract class AbstractTile<T extends TileLayout<T, ?>> {
-    protected final T tileLayout;
+abstract class AbstractTile {
+    protected final TileLayout tileLayout;
 
-    AbstractTile(T tileLayout) {
+    AbstractTile(TileLayout tileLayout) {
         this.tileLayout = tileLayout;
     }
 
@@ -18,7 +18,7 @@ abstract class AbstractTile<T extends TileLayout<T, ?>> {
 
     abstract void rotate();
 
-    T getTileLayout() {
+    TileLayout getTileLayout() {
         return this.tileLayout;
     }
 

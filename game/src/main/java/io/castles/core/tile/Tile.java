@@ -14,7 +14,7 @@ public class Tile {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(RESERVED_IDS);
 
     private final long id;
-    private AbstractTile<MatrixTileLayout> delegate;
+    private AbstractTile delegate;
 
     @TestOnly
     public static Tile drawStatic(TileContent content) {
@@ -39,7 +39,7 @@ public class Tile {
         return new Tile(tileLayout);
     }
 
-    private Tile(MatrixTileLayout tileLayout) {
+    private Tile(TileLayout tileLayout) {
         this(getNewId(), tileLayout);
     }
 
@@ -47,7 +47,7 @@ public class Tile {
      * This constructor should only be used to construct
      * a Tile from a TileDTO.
      */
-    public Tile(long id, MatrixTileLayout tileLayout) {
+    public Tile(long id, TileLayout tileLayout) {
         this.id = id;
         this.delegate = new DrawnTile(tileLayout);
     }
@@ -60,8 +60,8 @@ public class Tile {
         return delegate.getTileEdges();
     }
 
-    public MatrixTileLayout getTileLayout() {
-        return delegate.getTileLayout();
+    public <T> T getTileLayout() {
+        return (T) delegate.getTileLayout();
     }
 
     public boolean matches(Tile other, int direction) {
@@ -99,9 +99,9 @@ public class Tile {
         return ID_GENERATOR.getAndIncrement();
     }
 
-    static class DrawnTile extends AbstractTile<MatrixTileLayout> {
+    static class DrawnTile extends AbstractTile {
 
-        protected DrawnTile(MatrixTileLayout tileLayout) {
+        protected DrawnTile(TileLayout tileLayout) {
             super(tileLayout);
         }
 
@@ -131,18 +131,18 @@ public class Tile {
         }
     }
 
-    static class InsertedTile extends AbstractTile<MatrixTileLayout> {
+    static class InsertedTile extends AbstractTile {
 
         private final Tile[] neighbors;
 
         private final int x;
         private final int y;
 
-        public InsertedTile(MatrixTileLayout tileLayout, int x, int y) {
+        public InsertedTile(TileLayout tileLayout, int x, int y) {
             this(tileLayout, new Tile[NUM_NEIGHBORS], x, y);
         }
 
-        public InsertedTile(MatrixTileLayout tileLayout, Tile[] neighbors, int x, int y) {
+        public InsertedTile(TileLayout tileLayout, Tile[] neighbors, int x, int y) {
             super(tileLayout);
             this.x = x;
             this.y = y;

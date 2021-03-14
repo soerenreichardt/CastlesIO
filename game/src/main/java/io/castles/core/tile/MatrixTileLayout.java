@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import java.util.Arrays;
 
 @EqualsAndHashCode(callSuper = false)
-public class MatrixTileLayout extends AbstractTileLayout<MatrixTileLayout, Matrix<TileContent>> {
+public class MatrixTileLayout extends AbstractTileLayout {
 
     static final int DEFAULT_DIMENSIONS = 3;
 
