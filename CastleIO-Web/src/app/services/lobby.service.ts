@@ -2,6 +2,8 @@ import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs';
+import {PublicLobby} from '../models/public-lobby.interface';
+import {Lobby} from '../models/lobby.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +22,14 @@ export class LobbyService {
                 playerName
             }
         });
+    }
+
+    getPublicLobbyInfo(): Observable<PublicLobby> {
+        return this.http.get<PublicLobby>(this.lobbyUrl + 'info/');
+    }
+
+    getLobbyStatus(playerId: string): Observable<Lobby> {
+        return this.http.get<Lobby>(this.lobbyUrl + 'status/' + playerId);
     }
 
     leaveLobby(playerId: string): Observable<void> {

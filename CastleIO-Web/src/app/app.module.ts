@@ -6,19 +6,48 @@ import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import { LobbyComponent } from './lobby/lobby.component';
 import { LandingComponent } from './landing/landing.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { CreatePlayerComponent } from './lobby/create-player/create-player.component';
+import { ModalDirective } from './directives/modal.directive';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatInputModule} from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
     declarations: [
         AppComponent,
         LobbyComponent,
-        LandingComponent
+        LandingComponent,
+        CreatePlayerComponent,
+        ModalDirective
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
-        FormsModule
+        FormsModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatListModule,
+        MatCardModule,
+        MatIconModule,
+        MatDividerModule,
+        MatSelectModule,
+        MatSliderModule,
+        MatSnackBarModule,
+        ClipboardModule,
+        ReactiveFormsModule
     ],
     providers: [],
     bootstrap: [AppComponent]

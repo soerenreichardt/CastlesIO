@@ -1,0 +1,18 @@
+<div class="modal">
+    <div class="card">
+        <h2>Join {{lobbyInfo?.name}}</h2>
+
+        <div class="card-content">
+            <p class="num-players">{{lobbyInfo?.numPlayers}}/{{lobbyInfo?.maxPlayers}} Players</p>
+            <form name="playerForm" (ngSubmit)="join()" #playerForm="ngForm">
+                <div class="form-row">
+                    <mat-form-field class="player-name">
+                        <mat-label>Your Name</mat-label>
+                        <input matInput placeholder="" [(ngModel)]="playerName" name="playerName" required autofocus>
+                    </mat-form-field>
+                </div>
+                <button mat-flat-button color="accent" [disabled]="!playerForm.valid">Join</button>
+            </form>
+        </div>
+    </div>
+</div>

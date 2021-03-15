@@ -1,13 +1,63 @@
-<form name="playerForm" (ngSubmit)="joinLobby()">
-    <input type="text" [(ngModel)]="playerName" name="playerName">
-    <button type="submit">Join Game</button>
-</form>
-
-<pre>
-    only for debugging
-    LobbyID: {{lobbyId}}
-    PlayerID: {{playerId}}
-
-    SseMessageLog:
-    <span *ngFor="let data of sseDataLog">{{data}}<br></span>
-</pre>
+<app-create-player *ngIf="!playerId"
+                   (joinLobby)="joinLobby($event)"
+                   [lobbyId]="lobbyId"></app-create-player>
+<div class="content" *ngIf="lobby">
+    <div class="players card">
+        <h2>{{lobby.lobbyName}}</h2>
+        <div class="card-content">
+            <mat-list class="player-list">
+                <mat-list-item *ngFor="let playerName of lobby.playerNames">
+                    <h4>{{playerName}}</h4>
+                    <p class="controls">
+                        <span class="material-icons" title="remove player" *ngIf="lobby.lobbySettings.editable">delete</span>
+                    </p>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </div>
+    <div class="options card">
+        <h2>Game Settings</h2>
+        <div class="card-content">
+            <form (change)="updateLobbySettings()" #settingsForm=ngForm>
+                <section class="small-controls">
+                    <mat-checkbox (change)="changeLobbyVisibility()"
+                                  [(ngModel)]="isLobbyPublic"
+                                  name="lobbyVisibility" labelPosition="before">Public</mat-checkbox>
+                    <mat-form-field>
+                        <mat-label>Game Mode</mat-label>
+                        <mat-select [(value)]="lobby.lobbySettings.gameMode" name="gameModeSelect">
+                            <mat-option *ngFor="let gameMode of lobby.lobbySettings.gameModes" [value]="gameMode">{{gameMode}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <div class="max-players label-value-slider">
+                        <p>Max Players</p>
+                        <span>{{lobby.lobbySettings.maxPlayers}}</span>
+                        <mat-slider min="2" max="10" step="1" tickInterval="1"
+                                    (input)="lobby.lobbySettings.maxPlayers = $event.value"
+                                    (change)="updateLobbySettings()" name="maxPlayersSlider"></mat-slider>
+                    </div>
+                </section>
+                <div class="turn-time label-value-slider">
+                    <p>Turn Time</p>
+                    <span>{{lobby.lobbySettings.turnTimeSeconds}} sec</span>
+                    <mat-slider min="10" max="120" step="5" tickInterval="2"
+                                (input)="lobby.lobbySettings.turnTimeSeconds = $event.value"
+                                (change)="updateLobbySettings()" name="maxPlayersSlider"></mat-slider>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="invite-link">
+    <p class="label">
+        Invite Link
+    </p>
+    <p class="link">
+        {{inviteLink}}
+    </p>
+    <button mat-icon-button color="accent" title="Click to copy the invite link" (click)="copyUrlToClipboard()">
+        <mat-icon>content_copy</mat-icon>
+    </button>
+</div>

@@ -1,0 +1,7 @@
+.page-content {
+    padding: 2em;
+    display: grid;
+    min-height: 100vh;
+    grid-auto-flow: row;
+    grid-auto-rows: 10em 1fr;
+}
