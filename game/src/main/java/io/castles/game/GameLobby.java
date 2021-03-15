@@ -55,6 +55,9 @@ public class GameLobby extends IdentifiableObject {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
     }
 
+    public boolean isPlayerInLobby(UUID playerId) {
+        return this.players.contains(playerId);
+    }
 
     public int getNumPlayers() {
         return players.size();
