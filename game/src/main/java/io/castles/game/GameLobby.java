@@ -56,7 +56,8 @@ public class GameLobby extends IdentifiableObject {
     }
 
     public boolean isPlayerInLobby(UUID playerId) {
-        return this.players.contains(playerId);
+        var playerIds = this.players.stream().map(Player::getId).collect(Collectors.toList());
+        return playerIds.contains(playerId);
     }
 
     public int getNumPlayers() {
