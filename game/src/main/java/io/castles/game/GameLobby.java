@@ -15,12 +15,14 @@ public class GameLobby extends IdentifiableObject {
     private final Set<Player> players;
     private final GameSettingsBuilder settingsBuilder;
     private final String name;
+    private Player owner;
 
     public GameLobby(String name) {
         this.name = name;
         this.players = new HashSet<>();
         this.settingsBuilder = GameSettings.builder();
         this.settingsBuilder.name(name);
+        this.owner = null;
     }
 
     Game startGame() {
@@ -35,6 +37,9 @@ public class GameLobby extends IdentifiableObject {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
+        if (this.owner == null) {
+            this.owner = player;
+        }
     }
 
     public void removePlayer(Player player) {
@@ -42,10 +47,19 @@ public class GameLobby extends IdentifiableObject {
         if (!removed) {
             throw new IllegalArgumentException(String.format("Player %s was not found in the list of players %s", player, players));
         }
+        if (player.getId() == owner.getId()) {
+            replaceOwner();
+        }
     }
 
     public void removePlayer(UUID playerId) {
         removePlayer(getPlayerById(playerId));
+    }
+
+    private void replaceOwner() {
+        if (!this.players.isEmpty()) {
+            this.owner = this.players.iterator().next();
+        }
     }
 
     private Player getPlayerById(UUID playerId) {
