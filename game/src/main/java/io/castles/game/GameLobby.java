@@ -56,12 +56,7 @@ public class GameLobby extends IdentifiableObject {
     }
 
     public boolean isPlayerInLobby(UUID playerId) {
-        try {
-            getPlayerById(playerId);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return this.players.contains(playerId);
     }
 
     public int getNumPlayers() {
