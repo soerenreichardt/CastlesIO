@@ -1,9 +1,15 @@
 package io.castles.core;
 
 import io.castles.core.board.Board;
+import io.castles.core.board.BoardListener;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,5 +82,38 @@ class BoardTest {
         Board board = Board.withStaticTile(TileContent.GRAS);
         Tile newTile = board.getNewTile();
         assertNotNull(newTile);
+    }
+
+    @Test
+    void listenerShouldReceiveUpdates() {
+        var testListener = new TestListener();
+        Board board = Board.withStaticTile(TileContent.GRAS);
+        board.addBoardListener(testListener);
+
+        assertEquals(1, testListener.tiles.size());
+        assertEquals(board.getTile(0, 0), testListener.tiles.get(0));
+
+        Tile tile = Tile.drawStatic(TileContent.GRAS);
+        board.insertTileToBoard(tile, 0, 1);
+        assertEquals(2, testListener.tiles.size());
+        assertEquals(board.getTile(0, 1), testListener.tiles.get(1));
+    }
+
+    static class TestListener implements BoardListener {
+        List<Tile> tiles;
+
+        public TestListener() {
+            this.tiles = new ArrayList<>();
+        }
+
+        @Override
+        public void currentState(Map<Integer, Map<Integer, Tile>> board) {
+            this.tiles.addAll(board.values().stream().flatMap(map -> map.values().stream()).collect(Collectors.toList()));
+        }
+
+        @Override
+        public void onTileAdded(Tile tile) {
+            this.tiles.add(tile);
+        }
     }
 }

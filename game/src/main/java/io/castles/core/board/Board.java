@@ -1,9 +1,11 @@
 package io.castles.core.board;
 
 import io.castles.core.GameMode;
+import io.castles.core.board.statistics.BoardStatistics;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
@@ -11,6 +13,8 @@ public class Board {
 
     private final Map<Integer, Map<Integer, Tile>> tiles;
     private final TileProducer tileProducer;
+    private final List<BoardListener> boardListeners;
+    private final BoardStatistics boardStatistics;
 
     public static Board create(GameMode gameMode, Optional<List<Tile>> tileList) {
         if (gameMode == GameMode.DEBUG) {
@@ -31,6 +35,7 @@ public class Board {
         return new Board(() -> tiles.get(rng.nextInt(tiles.size())));
     }
 
+    @TestOnly
     public static Board withStaticTile(TileContent border) {
         return new Board(() -> Tile.drawStatic(border));
     }
@@ -38,7 +43,15 @@ public class Board {
     private Board(TileProducer tileProducer) {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
+        this.boardListeners = new LinkedList<>();
+        this.boardStatistics = new BoardStatistics();
+
+        addBoardListener(boardStatistics);
         setInitialTile(tileProducer.get());
+    }
+
+    public BoardStatistics getBoardStatistics() {
+        return this.boardStatistics;
     }
 
     public Tile getNewTile() {
@@ -71,6 +84,12 @@ public class Board {
         setNeighborsFromAndToTile(tile, neighbors);
 
         innerTiles.put(y, tile);
+        notifyListeners(tile);
+    }
+
+    public void addBoardListener(BoardListener listener) {
+        this.boardListeners.add(listener);
+        listener.currentState(tiles);
     }
 
     private Tile[] getNeighborsOfTile(Tile tile) {
@@ -153,6 +172,11 @@ public class Board {
         this.tiles
                 .computeIfAbsent(tile.getX(), ignore -> new HashMap<>())
                 .put(tile.getY(), tile);
+        notifyListeners(tile);
+    }
+
+    private void notifyListeners(Tile tile) {
+        this.boardListeners.forEach(boardListener -> boardListener.onTileAdded(tile));
     }
 
     private Optional<Tile> getLeftNeighbor(int x, int y) {
