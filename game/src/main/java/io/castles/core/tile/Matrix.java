@@ -12,6 +12,8 @@ public class Matrix<T> {
     public Matrix(int rows, int columns, T[] values) {
         this.rows = rows;
         this.columns = columns;
+
+        assert values.length == rows * columns;
         this.values = values;
     }
 

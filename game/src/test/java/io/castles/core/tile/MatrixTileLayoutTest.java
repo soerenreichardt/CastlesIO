@@ -131,6 +131,42 @@ class MatrixTileLayoutTest {
         assertThat(matrixTileLayout.getTileContentEdge(TileLayout.RIGHT)).allMatch(content -> content == TileContent.CASTLE);
     }
 
+    @Test
+    void shouldMatchWithDifferentSizes() {
+        Matrix<TileContent> matrix5 = new Matrix<>(5, 5, new TileContent[]{
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET,
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE
+        });
+        var largeTileLayout = new MatrixTileLayout(matrix5);
+
+        assertThat(tileLayout.matches(largeTileLayout, TileLayout.RIGHT)).isTrue();
+        assertThat(tileLayout.matches(largeTileLayout, TileLayout.LEFT)).isTrue();
+        assertThat(tileLayout.matches(largeTileLayout, TileLayout.BOTTOM)).isFalse();
+        assertThat(tileLayout.matches(largeTileLayout, TileLayout.TOP)).isFalse();
+        largeTileLayout.rotate();
+        assertThat(tileLayout.matches(largeTileLayout, TileLayout.TOP)).isFalse();
+
+        Matrix<TileContent> matrix7 = new Matrix<>(7, 7, new TileContent[]{
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET, TileContent.STREET,
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE
+        });
+
+        var evenLargerTileLayout = new MatrixTileLayout(matrix7);
+
+        assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.RIGHT)).isTrue();
+        assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.LEFT)).isTrue();
+        assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.TOP)).isFalse();
+        assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.BOTTOM)).isFalse();
+    }
+
     @Nested
     class WithSharedTileContent {
 
@@ -152,6 +188,13 @@ class MatrixTileLayoutTest {
             TileContent[] topEdge = tileLayout.getTileContentEdge(TileLayout.TOP);
             assertThat(topEdge).containsExactly(TileContent.GRAS, TileContent.GRAS, TileContent.GRAS_AND_CASTLE);
             assertThat(tileLayout.getCenter()).isEqualTo(TileContent.GRAS_AND_CASTLE);
+        }
+
+        @Test
+        void shouldMatchWithSharedContent() {
+            var otherLayout = new MatrixTileLayout(matrix);
+            otherLayout.rotate(2);
+            assertThat(tileLayout.matches(otherLayout, TileLayout.BOTTOM)).isTrue();
         }
     }
 }

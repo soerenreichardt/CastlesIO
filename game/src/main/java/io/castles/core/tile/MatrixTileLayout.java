@@ -36,19 +36,33 @@ public class MatrixTileLayout extends AbstractTileLayout {
                 }
             }
         } else {
-            var baseContent = tileEdge[0];
-            for (int i = 1; i < tileEdge.length; i++) {
-                if (!tileEdge[i].matches(baseContent)) {
-                    return false;
+            TileContent[] smallEdge;
+            TileContent[] largeEdge;
+            if (tileEdge.length > otherTileEdge.length) {
+                smallEdge = otherTileEdge;
+                largeEdge = tileEdge;
+            } else {
+                smallEdge = tileEdge;
+                largeEdge = otherTileEdge;
+            }
+            int sizeDifference = largeEdge.length - smallEdge.length - 1;
+
+            // match center
+            int largeHalf = largeEdge.length / 2;
+            int smallHalf = smallEdge.length / 2;
+            if (!largeEdge[largeHalf].matches(smallEdge[smallHalf])) {
+                return false;
+            }
+
+            for (int smallIndex = 0; smallIndex < smallEdge.length / 2; smallIndex++) {
+                for (int largeIndex = 0; largeIndex < sizeDifference; largeIndex++) {
+                    var match = smallEdge[smallHalf + smallIndex + 1].matches(largeEdge[largeHalf + (smallIndex * 2) + largeIndex + 1])
+                            || smallEdge[smallHalf - smallIndex + 1].matches(largeEdge[largeHalf - (smallIndex * 2) + largeIndex + 1]);
+                    if (!match) {
+                        return false;
+                    }
                 }
             }
-            var otherBaseContent = otherTileEdge[0];
-            for (int i = 1; i < otherTileEdge.length; i++) {
-                if (!otherTileEdge[i].matches(otherBaseContent)) {
-                    return false;
-                }
-            }
-            return baseContent == otherBaseContent;
         }
         return true;
     }
