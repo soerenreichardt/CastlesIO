@@ -84,7 +84,7 @@ class GameControllerTest {
     void shouldInsertTile() throws Exception {
         Mockito.when(server.gameById(any(UUID.class))).thenReturn(game);
         Mockito.when(game.getCurrentGameState()).thenReturn(GameState.PLACE_TILE);
-        TileDTO tile = new TileDTO(Tile.getNewId(), TileLayoutDTO.from(Tile.drawStatic(TileContent.GRAS).getTileLayout()));
+        TileDTO tile = TileDTO.from(Tile.drawStatic(TileContent.GRAS));
         Mockito.when(game.getTile(0, 1)).thenReturn(tile.toTile());
 
         String tileJson = JsonHelper.serializeObject(tile);

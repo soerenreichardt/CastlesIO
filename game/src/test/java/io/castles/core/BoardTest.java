@@ -11,7 +11,7 @@ class BoardTest {
 
     @Test
     void createsBoardWithInitialTile() {
-        var board = Board.withRandomTile();
+        var board = Board.withStaticTile(TileContent.GRAS);
         assertNotNull(board);
 
         var tile = board.getTile(0, 0);
@@ -43,7 +43,7 @@ class BoardTest {
 
     @Test
     void shouldThrowWhenInsertingToOccupiedPosition() {
-        var board = Board.withRandomTile();
+        var board = Board.withStaticTile(TileContent.GRAS);
         var tile = Tile.drawStatic(TileContent.GRAS);
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 0, 0))
                 .hasMessageContaining("already occupied")
@@ -52,8 +52,8 @@ class BoardTest {
 
     @Test
     void shouldThrowOnInsertIfNoNeighborsWereFound() {
-        var board = Board.withRandomTile();
-        var tile = Tile.drawRandom();
+        var board = Board.withStaticTile(TileContent.GRAS);
+        var tile = Tile.drawStatic(TileContent.GRAS);
 
         assertThatThrownBy(() -> board.insertTileToBoard(tile, 1, 1))
                 .hasMessageContaining("no neighbors were found")
@@ -72,7 +72,7 @@ class BoardTest {
 
     @Test
     void shouldCreateNewTiles() {
-        Board board = Board.withRandomTile();
+        Board board = Board.withStaticTile(TileContent.GRAS);
         Tile newTile = board.getNewTile();
         assertNotNull(newTile);
     }

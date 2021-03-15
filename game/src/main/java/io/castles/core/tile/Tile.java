@@ -3,11 +3,9 @@ package io.castles.core.tile;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.castles.core.tile.TileLayout.*;
-import static io.castles.core.tile.TileUtil.oppositeDirection;
+import static io.castles.core.tile.TileLayout.NUM_NEIGHBORS;
 
 @EqualsAndHashCode
 public class Tile {
@@ -18,22 +16,9 @@ public class Tile {
     private final long id;
     private AbstractTile delegate;
 
-    public static Tile drawRandom() {
-        Random rng = new Random();
-        TileLayout.Builder builder = TileLayout.builder();
-        for (int direction = 0; direction < NUM_EDGES; direction++) {
-            TileContent tileContent = TileContent.getById(rng.nextInt(TileContent.values().length));
-            builder.withContent(tileContent).connectedOnEdges(direction);
-        }
-        return new Tile(builder.build());
-    }
-
     @TestOnly
     public static Tile drawStatic(TileContent content) {
-        var tileLayout = TileLayout.builder()
-                .withContent(content)
-                .connectedOnEdges(LEFT, RIGHT, TOP, BOTTOM)
-                .build();
+        var tileLayout = MatrixTileLayout.builder().setAll(content);
         return new Tile(tileLayout);
     }
 
@@ -44,15 +29,12 @@ public class Tile {
             TileContent topEdgeContent,
             TileContent bottomEdgeContent
     ) {
-        var tileLayout = TileLayout.builder()
-                .withContent(leftEdgeContent)
-                .connectedOnEdges(LEFT)
-                .withContent(rightEdgeContent)
-                .connectedOnEdges(RIGHT)
-                .withContent(topEdgeContent)
-                .connectedOnEdges(TOP)
-                .withContent(bottomEdgeContent)
-                .connectedOnEdges(BOTTOM)
+        var tileLayout = MatrixTileLayout.builder()
+                .setBackground(TileContent.GRAS)
+                .setTopEdge(topEdgeContent)
+                .setBottomEdge(bottomEdgeContent)
+                .setLeftEdge(leftEdgeContent)
+                .setRightEdge(rightEdgeContent)
                 .build();
         return new Tile(tileLayout);
     }
@@ -78,15 +60,15 @@ public class Tile {
         return delegate.getTileEdges();
     }
 
-    public TileLayout getTileLayout() {
-        return delegate.getTileLayout();
+    public <T> T getTileLayout() {
+        return (T) delegate.getTileLayout();
     }
 
     public boolean matches(Tile other, int direction) {
         if (other == null) {
             return true;
         }
-        return delegate.getTileEdges()[direction] == other.getTileEdges()[oppositeDirection(direction)];
+        return delegate.getTileLayout().matches(other.getTileLayout(), direction);
     }
 
     public void insertToBoard(int x, int y) {

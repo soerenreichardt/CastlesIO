@@ -9,7 +9,7 @@ class TileTest {
 
     @Test
     void shouldCreateRandomTile() {
-        var tile = Tile.drawRandom();
+        var tile = Tile.drawStatic(TileContent.GRAS);
         assertNotNull(tile);
         for (TileContent tileContent : tile.getTileEdges()) {
             assertNotNull(tileContent);
@@ -29,7 +29,7 @@ class TileTest {
 
     @Test
     void shouldInsertATileToTheBoard() {
-        var tile = Tile.drawRandom();
+        var tile = Tile.drawStatic(TileContent.GRAS);
         assertThatThrownBy(tile::getX)
                 .hasMessageContaining("getX is not supported on an uninserted tile")
                 .isInstanceOf(UnsupportedOperationException.class);
@@ -64,7 +64,7 @@ class TileTest {
     @Test
     void shouldRotateTile() {
         var tile = Tile.drawSpecific(TileContent.GRAS, TileContent.GRAS, TileContent.STREET, TileContent.CASTLE);
-        Tile expectedRotation = Tile.drawSpecific(TileContent.CASTLE, TileContent.STREET, TileContent.GRAS, TileContent.GRAS);
+        Tile expectedRotation = Tile.drawSpecific(TileContent.STREET, TileContent.CASTLE, TileContent.GRAS, TileContent.GRAS);
         tile.rotate();
         for (int i = 0; i < tile.getTileEdges().length; i++) {
             assertEquals(expectedRotation.getTileEdges()[i], tile.getTileEdges()[i]);

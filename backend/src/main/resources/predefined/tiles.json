@@ -3,324 +3,293 @@
     "id": 1,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "SHARED",
+          "GRAS", "SHARED", "CASTLE",
+          "SHARED", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 2,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 5,
+        "columns": 5,
+        "values": [
+          "GRAS", "GRAS", "STREET", "GRAS", "SHARED",
+          "GRAS", "GRAS", "STREET", "GRAS", "CASTLE",
+          "STREET", "STREET", "STREET", "GRAS", "GRAS",
+          "GRAS", "GRAS", "STREET", "GRAS", "CASTLE",
+          "GRAS", "GRAS", "STREET", "GRAS", "SHARED"
+        ]
+      }
     }
   },
   {
     "id": 3,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 3, 4]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "SHARED", "GRAS", "SHARED",
+          "CASTLE", "GRAS", "CASTLE",
+          "SHARED", "GRAS", "SHARED"
+        ]
+      }
     }
   },
   {
     "id": 4,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1, 2, 3]
-        },
-        {
-          "content": "CHURCH",
-          "tileEdges": [4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "CHURCH", "GRAS",
+          "GRAS", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 5,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 1, 3]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2]
-        },
-        {
-          "content": "CHURCH",
-          "tileEdges": [4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "GRAS", "CHURCH", "STREET",
+          "GRAS", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 6,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "STREET", "GRAS",
+          "STREET", "STREET", "STREET",
+          "GRAS", "STREET", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 7,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [0, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "STREET", "GRAS",
+          "GRAS", "STREET", "STREET",
+          "GRAS", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 8,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [0, 2, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "GRAS", "GRAS",
+          "STREET", "STREET", "STREET",
+          "GRAS", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 9,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [0]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "GRAS", "STREET", "GRAS",
+          "GRAS", "STREET", "STREET",
+          "GRAS", "STREET", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 10,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "CASTLE", "CASTLE", "CASTLE",
+          "CASTLE", "CASTLE", "CASTLE",
+          "CASTLE", "CASTLE", "CASTLE"
+        ]
+      }
     }
   },
   {
     "id": 11,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "CASTLE", "CASTLE", "SHARED",
+          "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "SHARED"
+        ]
+      }
     }
   },
   {
     "id": 12,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 1, 3, 4]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 5,
+        "columns": 5,
+        "values": [
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "STREET",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED"
+        ]
+      }
     }
   },
   {
     "id": 13,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [1]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "DISCONNECTED", "CASTLE", "SHARED",
+          "CASTLE", "GRAS", "GRAS",
+          "SHARED", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 14,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 2, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "SHARED", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "GRAS",
+          "SHARED", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 15,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 3, 4]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 5,
+        "values": [
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "GRAS", "GRAS",
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 16,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 5,
+        "values": [
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "STREET", "STREET",
+          "SHARED", "GRAS", "GRAS", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 17,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [1, 4]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [2, 3]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 5,
+        "values": [
+          "SHARED", "GRAS", "GRAS", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "STREET", "STREET",
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS"
+        ]
+      }
     }
   },
   {
     "id": 18,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "GRAS",
-          "tileEdges": [0]
-        },
-        {
-          "content": "GRAS",
-          "tileEdges": [2]
-        },
-        {
-          "content": "CASTLE",
-          "tileEdges": [1, 3, 4]
-        }
-      ]
+      "content": {
+        "rows": 3,
+        "columns": 3,
+        "values": [
+          "SHARED", "CASTLE", "SHARED",
+          "GRAS", "CASTLE", "GRAS",
+          "SHARED", "CASTLE", "SHARED"
+        ]
+      }
     }
   },
   {
     "id": 19,
     "tileLayout": {
       "rotation": 0,
-      "layout": [
-        {
-          "content": "CASTLE",
-          "tileEdges": [0, 3]
-        },
-        {
-          "content": "STREET",
-          "tileEdges": [1, 2]
-        }
-      ]
+      "content": {
+        "rows": 7,
+        "columns": 7,
+        "values": [
+          "SHARED", "GRAS", "GRAS", "STREET", "GRAS", "GRAS", "GRAS",
+          "CASTLE", "SHARED", "GRAS", "STREET", "STREET", "GRAS", "GRAS",
+          "CASTLE", "CASTLE", "SHARED", "GRAS", "STREET", "STREET", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS", "STREET", "STREET",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED"
+        ]
+      }
     }
   }
 ]

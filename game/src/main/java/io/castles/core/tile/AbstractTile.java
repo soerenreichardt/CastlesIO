@@ -23,7 +23,12 @@ abstract class AbstractTile {
     }
 
     TileContent[] getTileEdges() {
-        return this.tileLayout.getTileEdges();
+        var singleTypeTileEdges = new TileContent[TileLayout.NUM_EDGES];
+        for (int i = 0; i < TileLayout.NUM_EDGES; i++) {
+            TileContent[] tileContentEdge = tileLayout.getTileContentEdge(i);
+            singleTypeTileEdges[i] = tileContentEdge[tileContentEdge.length / 2];
+        }
+        return singleTypeTileEdges;
     }
 
     abstract Tile[] neighbors();
