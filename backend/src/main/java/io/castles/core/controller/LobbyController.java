@@ -56,15 +56,13 @@ public class LobbyController {
     }
 
     @GetMapping("/subscribe/{playerId}")
-    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
-        var gameLobby = server.gameLobbyById(id);
-        var sseEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
-        try {
-            lobbyService.updateLobbyState(gameLobby);
-        } catch (IOException e) {
-            // TODO: exception handling
-            throw new RuntimeException(e);
+    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) throws IOException {
+        lobbyService.updateLobbyState(id);
+        var playerEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
+        if (playerEmitter == null) {
+            playerEmitter = this.lobbyService.reconnectLobby(id, playerId);
+            this.lobbyService.updateLobbyStateToPlayer(id, playerId);
         }
-        return sseEmitter;
+        return playerEmitter;
     }
 }
