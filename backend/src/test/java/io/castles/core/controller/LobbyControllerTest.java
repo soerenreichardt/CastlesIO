@@ -90,7 +90,9 @@ class LobbyControllerTest {
         }
 
         var emitter = new SseEmitter();
-        var game = new Game(gameLobby.getId(), GameSettings.builder().gameMode(GameMode.DEBUG).name("game").build(), Set.of(new Player("foo")));
+        var lobbySettings = gameLobby.getLobbySettings();
+        lobbySettings.setGameMode(GameMode.DEBUG);
+        var game = new Game(gameLobby.getId(), GameSettings.from(lobbySettings), Set.of(new Player("foo")));
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);

@@ -2,38 +2,34 @@ package io.castles.game;
 
 import io.castles.core.GameMode;
 import io.castles.core.tile.Tile;
-import io.castles.game.GameSettings.GameSettingsBuilder;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameLobby extends IdentifiableObject {
 
     public static final int MIN_PLAYERS = 2;
-    public static final int MAX_PLAYERS = 5;
 
     private final Set<Player> players;
-    private final GameSettingsBuilder settingsBuilder;
+    private final GameLobbySettings lobbySettings;
     private final String name;
     private Player owner;
 
     public GameLobby(String name) {
         this.name = name;
         this.players = new HashSet<>();
-        this.settingsBuilder = GameSettings.builder();
-        this.settingsBuilder.name(name);
         this.owner = null;
+        this.lobbySettings = GameLobbySettings.builder().build();
     }
 
     Game startGame() {
         if (!canStart()) {
             throw new IllegalStateException("Unable to start game");
         }
-        return new Game(getId(), this.settingsBuilder.build(), this.players);
+        return new Game(getId(), GameSettings.from(lobbySettings), this.players);
     }
 
     public void addPlayer(Player player) {
-        if (players.size() >= MAX_PLAYERS) {
+        if (players.size() >= lobbySettings.getMaxPlayers()) {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
@@ -79,26 +75,34 @@ public class GameLobby extends IdentifiableObject {
     }
 
     public void setGameMode(GameMode gameMode) {
-        this.settingsBuilder.gameMode(gameMode);
+        this.lobbySettings.setGameMode(gameMode);
     }
 
     public void setTileList(List<Tile> tiles) {
-        this.settingsBuilder.tileList(Optional.of(tiles));
+        this.lobbySettings.setTileList(tiles);
     }
 
     public boolean canStart() {
-        return players.size() >= MIN_PLAYERS && players.size() <= MAX_PLAYERS;
+        return players.size() >= MIN_PLAYERS && players.size() <= lobbySettings.getMaxPlayers();
     }
 
     public String getName() {
         return this.name;
     }
 
-    public Number getMaxPlayers() {
-        return MAX_PLAYERS;
+    public int getMaxPlayers() {
+        return lobbySettings.getMaxPlayers();
     }
 
     public List<String> getPlayerNames() {
         return this.players.stream().map(Player::getName).collect(Collectors.toList());
+    }
+
+    public Player getOwner() {
+        return this.owner;
+    }
+
+    public GameLobbySettings getLobbySettings() {
+        return this.lobbySettings;
     }
 }

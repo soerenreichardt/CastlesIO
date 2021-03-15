@@ -42,7 +42,7 @@ class GameLobbyTest {
             assertFalse(gameLobby.canStart());
         }
 
-        for (int i = GameLobby.MIN_PLAYERS; i <= GameLobby.MAX_PLAYERS; i++) {
+        for (int i = GameLobby.MIN_PLAYERS; i <= gameLobby.getMaxPlayers(); i++) {
             gameLobby.addPlayer(new Player("" + i));
             assertTrue(gameLobby.canStart());
         }
@@ -64,7 +64,7 @@ class GameLobbyTest {
 
     @Test
     void shouldThrowWhenAddingPlayerWhileLobbyIsFull() {
-        for (int i = 0; i < GameLobby.MAX_PLAYERS; i++) {
+        for (int i = 0; i < gameLobby.getMaxPlayers(); i++) {
             gameLobby.addPlayer(new Player("" + i));
         }
         assertThatThrownBy(() -> gameLobby.addPlayer(new Player("foo")))
