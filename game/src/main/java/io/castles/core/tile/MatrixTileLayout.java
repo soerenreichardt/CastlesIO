@@ -2,7 +2,9 @@ package io.castles.core.tile;
 
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 public class MatrixTileLayout extends AbstractTileLayout {
@@ -29,20 +31,20 @@ public class MatrixTileLayout extends AbstractTileLayout {
         TileContent[] tileEdge = getTileContentEdgeWithAppliedRotation(rotatedDirection);
         if (tileEdge.length == otherTileEdge.length) {
             for (int i = 0; i < tileEdge.length; i++) {
-                if (tileEdge[i] != otherTileEdge[i]) {
+                if (!tileEdge[i].matches(otherTileEdge[i])) {
                     return false;
                 }
             }
         } else {
             var baseContent = tileEdge[0];
             for (int i = 1; i < tileEdge.length; i++) {
-                if (tileEdge[i] != baseContent) {
+                if (!tileEdge[i].matches(baseContent)) {
                     return false;
                 }
             }
             var otherBaseContent = otherTileEdge[0];
             for (int i = 1; i < otherTileEdge.length; i++) {
-                if (otherTileEdge[i] != otherBaseContent) {
+                if (!otherTileEdge[i].matches(otherBaseContent)) {
                     return false;
                 }
             }
@@ -60,19 +62,23 @@ public class MatrixTileLayout extends AbstractTileLayout {
 
         if (rotatedDirection == LEFT) {
             for (int i = 0; i < edgeLength; i++) {
-                edge[i] = contentMatrix.get(i, 0);
+                edge[i] = getResolvedContentAt(i, 0);
             }
         }
         if (rotatedDirection == RIGHT) {
             for (int i = 0; i < edgeLength; i++) {
-                edge[i] = contentMatrix.get(i, contentMatrix.getColumns() - 1);
+                edge[i] = getResolvedContentAt(i, contentMatrix.getColumns() - 1);
             }
         }
         if (rotatedDirection == TOP) {
-            System.arraycopy(contentMatrix.getValues(), 0, edge, 0, edgeLength);
+            for (int i = 0; i < edgeLength; i++) {
+                edge[i] = getResolvedContentAt(0, i);
+            }
         }
         if (rotatedDirection == BOTTOM) {
-            System.arraycopy(contentMatrix.getValues(), contentMatrix.getValues().length - contentMatrix.getColumns(), edge, 0, edgeLength);
+            for (int i = 0; i < edgeLength; i++) {
+                edge[i] = getResolvedContentAt(contentMatrix.getRows() - 1, i);
+            }
         }
 
         return edge;
@@ -82,7 +88,7 @@ public class MatrixTileLayout extends AbstractTileLayout {
     public TileContent getCenter() {
         int centerRowIndex = (contentMatrix.getRows() / 2);
         int centerColumnIndex = (contentMatrix.getColumns() / 2);
-        return contentMatrix.get(centerRowIndex, centerColumnIndex);
+        return getResolvedContentAt(centerRowIndex, centerColumnIndex);
     }
 
     @Override
@@ -92,6 +98,25 @@ public class MatrixTileLayout extends AbstractTileLayout {
 
     public static Builder<MatrixTileLayout> builder() {
         return new MatrixTileLayoutBuilder();
+    }
+
+    private TileContent getResolvedContentAt(int row, int column) {
+        TileContent tileContent = contentMatrix.get(row, column);
+        if (tileContent == TileContent.SHARED) {
+            return resolveSharedTileContent(row, column);
+        }
+        return tileContent;
+    }
+
+    private TileContent resolveSharedTileContent(int row, int column) {
+        List<TileContent> neighbors = new ArrayList<>();
+
+        if (column > 0) neighbors.add(contentMatrix.get(row, column - 1));
+        if (column < contentMatrix.getColumns() - 1) neighbors.add(contentMatrix.get(row, column + 1));
+        if (row > 0) neighbors.add(contentMatrix.get(row - 1, column));
+        if (row < contentMatrix.getRows() - 1) neighbors.add(contentMatrix.get(row + 1, column));
+
+        return TileContent.getById(TileContent.merge(neighbors.toArray(TileContent[]::new)));
     }
 
     static final class MatrixTileLayoutBuilder implements Builder<MatrixTileLayout> {

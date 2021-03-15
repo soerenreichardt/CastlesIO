@@ -1,6 +1,8 @@
 package io.castles.core.tile;
 
 import org.assertj.core.api.AbstractBooleanAssert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,6 +25,13 @@ class MatrixTileLayoutTest {
                     TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE
             });
 
+    MatrixTileLayout tileLayout;
+
+    @BeforeEach
+    void setup() {
+        this.tileLayout = new MatrixTileLayout(matrix);
+    }
+
     static Stream<Arguments> directionAndExpected() {
         return Stream.of(
                 Arguments.of(TileLayout.LEFT, List.of(TileContent.GRAS, TileContent.STREET, TileContent.CASTLE)),
@@ -35,13 +44,11 @@ class MatrixTileLayoutTest {
     @ParameterizedTest
     @MethodSource("directionAndExpected")
     void shouldGetMatrixEdges(int direction, List<TileContent> expectedEdge) {
-        var tileLayout = new MatrixTileLayout(matrix);
         assertThat(tileLayout.getTileContentEdge(direction)).containsExactlyElementsOf(expectedEdge);
     }
 
     @Test
     void shouldGetCenterContent() {
-        var tileLayout = new MatrixTileLayout(matrix);
         assertThat(tileLayout.getCenter()).isEqualTo(TileContent.STREET);
     }
 
@@ -53,7 +60,6 @@ class MatrixTileLayoutTest {
     // TODO: this could be an abstract test for `AbstractTileLayout`
     @Test
     void shouldRotateCorrectly() {
-        var tileLayout = new MatrixTileLayout(matrix);
         tileLayout.rotate();
 
         assertThat(tileLayout.getTileContentEdge(TileLayout.LEFT)).containsExactlyElementsOf(List.of(TileContent.GRAS, TileContent.GRAS, TileContent.GRAS));
@@ -71,7 +77,6 @@ class MatrixTileLayoutTest {
 
     @Test
     void shouldDoMultipleRotatesCorrectly() {
-        var tileLayout = new MatrixTileLayout(matrix);
         tileLayout.rotate();
         tileLayout.rotate();
         tileLayout.rotate();
@@ -88,7 +93,6 @@ class MatrixTileLayoutTest {
     @ParameterizedTest
     @CsvSource({ "0, true", "1, false", "2, true", "3, false" })
     void shouldMatchOtherTile(int direction, boolean shouldMatch) {
-        var tileLayout = new MatrixTileLayout(matrix);
         var otherTileLayout = new MatrixTileLayout(matrix);
 
         AbstractBooleanAssert<?> booleanAssert = assertThat(tileLayout.matches(otherTileLayout, direction));
@@ -101,7 +105,6 @@ class MatrixTileLayoutTest {
 
     @Test
     void shouldMatchOtherTileWithRotation() {
-        var tileLayout = new MatrixTileLayout(matrix);
         var otherTileLayout = new MatrixTileLayout(matrix);
 
         for (int i = 0; i < TileLayout.NUM_EDGES; i++) {
@@ -126,5 +129,29 @@ class MatrixTileLayoutTest {
         assertThat(matrixTileLayout.getCenter()).isEqualTo(TileContent.GRAS);
         assertThat(matrixTileLayout.getTileContentEdge(TileLayout.LEFT)).allMatch(content -> content == TileContent.CASTLE);
         assertThat(matrixTileLayout.getTileContentEdge(TileLayout.RIGHT)).allMatch(content -> content == TileContent.CASTLE);
+    }
+
+    @Nested
+    class WithSharedTileContent {
+
+        Matrix<TileContent> matrix = new Matrix<>(3, 3, new TileContent[] {
+                TileContent.GRAS, TileContent.GRAS, TileContent.SHARED,
+                TileContent.GRAS, TileContent.SHARED, TileContent.CASTLE,
+                TileContent.SHARED, TileContent.CASTLE, TileContent.CASTLE
+        });
+
+        MatrixTileLayout tileLayout;
+
+        @BeforeEach
+        void setup() {
+            this.tileLayout = new MatrixTileLayout(matrix);
+        }
+
+        @Test
+        void shouldResolveSharedContent() {
+            TileContent[] topEdge = tileLayout.getTileContentEdge(TileLayout.TOP);
+            assertThat(topEdge).containsExactly(TileContent.GRAS, TileContent.GRAS, TileContent.GRAS_AND_CASTLE);
+            assertThat(tileLayout.getCenter()).isEqualTo(TileContent.GRAS_AND_CASTLE);
+        }
     }
 }
