@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static io.castles.core.tile.TileContent.*;
@@ -69,5 +70,13 @@ public class TileContentTest {
     @MethodSource("nonMatchingContents")
     void shouldNotMatchOtherTiles(TileContent lhs, TileContent rhs) {
         assertThat(lhs.matches(rhs)).isFalse();
+    }
+
+    @Test
+    void disconnectedShouldMatchCastleOnly() {
+        assertThat(DISCONNECTED.matches(CASTLE)).isTrue();
+        Arrays.stream(TileContent.values())
+                .filter(content -> content != CASTLE)
+                .forEach(content -> assertThat(DISCONNECTED.matches(content)).isFalse());
     }
 }

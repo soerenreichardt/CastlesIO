@@ -9,6 +9,12 @@ public enum TileContent {
     STREET(2),
     CHURCH(3),
     SHARED(4),
+    DISCONNECTED(5) {
+        @Override
+        public boolean matches(TileContent other) {
+            return other == CASTLE;
+        }
+    },
     GRAS_AND_CASTLE(merge(GRAS, CASTLE), false),
     GRAS_AND_STREET(merge(GRAS, STREET), false);
 

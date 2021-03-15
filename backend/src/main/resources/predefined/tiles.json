@@ -7,9 +7,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "GRAS", "SHARED",
+          "GRAS", "SHARED", "CASTLE",
+          "SHARED", "CASTLE", "CASTLE"
         ]
       }
     }
@@ -19,12 +19,14 @@
     "tileLayout": {
       "rotation": 0,
       "content": {
-        "rows": 3,
-        "columns": 3,
+        "rows": 5,
+        "columns": 5,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "GRAS", "STREET", "GRAS", "SHARED",
+          "GRAS", "GRAS", "STREET", "GRAS", "CASTLE",
+          "STREET", "STREET", "STREET", "GRAS", "GRAS",
+          "GRAS", "GRAS", "STREET", "GRAS", "CASTLE",
+          "GRAS", "GRAS", "STREET", "GRAS", "SHARED"
         ]
       }
     }
@@ -37,9 +39,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "SHARED",
+          "CASTLE", "GRAS", "CASTLE",
+          "SHARED", "GRAS", "SHARED"
         ]
       }
     }
@@ -53,8 +55,8 @@
         "columns": 3,
         "values": [
           "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "CHURCH", "GRAS",
+          "GRAS", "GRAS", "GRAS"
         ]
       }
     }
@@ -68,8 +70,8 @@
         "columns": 3,
         "values": [
           "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "CHURCH", "STREET",
+          "GRAS", "GRAS", "GRAS"
         ]
       }
     }
@@ -82,9 +84,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "STREET", "GRAS",
+          "STREET", "STREET", "STREET",
+          "GRAS", "STREET", "GRAS"
         ]
       }
     }
@@ -97,9 +99,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "STREET", "GRAS",
+          "GRAS", "STREET", "STREET",
+          "GRAS", "GRAS", "GRAS"
         ]
       }
     }
@@ -113,8 +115,8 @@
         "columns": 3,
         "values": [
           "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "STREET", "STREET", "STREET",
+          "GRAS", "GRAS", "GRAS"
         ]
       }
     }
@@ -127,9 +129,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "GRAS", "STREET", "GRAS",
+          "GRAS", "STREET", "STREET",
+          "GRAS", "STREET", "GRAS"
         ]
       }
     }
@@ -142,9 +144,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "CASTLE", "CASTLE", "CASTLE",
+          "CASTLE", "CASTLE", "CASTLE",
+          "CASTLE", "CASTLE", "CASTLE"
         ]
       }
     }
@@ -157,9 +159,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "CASTLE", "CASTLE", "SHARED",
+          "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "SHARED"
         ]
       }
     }
@@ -169,12 +171,14 @@
     "tileLayout": {
       "rotation": 0,
       "content": {
-        "rows": 3,
-        "columns": 3,
+        "rows": 5,
+        "columns": 5,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "STREET",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED"
         ]
       }
     }
@@ -187,9 +191,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "DISCONNECTED", "CASTLE", "SHARED",
+          "CASTLE", "GRAS", "GRAS",
+          "SHARED", "GRAS", "GRAS"
         ]
       }
     }
@@ -202,9 +206,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "GRAS",
+          "SHARED", "GRAS", "GRAS"
         ]
       }
     }
@@ -215,11 +219,11 @@
       "rotation": 0,
       "content": {
         "rows": 3,
-        "columns": 3,
+        "columns": 5,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "GRAS", "GRAS",
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS"
         ]
       }
     }
@@ -230,11 +234,11 @@
       "rotation": 0,
       "content": {
         "rows": 3,
-        "columns": 3,
+        "columns": 5,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "STREET", "STREET",
+          "SHARED", "GRAS", "GRAS", "GRAS", "GRAS"
         ]
       }
     }
@@ -245,11 +249,11 @@
       "rotation": 0,
       "content": {
         "rows": 3,
-        "columns": 3,
+        "columns": 5,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "GRAS", "GRAS", "GRAS",
+          "CASTLE", "GRAS", "STREET", "STREET", "STREET",
+          "SHARED", "GRAS", "STREET", "GRAS", "GRAS"
         ]
       }
     }
@@ -262,9 +266,9 @@
         "rows": 3,
         "columns": 3,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "CASTLE", "SHARED",
+          "GRAS", "CASTLE", "GRAS",
+          "SHARED", "CASTLE", "SHARED"
         ]
       }
     }
@@ -274,12 +278,16 @@
     "tileLayout": {
       "rotation": 0,
       "content": {
-        "rows": 3,
-        "columns": 3,
+        "rows": 7,
+        "columns": 7,
         "values": [
-          "GRAS", "GRAS", "GRAS",
-          "GRAS", "GRAS", "CASTLE",
-          "GRAS", "CASTLE", "CASTLE"
+          "SHARED", "GRAS", "GRAS", "STREET", "GRAS", "GRAS", "GRAS",
+          "CASTLE", "SHARED", "GRAS", "STREET", "STREET", "GRAS", "GRAS",
+          "CASTLE", "CASTLE", "SHARED", "GRAS", "STREET", "STREET", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS", "STREET", "STREET",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED", "GRAS",
+          "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "CASTLE", "SHARED"
         ]
       }
     }
