@@ -5,7 +5,6 @@ import io.castles.core.tile.Matrix;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
-import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.*;
@@ -27,13 +26,23 @@ public class Graph {
         return nodes;
     }
 
+    public int nodeCount() {
+        return nodes.size();
+    }
+
+    public Map<Node, Set<Node>> relationships() {
+        return relationships;
+    }
+
+    public int relationshipCount() {
+        return (int) relationships.entrySet().stream().flatMap(entry -> entry.getValue().stream()).count();
+    }
+
     public void addNode(Node node) {
         this.nodes.add(node);
     }
 
-    public void addRelationship(Relationship relationship) {
-        Node source = relationship.source;
-        Node target = relationship.target;
+    public void addRelationship(Node source, Node target) {
         if (!nodes.contains(source)) addNode(source);
         if (!nodes.contains(target)) addNode(target);
 
@@ -67,7 +76,10 @@ public class Graph {
 
     private void graphFromMatrixBfs(Matrix<TileContent> contentMatrix, BitSet seenPositions, int row, int column, long tileId) {
         MatrixBfs matrixBfs = new MatrixBfs(contentMatrix, tileContent, seenPositions, tileId);
-        matrixBfs.compute(new Node(tileId, row, column), this::addNode);
+        matrixBfs.compute(new Node(tileId, row, column), (node, neighbors) -> {
+            addNode(node);
+            neighbors.forEach(neighbor -> addRelationship(node, neighbor));
+        });
     }
 
     @Value
@@ -75,12 +87,5 @@ public class Graph {
         long tileId;
         int row;
         int column;
-    }
-
-    @Value
-    @EqualsAndHashCode
-    public static class Relationship {
-        Node source;
-        Node target;
     }
 }

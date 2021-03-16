@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GraphTest {
 
     @Test
-    void shouldCreateTileInternalGraph() {
+    void shouldCreateTileInternalGraphNodes() {
         Matrix<TileContent> matrix = new Matrix<>(3, 3, new TileContent[]{
                 TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE,
                 TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE,
@@ -22,7 +22,7 @@ class GraphTest {
 
         var grasGraph = new Graph(TileContent.GRAS);
         grasGraph.fromTile(tile);
-        assertThat(grasGraph.nodes().size()).isEqualTo(3);
+        assertThat(grasGraph.nodeCount()).isEqualTo(3);
         assertThat(grasGraph.nodes()).contains(
                 new Graph.Node(tile.getId(), 0, 1),
                 new Graph.Node(tile.getId(), 1, 1),
@@ -42,4 +42,27 @@ class GraphTest {
         );
     }
 
+    @Test
+    void shouldCreateTileInternalGraphRelationships() {
+        Matrix<TileContent> matrix = new Matrix<>(3, 3, new TileContent[]{
+                TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE
+        });
+        var tileLayout = new MatrixTileLayout(matrix);
+        var tile = new Tile(0, tileLayout);
+
+        var grasGraph = new Graph(TileContent.GRAS);
+        grasGraph.fromTile(tile);
+        assertThat(grasGraph.relationshipCount()).isEqualTo(4);
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 0, 1)))
+                .containsExactly(new Graph.Node(tile.getId(), 1, 1));
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 1, 1)))
+                .containsExactly(
+                        new Graph.Node(tile.getId(), 0, 1),
+                        new Graph.Node(tile.getId(), 2, 1)
+                );
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 2, 1)))
+                .containsExactly(new Graph.Node(tile.getId(), 1, 1));
+    }
 }
