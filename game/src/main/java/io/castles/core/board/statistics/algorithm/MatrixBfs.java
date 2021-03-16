@@ -37,9 +37,10 @@ public class MatrixBfs extends AbstractBreadthFirstSearch<Graph.Node> {
 
     private void visitNeighbor(Matrix<TileContent> contentMatrix, List<Graph.Node> validNeighbors, BitSet seenPositions, int row, int column, long tileId) {
         TileContent tileContent = contentMatrix.get(row, column);
-        seenPositions.set(column + contentMatrix.getColumns() * row);
-        if (tileContent == this.tileContent) {
+        int matrixIndex = column + contentMatrix.getColumns() * row;
+        if (tileContent == this.tileContent && !seenPositions.get(matrixIndex)) {
             validNeighbors.add(new Graph.Node(tileId, row, column));
+            seenPositions.set(matrixIndex);
         }
     }
 }
