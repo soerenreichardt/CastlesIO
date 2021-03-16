@@ -3,6 +3,9 @@ package io.castles.core.model;
 import io.castles.core.GameMode;
 import io.castles.core.tile.Tile;
 import io.castles.game.GameLobbySettings;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.List;
@@ -11,13 +14,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Value
+@Data
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class LobbySettingsDTO {
-    int turnTimeSeconds;
-    int maxPlayers;
-    String gameMode;
-    List<Long> tileList;
-    List<String> gameModes;
+    private final int turnTimeSeconds;
+    private final int maxPlayers;
+    private final String gameMode;
+    private final List<Long> tileList;
+    private final List<String> gameModes;
+
+    private boolean editable = false;
 
     public static LobbySettingsDTO from(GameLobbySettings lobbySettings) {
         return new LobbySettingsDTO(

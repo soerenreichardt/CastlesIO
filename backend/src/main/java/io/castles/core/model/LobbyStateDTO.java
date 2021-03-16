@@ -4,7 +4,6 @@ import io.castles.game.GameLobby;
 import lombok.Value;
 
 import java.util.List;
-import java.util.UUID;
 
 @Value
 public class LobbyStateDTO {

@@ -98,11 +98,15 @@ public class GameLobby extends IdentifiableObject {
         return this.players.stream().map(Player::getName).collect(Collectors.toList());
     }
 
-    public Player getOwner() {
-        return this.owner;
+    public UUID getOwnerId() {
+        return this.owner.getId();
     }
 
     public GameLobbySettings getLobbySettings() {
         return this.lobbySettings;
+    }
+
+    public List<UUID> getPlayerIds() {
+        return this.players.stream().map(Player::getId).collect(Collectors.toList());
     }
 }

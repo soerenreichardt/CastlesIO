@@ -46,19 +46,29 @@ public class LobbyService {
 
     public void updateLobbyState(UUID id) {
         var gameLobby = server.gameLobbyById(id);
-        var lobbySseEmitters = this.emitterService.getAllLobbyEmitters(gameLobby.getId());
-        for (var playerSseEmitter : lobbySseEmitters) {
-            try {
-                playerSseEmitter.send(LobbyStateDTO.from(gameLobby));
-            } catch (IOException e) {
-                lobbySseEmitters.remove(playerSseEmitter);
-            }
+        var playerIds = gameLobby.getPlayerIds();
+        for (var playerId : playerIds) {
+                updateLobbyStateToPlayer(id, playerId);
         }
     }
 
-    public void updateLobbyStateToPlayer(UUID id, UUID playerId) throws IOException {
+    public void updateLobbyStateToPlayer(UUID id, UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
+        var playerLobbyStateDTO = getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);
         var playerSseEmitter = this.emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), playerId);
-        playerSseEmitter.send(LobbyStateDTO.from(gameLobby));
+
+        try {
+            playerSseEmitter.send(playerLobbyStateDTO);
+        } catch (IOException e) {
+            playerSseEmitter.complete();
+        }
+    }
+
+    private LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
+        LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        if (gameLobby.getOwnerId() == playerId) {
+            lobbyStateDTO.getLobbySettings().setEditable(true);
+        }
+        return lobbyStateDTO;
     }
 }
