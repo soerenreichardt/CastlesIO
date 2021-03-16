@@ -1,5 +1,6 @@
 package io.castles.core.board.statistics;
 
+import io.castles.core.board.statistics.algorithm.MatrixBfs;
 import io.castles.core.tile.Matrix;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
@@ -8,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Graph {
 
@@ -66,45 +66,12 @@ public class Graph {
     }
 
     private void graphFromMatrixBfs(Matrix<TileContent> contentMatrix, BitSet seenPositions, int row, int column, long tileId) {
-        Set<Node> bfsSeen = new HashSet<>();
-        Queue<Node> queue = new LinkedBlockingQueue<>();
-
-        Node node = new Node(tileId, row, column);
-        queue.offer(node);
-        while (!queue.isEmpty()) {
-            Node currentNode = queue.poll();
-
-            if (bfsSeen.contains(currentNode))  continue;
-
-            List<Node> neighbors = new ArrayList<>();
-            if (row > 0) visitNeighbor(contentMatrix, neighbors, seenPositions, row - 1, column, tileId);
-            if (row < contentMatrix.getRows() - 1) visitNeighbor(contentMatrix, neighbors, seenPositions,row + 1, column, tileId);
-            if (column > 0) visitNeighbor(contentMatrix, neighbors, seenPositions, row, column - 1, tileId);
-            if (column < contentMatrix.getColumns() - 1) visitNeighbor(contentMatrix, neighbors, seenPositions, row, column + 1, tileId);
-
-            addNode(currentNode);
-            bfsSeen.add(currentNode);
-            neighbors.forEach(queue::offer);
-        }
-    }
-
-    private void visitNeighbor(Matrix<TileContent> contentMatrix, List<Node> validNeighbors, BitSet seenPositions, int row, int column, long tileId) {
-        TileContent tileContent = contentMatrix.get(row, column);
-        seenPositions.set(column + contentMatrix.getColumns() * row);
-        if (tileContent == this.tileContent) {
-            validNeighbors.add(new Node(tileId, row, column));
-        }
+        MatrixBfs matrixBfs = new MatrixBfs(contentMatrix, tileContent, seenPositions, tileId);
+        matrixBfs.compute(new Node(tileId, row, column), this::addNode);
     }
 
     @Value
-    @EqualsAndHashCode
-    static class Position {
-        int row;
-        int column;
-    }
-
-    @Value
-    static class Node {
+    public static class Node {
         long tileId;
         int row;
         int column;
@@ -112,7 +79,7 @@ public class Graph {
 
     @Value
     @EqualsAndHashCode
-    static class Relationship {
+    public static class Relationship {
         Node source;
         Node target;
     }
