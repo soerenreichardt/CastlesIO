@@ -57,67 +57,6 @@ public class Graph {
         tiles.forEach(this::connectTileToAdjacentGraph);
     }
 
-    private void connectTileToAdjacentGraph(Tile tile) {
-        Tile[] neighbors = tile.getNeighbors();
-        for (int direction = 0, neighborsLength = neighbors.length; direction < neighborsLength; direction++) {
-            Tile neighbor = neighbors[direction];
-            if (neighbor != null) {
-                connectTileToAdjacentTile(tile, neighbor, direction);
-            }
-        }
-    }
-
-    private void connectTileToAdjacentTile(Tile tile, Tile neighbor, int direction) {
-        MatrixTileLayout tileLayout = tile.getTileLayout();
-        MatrixTileLayout neighborLayout = neighbor.getTileLayout();
-
-        var tileContentEdge = tileLayout.getTileContentEdge(direction);
-        var neighborContentEdge = neighborLayout.getTileContentEdge(TileSupport.oppositeDirection(direction));
-
-        Map<Integer, List<Integer>> tileContentEdgeIndicesMapping = new HashMap<>();
-        MatrixTileLayout.compareTileEdgesWithIndex(tileContentEdge, neighborContentEdge, (lhsEdge, lhsIndex, rhsEdge, rhsIndex) -> {
-            if (lhsEdge == tileContent && rhsEdge == tileContent) {
-                tileContentEdgeIndicesMapping.computeIfAbsent(lhsIndex, __ -> new ArrayList<>()).add(rhsIndex);
-            }
-            return true;
-        });
-
-        Tile smallTile;
-        Tile largeTile;
-        int smallDirection;
-        int largeDirection;
-
-        if (tileContentEdge.length >= neighborContentEdge.length) {
-            largeTile = tile;
-            largeDirection = direction;
-            smallTile = neighbor;
-            smallDirection = TileSupport.oppositeDirection(direction);
-        } else {
-            largeTile = neighbor;
-            largeDirection = TileSupport.oppositeDirection(direction);
-            smallTile = tile;
-            smallDirection = direction;
-        }
-
-        tileContentEdgeIndicesMapping.forEach((smallIndex, largeIndices) -> {
-            MatrixTileLayout smallLayout = smallTile.getTileLayout();
-            Matrix<TileContent> smallMatrix = smallLayout.getContent();
-            int resolvedSmallMatrixIndex = smallLayout.getResolvedPositionInMatrix(smallIndex, smallDirection);
-            Node source = new Node(smallTile.getId(), smallMatrix.getRowFromIndex(resolvedSmallMatrixIndex), smallMatrix.getColumnFromIndex(resolvedSmallMatrixIndex));
-
-            largeIndices.forEach(largeIndex -> {
-                MatrixTileLayout largeLayout = largeTile.getTileLayout();
-                Matrix<TileContent> largeMatrix = largeLayout.getContent();
-                int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
-                Node target = new Node(largeTile.getId(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
-                if (!nodes.contains(source) || !nodes.contains(target)) {
-                    throw new IllegalStateException("Computed node not found in list of nodes");
-                }
-                addRelationship(source, target);
-            });
-        });
-    }
-
     private void createTileInternalGraph(Tile tile) {
         MatrixTileLayout tileLayout = tile.getTileLayout();
         Matrix<TileContent> contentMatrix = tileLayout.getContent();
@@ -143,6 +82,82 @@ public class Graph {
         matrixBfs.compute(new Node(tileId, row, column), (node, neighbors) -> {
             addNode(node);
             neighbors.forEach(neighbor -> addRelationship(node, neighbor));
+        });
+    }
+
+    private void connectTileToAdjacentGraph(Tile tile) {
+        Tile[] neighbors = tile.getNeighbors();
+        for (int direction = 0, neighborsLength = neighbors.length; direction < neighborsLength; direction++) {
+            Tile neighbor = neighbors[direction];
+            if (neighbor != null) {
+                connectTileToAdjacentTile(tile, neighbor, direction);
+            }
+        }
+    }
+
+    /**
+     * Creates relationships between touching edges of
+     * adjacent tiles.
+     */
+    private void connectTileToAdjacentTile(Tile tile, Tile neighbor, int direction) {
+        MatrixTileLayout tileLayout = tile.getTileLayout();
+        MatrixTileLayout neighborLayout = neighbor.getTileLayout();
+
+        var tileContentEdge = tileLayout.getTileContentEdge(direction);
+        var neighborContentEdge = neighborLayout.getTileContentEdge(TileSupport.oppositeDirection(direction));
+
+        // Gets mapping information between indices of 2 adjacent tile edges
+        // Positions in smaller edges are mapped to one or more positions in larger edges
+        Map<Integer, List<Integer>> tileContentEdgeIndicesMapping = new HashMap<>();
+        MatrixTileLayout.compareTileEdgesWithIndex(tileContentEdge, neighborContentEdge, (lhsEdge, lhsIndex, rhsEdge, rhsIndex) -> {
+            if (lhsEdge == tileContent && rhsEdge == tileContent) {
+                tileContentEdgeIndicesMapping.computeIfAbsent(lhsIndex, __ -> new ArrayList<>()).add(rhsIndex);
+            }
+            return true;
+        });
+
+        // Find larger and smaller tile edge
+        Tile smallTile;
+        Tile largeTile;
+        int smallDirection;
+        int largeDirection;
+
+        if (tileContentEdge.length >= neighborContentEdge.length) {
+            largeTile = tile;
+            largeDirection = direction;
+            smallTile = neighbor;
+            smallDirection = TileSupport.oppositeDirection(direction);
+        } else {
+            largeTile = neighbor;
+            largeDirection = TileSupport.oppositeDirection(direction);
+            smallTile = tile;
+            smallDirection = direction;
+        }
+
+        traverseEdgeIndicesMapping(tileContentEdgeIndicesMapping, smallTile, largeTile, smallDirection, largeDirection);
+    }
+
+    /**
+     * Traverse index mapping information between smaller and larger edge
+     * Creates a relationship between any of these mappings
+     */
+    private void traverseEdgeIndicesMapping(Map<Integer, List<Integer>> tileContentEdgeIndicesMapping, Tile smallTile, Tile largeTile, int smallDirection, int largeDirection) {
+        tileContentEdgeIndicesMapping.forEach((smallIndex, largeIndices) -> {
+            MatrixTileLayout smallLayout = smallTile.getTileLayout();
+            Matrix<TileContent> smallMatrix = smallLayout.getContent();
+            int resolvedSmallMatrixIndex = smallLayout.getResolvedPositionInMatrix(smallIndex, smallDirection);
+            Node source = new Node(smallTile.getId(), smallMatrix.getRowFromIndex(resolvedSmallMatrixIndex), smallMatrix.getColumnFromIndex(resolvedSmallMatrixIndex));
+
+            largeIndices.forEach(largeIndex -> {
+                MatrixTileLayout largeLayout = largeTile.getTileLayout();
+                Matrix<TileContent> largeMatrix = largeLayout.getContent();
+                int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
+                Node target = new Node(largeTile.getId(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
+                if (!nodes.contains(source) || !nodes.contains(target)) {
+                    throw new IllegalStateException("Computed node not found in list of nodes");
+                }
+                addRelationship(source, target);
+            });
         });
     }
 

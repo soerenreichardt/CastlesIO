@@ -75,6 +75,14 @@ public class MatrixTileLayout extends AbstractTileLayout {
         return contentMatrix;
     }
 
+    /**
+     * Computes the position of an index pointing to a tile edge
+     * of the underlying matrix.
+     *
+     * @param indexInContentEdge Index of a given tile edge
+     * @param direction Direction of the tile edge
+     * @return Position in values array of the underlying matrix
+     */
     public int getResolvedPositionInMatrix(int indexInContentEdge, int direction) {
         direction = activeRotation[direction];
         if (direction == TOP) {
