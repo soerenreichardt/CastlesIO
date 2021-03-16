@@ -29,36 +29,39 @@ public class MatrixTileLayout extends AbstractTileLayout {
     @Override
     protected boolean matchesTileWithAppliedRotation(TileContent[] otherTileEdge, int rotatedDirection) {
         TileContent[] tileEdge = getTileContentEdgeWithAppliedRotation(rotatedDirection);
-        if (tileEdge.length == otherTileEdge.length) {
-            for (int i = 0; i < tileEdge.length; i++) {
-                if (!tileEdge[i].matches(otherTileEdge[i])) {
+        return compareTileEdges(tileEdge, otherTileEdge, TileContent::matches);
+    }
+
+    public boolean compareTileEdges(TileContent[] lhs, TileContent[] rhs, AdjacentTileEdgesVisitor consumer) {
+        if (lhs.length == rhs.length) {
+            for (int i = 0; i < lhs.length; i++) {
+                if (!consumer.accept(lhs[i], rhs[i])) {
                     return false;
                 }
             }
         } else {
             TileContent[] smallEdge;
             TileContent[] largeEdge;
-            if (tileEdge.length > otherTileEdge.length) {
-                smallEdge = otherTileEdge;
-                largeEdge = tileEdge;
+            if (lhs.length > rhs.length) {
+                smallEdge = rhs;
+                largeEdge = lhs;
             } else {
-                smallEdge = tileEdge;
-                largeEdge = otherTileEdge;
+                smallEdge = lhs;
+                largeEdge = rhs;
             }
             int sizeDifference = largeEdge.length - smallEdge.length - 1;
 
             // match center
             int largeHalf = largeEdge.length / 2;
             int smallHalf = smallEdge.length / 2;
-            if (!largeEdge[largeHalf].matches(smallEdge[smallHalf])) {
+            if (!consumer.accept(largeEdge[largeHalf], smallEdge[smallHalf])) {
                 return false;
             }
 
             for (int smallIndex = 0; smallIndex < smallEdge.length / 2; smallIndex++) {
                 for (int largeIndex = 0; largeIndex < sizeDifference; largeIndex++) {
-                    var match = smallEdge[smallHalf + smallIndex + 1].matches(largeEdge[largeHalf + (smallIndex * 2) + largeIndex + 1])
-                            || smallEdge[smallHalf - smallIndex + 1].matches(largeEdge[largeHalf - (smallIndex * 2) + largeIndex + 1]);
-                    if (!match) {
+                    if (!(consumer.accept(smallEdge[smallHalf + smallIndex + 1], largeEdge[largeHalf + (smallIndex * 2) + largeIndex + 1])
+                        || consumer.accept(smallEdge[smallHalf - smallIndex + 1], largeEdge[largeHalf - (smallIndex * 2) + largeIndex + 1]))) {
                         return false;
                     }
                 }
@@ -131,6 +134,11 @@ public class MatrixTileLayout extends AbstractTileLayout {
         if (row < contentMatrix.getRows() - 1) neighbors.add(contentMatrix.get(row + 1, column));
 
         return TileContent.getById(TileContent.merge(neighbors.toArray(TileContent[]::new)));
+    }
+
+    @FunctionalInterface
+    interface AdjacentTileEdgesVisitor {
+        boolean accept(TileContent lhs, TileContent rhs);
     }
 
     static final class MatrixTileLayoutBuilder implements Builder<MatrixTileLayout> {

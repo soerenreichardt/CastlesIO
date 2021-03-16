@@ -1,7 +1,6 @@
 package io.castles.core.graph.algorithm;
 
 import io.castles.core.graph.Graph;
-import io.castles.core.graph.algorithm.AbstractBreadthFirstSearch;
 import io.castles.core.tile.Matrix;
 import io.castles.core.tile.TileContent;
 

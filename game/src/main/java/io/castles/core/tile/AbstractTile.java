@@ -22,7 +22,7 @@ abstract class AbstractTile {
         return this.tileLayout;
     }
 
-    TileContent[] getTileEdges() {
+    TileContent[] getTileEdgeCenters() {
         var singleTypeTileEdges = new TileContent[TileLayout.NUM_EDGES];
         for (int i = 0; i < TileLayout.NUM_EDGES; i++) {
             TileContent[] tileContentEdge = tileLayout.getTileContentEdge(i);

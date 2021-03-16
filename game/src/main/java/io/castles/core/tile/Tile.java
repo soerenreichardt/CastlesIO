@@ -57,7 +57,7 @@ public class Tile {
     }
 
     public TileContent[] getTileEdges() {
-        return delegate.getTileEdges();
+        return delegate.getTileEdgeCenters();
     }
 
     public <T> T getTileLayout() {
