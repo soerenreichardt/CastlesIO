@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -165,6 +166,29 @@ class MatrixTileLayoutTest {
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.LEFT)).isTrue();
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.TOP)).isFalse();
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.BOTTOM)).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3 })
+    void shouldComputePositionInMatrix(int rotation) {
+        MatrixTileLayout tileLayout = new MatrixTileLayout(matrix);
+        tileLayout.rotate(0);
+
+        assertThat(tileLayout.getResolvedPositionInMatrix(0, TileLayout.TOP)).isEqualTo(0);
+        assertThat(tileLayout.getResolvedPositionInMatrix(1, TileLayout.TOP)).isEqualTo(1);
+        assertThat(tileLayout.getResolvedPositionInMatrix(2, TileLayout.TOP)).isEqualTo(2);
+
+        assertThat(tileLayout.getResolvedPositionInMatrix(0, TileLayout.LEFT)).isEqualTo(0);
+        assertThat(tileLayout.getResolvedPositionInMatrix(1, TileLayout.LEFT)).isEqualTo(3);
+        assertThat(tileLayout.getResolvedPositionInMatrix(2, TileLayout.LEFT)).isEqualTo(6);
+
+        assertThat(tileLayout.getResolvedPositionInMatrix(0, TileLayout.BOTTOM)).isEqualTo(6);
+        assertThat(tileLayout.getResolvedPositionInMatrix(1, TileLayout.BOTTOM)).isEqualTo(7);
+        assertThat(tileLayout.getResolvedPositionInMatrix(2, TileLayout.BOTTOM)).isEqualTo(8);
+
+        assertThat(tileLayout.getResolvedPositionInMatrix(0, TileLayout.RIGHT)).isEqualTo(2);
+        assertThat(tileLayout.getResolvedPositionInMatrix(1, TileLayout.RIGHT)).isEqualTo(5);
+        assertThat(tileLayout.getResolvedPositionInMatrix(2, TileLayout.RIGHT)).isEqualTo(8);
     }
 
     @Nested

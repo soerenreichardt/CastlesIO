@@ -22,4 +22,18 @@ class MatrixTest {
         assertThat(integerMatrix).isEqualTo(new Matrix<>(2, 2, new Integer[]{1, 2, 3, 4}));
     }
 
+    @Test
+    void shouldComputeRowAndColumnBasedOnIndex() {
+        Matrix<Integer> matrix = new Matrix<>(3, 3, new Integer[]{
+                0, 1, 2,
+                3, 4, 5,
+                6, 7, 8
+        });
+        assertThat(matrix.getColumnFromIndex(3)).isEqualTo(0);
+        assertThat(matrix.getRowFromIndex(3)).isEqualTo(1);
+
+        assertThat(matrix.getColumnFromIndex(7)).isEqualTo(1);
+        assertThat(matrix.getRowFromIndex(7)).isEqualTo(2);
+    }
+
 }

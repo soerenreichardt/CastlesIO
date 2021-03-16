@@ -40,6 +40,11 @@ public class Board {
         return new Board(() -> Tile.drawStatic(border));
     }
 
+    @TestOnly
+    public static Board withSpecificTile(TileLayout layout) {
+        return new Board(() -> new Tile(layout));
+    }
+
     private Board(TileProducer tileProducer) {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;

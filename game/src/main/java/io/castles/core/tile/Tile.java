@@ -39,7 +39,7 @@ public class Tile {
         return new Tile(tileLayout);
     }
 
-    private Tile(TileLayout tileLayout) {
+    public Tile(TileLayout tileLayout) {
         this(getNewId(), tileLayout);
     }
 
