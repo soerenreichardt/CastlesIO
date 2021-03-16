@@ -56,8 +56,9 @@ class LobbyControllerTest {
     @Test
     void shouldJoinAsPlayer() throws Exception {
         var gameLobby = new GameLobby("Test");
-
+        var sseEmitter = new SseEmitter();
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
+        Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(sseEmitter);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
 
         assertEquals(0, gameLobby.getNumPlayers());
