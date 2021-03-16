@@ -1,4 +1,4 @@
-package io.castles.core.board.statistics.algorithm;
+package io.castles.core.graph.algorithm;
 
 import java.util.HashSet;
 import java.util.List;

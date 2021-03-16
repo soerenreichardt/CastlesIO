@@ -1,6 +1,6 @@
-package io.castles.core.board.statistics;
+package io.castles.core.graph;
 
-import io.castles.core.board.statistics.algorithm.MatrixBfs;
+import io.castles.core.graph.algorithm.MatrixBfs;
 import io.castles.core.tile.Matrix;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;

@@ -1,5 +1,6 @@
 package io.castles.core.board.statistics;
 
+import io.castles.core.graph.Graph;
 import io.castles.core.tile.Matrix;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
