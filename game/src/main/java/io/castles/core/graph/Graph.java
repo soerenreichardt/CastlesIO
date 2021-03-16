@@ -52,6 +52,11 @@ public class Graph {
         connectTileToAdjacentGraph(tile);
     }
 
+    public void fromExistingBoard(List<Tile> tiles) {
+        tiles.forEach(this::createTileInternalGraph);
+        tiles.forEach(this::connectTileToAdjacentGraph);
+    }
+
     private void connectTileToAdjacentGraph(Tile tile) {
         Tile[] neighbors = tile.getNeighbors();
         for (int direction = 0, neighborsLength = neighbors.length; direction < neighborsLength; direction++) {
