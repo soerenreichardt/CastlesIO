@@ -35,6 +35,10 @@ public class Graph {
         return (int) relationships.entrySet().stream().flatMap(entry -> entry.getValue().stream()).count();
     }
 
+    public TileContent tileContent() {
+        return tileContent;
+    }
+
     public void addNode(Node node) {
         this.nodes.add(node);
     }

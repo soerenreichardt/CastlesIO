@@ -3,6 +3,7 @@ package io.castles.core.graph.algorithm;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public abstract class AbstractBreadthFirstSearch<T> {
 
@@ -18,8 +19,11 @@ public abstract class AbstractBreadthFirstSearch<T> {
 
             if (!seen.contains(element)) {
                 Collection<T> neighbors = getNeighbors(element);
-                consumer.accept(element, neighbors);
-                neighbors.forEach(queue::offer);
+                Collection<T> unseenNeighbors = neighbors.stream()
+                        .filter(neighbor -> !seen.contains(neighbor))
+                        .collect(Collectors.toList());
+                consumer.accept(element, unseenNeighbors);
+                unseenNeighbors.forEach(queue::offer);
             } else {
                 consumer.accept(element, List.of());
             }
