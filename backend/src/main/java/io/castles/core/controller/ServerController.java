@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,8 @@ public class ServerController {
 
     @PostMapping("/lobby")
     @ResponseBody
-    UUID createLobby(@RequestParam("lobbyName") String name) {
-        return this.server.createGameLobby(name).getId();
+    UUID createLobby(@RequestParam("lobbyName") String name, @RequestParam("playerName") String playerName) {
+        Player player = new Player(playerName);
+        return this.server.createGameLobby(name, player).getId();
     }
 }

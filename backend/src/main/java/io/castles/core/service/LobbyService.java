@@ -7,9 +7,7 @@ import io.castles.game.Server;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.management.InstanceNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -37,7 +35,7 @@ public class LobbyService {
 
     public SseEmitter reconnectLobby(UUID id, UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
-        if (!gameLobby.isPlayerInLobby(playerId)) {
+        if (!gameLobby.containsPlayer(playerId)) {
             throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
         }
         this.emitterService.createPlayerEmitterForLobby(id, playerId);

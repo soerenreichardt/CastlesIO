@@ -41,7 +41,8 @@ class LobbyControllerTest {
 
     @Test
     void shouldGetPublicLobbyInfo() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var owner = new Player("Owner");
+        var gameLobby = new GameLobby("Test", owner);
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/info", gameLobby.getId());
@@ -55,37 +56,37 @@ class LobbyControllerTest {
 
     @Test
     void shouldJoinAsPlayer() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var owner = new Player("Owner");
+        var gameLobby = new GameLobby("Test", owner);
         var sseEmitter = new SseEmitter();
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(sseEmitter);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
 
-        assertEquals(0, gameLobby.getNumPlayers());
+        assertEquals(1, gameLobby.getNumPlayers());
         mvc.perform(MockMvcRequestBuilders.put(urlTemplate).param("playerName", "Foo Bar"))
                 .andExpect(status().isOk());
-        assertEquals(1, gameLobby.getNumPlayers());
+        assertEquals(2, gameLobby.getNumPlayers());
     }
 
     @Test
     void shouldRemovePlayer() throws Exception {
-        var gameLobby = new GameLobby("Test");
-        var player = new Player("p1");
+        var owner = new Player("Owner");
+        var gameLobby = new GameLobby("Test", owner);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
-
-        gameLobby.addPlayer(player);
 
         var urlTemplate = String.format("/lobby/%s/leave", gameLobby.getId());
 
         assertEquals(1, gameLobby.getNumPlayers());
-        mvc.perform(MockMvcRequestBuilders.delete(urlTemplate).param("playerId", player.getId().toString()))
+        mvc.perform(MockMvcRequestBuilders.delete(urlTemplate).param("playerId", owner.getId().toString()))
                 .andExpect(status().isOk());
         assertEquals(0, gameLobby.getNumPlayers());
     }
 
     @Test
     void shouldStartAGame() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var owner = new Player("Owner");
+        var gameLobby = new GameLobby("Test", owner);
         for (int i = 0; i < GameLobby.MIN_PLAYERS; i++) {
             gameLobby.addPlayer(new Player("" + i));
         }
@@ -108,10 +109,11 @@ class LobbyControllerTest {
     }
 
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var owner = new Player("Owner");
+        var gameLobby = new GameLobby("Test", owner);
         var player = new Player("P1");
         var emitter = new SseEmitter();
-        Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
+        Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);
 

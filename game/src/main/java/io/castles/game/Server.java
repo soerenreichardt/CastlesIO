@@ -22,8 +22,8 @@ public class Server {
         this.activeLobbies = new ConcurrentHashMap<>();
     }
 
-    public GameLobby createGameLobby(String name) {
-        var gameLobby = new GameLobby(name);
+    public GameLobby createGameLobby(String name, Player owner) {
+        var gameLobby = new GameLobby(name, owner);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         return gameLobby;
     }

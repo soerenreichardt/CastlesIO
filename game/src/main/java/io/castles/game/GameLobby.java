@@ -14,10 +14,11 @@ public class GameLobby extends IdentifiableObject {
     private final String name;
     private Player owner;
 
-    public GameLobby(String name) {
+    public GameLobby(String name, Player owner) {
         this.name = name;
         this.players = new HashSet<>();
-        this.owner = null;
+        this.owner = owner;
+        this.players.add(owner);
         this.lobbySettings = GameLobbySettings.builder().build();
     }
 
@@ -33,9 +34,6 @@ public class GameLobby extends IdentifiableObject {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
-        if (this.owner == null) {
-            this.owner = player;
-        }
     }
 
     public void removePlayer(Player player) {
@@ -65,7 +63,7 @@ public class GameLobby extends IdentifiableObject {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
     }
 
-    public boolean isPlayerInLobby(UUID playerId) {
+    public boolean containsPlayer(UUID playerId) {
         var playerIds = this.players.stream().map(Player::getId).collect(Collectors.toList());
         return playerIds.contains(playerId);
     }
