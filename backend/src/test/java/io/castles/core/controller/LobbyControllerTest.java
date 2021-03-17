@@ -41,7 +41,7 @@ class LobbyControllerTest {
 
     @Test
     void shouldGetPublicLobbyInfo() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var gameLobby = new GameLobby("Test", GameLobby.Visibility.PUBLIC);
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/info", gameLobby.getId());
@@ -55,7 +55,7 @@ class LobbyControllerTest {
 
     @Test
     void shouldJoinAsPlayer() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var gameLobby = new GameLobby("Test", GameLobby.Visibility.PUBLIC);
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
@@ -68,7 +68,7 @@ class LobbyControllerTest {
 
     @Test
     void shouldRemovePlayer() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var gameLobby = new GameLobby("Test", GameLobby.Visibility.PUBLIC);
         var player = new Player("p1");
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
 
@@ -84,7 +84,7 @@ class LobbyControllerTest {
 
     @Test
     void shouldStartAGame() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var gameLobby = new GameLobby("Test", GameLobby.Visibility.PUBLIC);
         for (int i = 0; i < GameLobby.MIN_PLAYERS; i++) {
             gameLobby.addPlayer(new Player("" + i));
         }
@@ -105,7 +105,7 @@ class LobbyControllerTest {
     }
 
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
-        var gameLobby = new GameLobby("Test");
+        var gameLobby = new GameLobby("Test", GameLobby.Visibility.PUBLIC);
         var player = new Player("P1");
         var emitter = new SseEmitter();
         Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);

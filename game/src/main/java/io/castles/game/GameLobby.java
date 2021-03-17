@@ -12,15 +12,26 @@ public class GameLobby extends IdentifiableObject {
     public static final int MIN_PLAYERS = 2;
     public static final int MAX_PLAYERS = 5;
 
+    private final String name;
+    private final Visibility visibility;
     private final Set<Player> players;
     private final GameSettingsBuilder settingsBuilder;
-    private final String name;
 
-    public GameLobby(String name) {
+    public enum Visibility {
+        PUBLIC,
+        PRIVATE
+    }
+
+    public GameLobby(String name, Visibility visibility) {
         this.name = name;
+        this.visibility = visibility;
         this.players = new HashSet<>();
         this.settingsBuilder = GameSettings.builder();
         this.settingsBuilder.name(name);
+    }
+
+    boolean isPublic() {
+        return visibility == Visibility.PUBLIC;
     }
 
     Game startGame() {

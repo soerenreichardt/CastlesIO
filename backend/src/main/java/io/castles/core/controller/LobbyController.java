@@ -43,7 +43,6 @@ public class LobbyController {
         return PublicLobbyDTO.from(gameLobby);
     }
 
-
     @DeleteMapping("/leave")
     void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {
         GameLobby gameLobby = server.gameLobbyById(id);

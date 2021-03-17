@@ -30,7 +30,7 @@ class ServerControllerTest {
     @Test
     void shouldCreateNewLobby() throws Exception {
         String lobbyName = "Test";
-        GameLobby gameLobby = new GameLobby(lobbyName);
+        GameLobby gameLobby = new GameLobby(lobbyName, GameLobby.Visibility.PUBLIC);
         Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
         mvc.perform(MockMvcRequestBuilders.post("/lobby").param("lobbyName", lobbyName))
                 .andExpect(status().isOk())
