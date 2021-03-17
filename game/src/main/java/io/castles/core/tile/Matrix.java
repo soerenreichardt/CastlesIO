@@ -20,4 +20,12 @@ public class Matrix<T> {
     public T get(int row, int column) {
         return values[column + columns * row];
     }
+
+    public int getRowFromIndex(int index) {
+        return index / columns;
+    }
+
+    public int getColumnFromIndex(int index) {
+        return index % columns;
+    }
 }

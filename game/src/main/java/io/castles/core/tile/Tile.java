@@ -39,7 +39,7 @@ public class Tile {
         return new Tile(tileLayout);
     }
 
-    private Tile(TileLayout tileLayout) {
+    public Tile(TileLayout tileLayout) {
         this(getNewId(), tileLayout);
     }
 
@@ -57,7 +57,7 @@ public class Tile {
     }
 
     public TileContent[] getTileEdges() {
-        return delegate.getTileEdges();
+        return delegate.getTileEdgeCenters();
     }
 
     public <T> T getTileLayout() {
