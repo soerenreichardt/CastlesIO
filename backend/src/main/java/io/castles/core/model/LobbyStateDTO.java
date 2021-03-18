@@ -9,11 +9,13 @@ import java.util.List;
 public class LobbyStateDTO {
     List<String> playerNames;
     String lobbyName;
+    LobbySettingsDTO lobbySettings;
 
     public static LobbyStateDTO from(GameLobby gameLobby) {
         return new LobbyStateDTO(
                 gameLobby.getPlayerNames(),
-                gameLobby.getName()
+                gameLobby.getName(),
+                LobbySettingsDTO.from(gameLobby.getLobbySettings())
         );
     }
 }

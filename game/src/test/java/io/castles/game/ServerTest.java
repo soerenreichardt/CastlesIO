@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerTest {
 
     static final Server server = Server.getInstance();
+    private static final Player DEFAULT_PLAYER = new Player("P1");
 
     @AfterEach
     void tearDown() {
@@ -18,14 +19,14 @@ class ServerTest {
     @Test
     void shouldCreateAndLookupNamedLobbies() {
         assertEquals(0, server.getActiveGameLobbies().size());
-        GameLobby gameLobby = server.createGameLobby("Test");
+        GameLobby gameLobby = server.createGameLobby("Test", DEFAULT_PLAYER);
         assertEquals(1, server.getActiveGameLobbies().size());
         assertEquals(gameLobby, server.gameLobbyById(gameLobby.getId()));
     }
 
     @Test
     void shouldStartAGameAndRemoveFromLobbies() {
-        GameLobby gameLobby = server.createGameLobby("Test");
+        GameLobby gameLobby = server.createGameLobby("Test", DEFAULT_PLAYER);
         gameLobby.setGameMode(GameMode.DEBUG);
 
         gameLobby.addPlayer(new Player("p1"));

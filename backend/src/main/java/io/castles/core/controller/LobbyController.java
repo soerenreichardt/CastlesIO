@@ -26,7 +26,7 @@ public class LobbyController {
     private final LobbyService lobbyService;
 
     @PutMapping("/join")
-    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam String playerName) {
+    UUID addPlayer(@PathVariable("id") UUID id, @RequestParam("playerName") String playerName) {
         var player = new Player(playerName);
         try {
             lobbyService.joinLobby(id, player);
@@ -42,7 +42,6 @@ public class LobbyController {
         GameLobby gameLobby = server.gameLobbyById(id);
         return PublicLobbyDTO.from(gameLobby);
     }
-
 
     @DeleteMapping("/leave")
     void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {

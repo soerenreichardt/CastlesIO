@@ -7,9 +7,7 @@ import io.castles.game.Server;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.management.InstanceNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -37,7 +35,7 @@ public class LobbyService {
 
     public SseEmitter reconnectLobby(UUID id, UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
-        if (!gameLobby.isPlayerInLobby(playerId)) {
+        if (!gameLobby.containsPlayer(playerId)) {
             throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
         }
         this.emitterService.createPlayerEmitterForLobby(id, playerId);
@@ -46,19 +44,29 @@ public class LobbyService {
 
     public void updateLobbyState(UUID id) {
         var gameLobby = server.gameLobbyById(id);
-        var lobbySseEmitters = this.emitterService.getAllLobbyEmitters(gameLobby.getId());
-        for (var playerSseEmitter : lobbySseEmitters) {
-            try {
-                playerSseEmitter.send(LobbyStateDTO.from(gameLobby));
-            } catch (IOException e) {
-                lobbySseEmitters.remove(playerSseEmitter);
-            }
+        var playerIds = gameLobby.getPlayerIds();
+        for (var playerId : playerIds) {
+                updateLobbyStateToPlayer(id, playerId);
         }
     }
 
-    public void updateLobbyStateToPlayer(UUID id, UUID playerId) throws IOException {
+    public void updateLobbyStateToPlayer(UUID id, UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
+        var playerLobbyStateDTO = getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);
         var playerSseEmitter = this.emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), playerId);
-        playerSseEmitter.send(LobbyStateDTO.from(gameLobby));
+
+        try {
+            playerSseEmitter.send(playerLobbyStateDTO);
+        } catch (IOException e) {
+            playerSseEmitter.complete();
+        }
+    }
+
+    private LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
+        LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        if (gameLobby.getOwnerId() == playerId) {
+            lobbyStateDTO.getLobbySettings().setEditable(true);
+        }
+        return lobbyStateDTO;
     }
 }
