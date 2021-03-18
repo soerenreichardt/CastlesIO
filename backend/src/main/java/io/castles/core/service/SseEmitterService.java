@@ -33,5 +33,4 @@ public class SseEmitterService {
         }
         return List.of();
     }
-
 }

@@ -16,15 +16,15 @@ public class Board {
     private final List<BoardListener> boardListeners;
     private final BoardStatistics boardStatistics;
 
-    public static Board create(GameMode gameMode, Optional<List<Tile>> tileList) {
+    public static Board create(GameMode gameMode, List<Tile> tileList) {
         if (gameMode == GameMode.DEBUG) {
             return Board.withStaticTile(TileContent.GRAS);
         }
         if (gameMode == GameMode.ORIGINAL) {
-            List<Tile> tiles = tileList.orElseThrow(
-                    () -> new IllegalStateException(String.format("No list of tiles was specified for game mode %s", gameMode))
-            );
-            return Board.withPredefinedTiles(tiles);
+            if (tileList.isEmpty()) {
+                throw new IllegalStateException(String.format("No list of tiles was specified for game mode %s", gameMode));
+            }
+            return Board.withPredefinedTiles(tileList);
         }
 
         throw new IllegalArgumentException("This should never happen. I miss exhaustiveness checks :(");

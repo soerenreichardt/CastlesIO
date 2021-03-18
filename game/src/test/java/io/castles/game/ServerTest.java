@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerTest {
 
     static final Server server = Server.getInstance();
+    private static final Player DEFAULT_PLAYER = new Player("P1");
 
     @AfterEach
     void tearDown() {
@@ -21,14 +22,14 @@ class ServerTest {
     @Test
     void shouldCreateAndLookupNamedLobbies() {
         assertEquals(0, server.getActiveGameLobbies().size());
-        GameLobby gameLobby = server.createGameLobby("Test");
+        GameLobby gameLobby = server.createGameLobby("Test", DEFAULT_PLAYER);
         assertEquals(1, server.getActiveGameLobbies().size());
         assertEquals(gameLobby, server.gameLobbyById(gameLobby.getId()));
     }
 
     @Test
     void shouldStartAGameAndRemoveFromLobbies() {
-        GameLobby gameLobby = server.createGameLobby("Test");
+        GameLobby gameLobby = server.createGameLobby("Test", DEFAULT_PLAYER);
         gameLobby.setGameMode(GameMode.DEBUG);
 
         gameLobby.addPlayer(new Player("p1"));
@@ -48,10 +49,10 @@ class ServerTest {
 
     @Test
     void shouldListPublicLobbies() {
-        GameLobby lobby1 = server.createGameLobby("lobby1", GameLobby.Visibility.PUBLIC);
-        GameLobby lobby2 = server.createGameLobby("lobby2", GameLobby.Visibility.PRIVATE);
-        GameLobby lobby3 = server.createGameLobby("lobby3", GameLobby.Visibility.PUBLIC);
-        
+        GameLobby lobby1 = server.createGameLobby("lobby1", new Player("owner"), GameLobby.Visibility.PUBLIC);
+        GameLobby lobby2 = server.createGameLobby("lobby2", new Player("owner"), GameLobby.Visibility.PRIVATE);
+        GameLobby lobby3 = server.createGameLobby("lobby3", new Player("owner"), GameLobby.Visibility.PUBLIC);
+
         assertThat(server.publicGameLobbies()).containsExactlyInAnyOrderElementsOf(List.of(lobby1, lobby3));
     }
 }

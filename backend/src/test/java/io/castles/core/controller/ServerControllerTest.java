@@ -1,6 +1,7 @@
 package io.castles.core.controller;
 
 import io.castles.game.GameLobby;
+import io.castles.game.Player;
 import io.castles.game.Server;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,10 +30,11 @@ class ServerControllerTest {
 
     @Test
     void shouldCreateNewLobby() throws Exception {
-        String lobbyName = "Test";
-        GameLobby gameLobby = new GameLobby(lobbyName, GameLobby.Visibility.PUBLIC);
-        Mockito.when(server.createGameLobby(any(String.class))).thenReturn(gameLobby);
-        mvc.perform(MockMvcRequestBuilders.post("/lobby").param("lobbyName", lobbyName))
+        var lobbyName = "Test";
+        var player = new Player("P1");
+        var gameLobby = new GameLobby(lobbyName, player, GameLobby.Visibility.PUBLIC);
+        Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
+        mvc.perform(MockMvcRequestBuilders.post("/lobby").param("lobbyName", lobbyName).param("playerName", "P2"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(gameLobby.getId().toString())));
     }

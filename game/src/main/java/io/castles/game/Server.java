@@ -24,12 +24,14 @@ public class Server {
         this.activeLobbies = new ConcurrentHashMap<>();
     }
 
-    public GameLobby createGameLobby(String name) {
-        return createGameLobby(name, GameLobby.Visibility.PUBLIC);
+    public GameLobby createGameLobby(String name, Player owner) {
+        var gameLobby = new GameLobby(name, owner, GameLobby.Visibility.PUBLIC);
+        activeLobbies.put(gameLobby.getId(), gameLobby);
+        return gameLobby;
     }
 
-    public GameLobby createGameLobby(String name, GameLobby.Visibility visibility) {
-        var gameLobby = new GameLobby(name, visibility);
+    public GameLobby createGameLobby(String name, Player owner, GameLobby.Visibility visibility) {
+        var gameLobby = new GameLobby(name, owner, visibility);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         return gameLobby;
     }
