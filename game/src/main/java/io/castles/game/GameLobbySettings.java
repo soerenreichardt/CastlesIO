@@ -1,6 +1,7 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,6 @@ public class GameLobbySettings {
     private GameMode gameMode = GameMode.ORIGINAL;
     @Builder.Default
     private List<Tile> tileList = List.of();
+    @Builder.Default
+    private Visibility visibility = Visibility.PUBLIC;
 }

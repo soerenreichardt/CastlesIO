@@ -42,7 +42,7 @@ class LobbyControllerTest {
     @Test
     void shouldGetPublicLobbyInfo() throws Exception {
         var owner = new Player("Owner");
-        var gameLobby = new GameLobby("Test", owner, GameLobby.Visibility.PUBLIC);
+        var gameLobby = new GameLobby("Test", owner);
 
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         var urlTemplate = String.format("/lobby/%s/info", gameLobby.getId());
@@ -57,7 +57,7 @@ class LobbyControllerTest {
     @Test
     void shouldJoinAsPlayer() throws Exception {
         var owner = new Player("Owner");
-        var gameLobby = new GameLobby("Test", owner, GameLobby.Visibility.PUBLIC);
+        var gameLobby = new GameLobby("Test", owner);
         var sseEmitter = new SseEmitter();
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(sseEmitter);
@@ -72,7 +72,7 @@ class LobbyControllerTest {
     @Test
     void shouldRemovePlayer() throws Exception {
         var owner = new Player("Owner");
-        var gameLobby = new GameLobby("Test", owner, GameLobby.Visibility.PUBLIC);
+        var gameLobby = new GameLobby("Test", owner);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
 
         var urlTemplate = String.format("/lobby/%s/leave", gameLobby.getId());
@@ -86,7 +86,7 @@ class LobbyControllerTest {
     @Test
     void shouldStartAGame() throws Exception {
         var owner = new Player("Owner");
-        var gameLobby = new GameLobby("Test", owner, GameLobby.Visibility.PUBLIC);
+        var gameLobby = new GameLobby("Test", owner);
         for (int i = 0; i < GameLobby.MIN_PLAYERS; i++) {
             gameLobby.addPlayer(new Player("" + i));
         }
@@ -110,7 +110,7 @@ class LobbyControllerTest {
 
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
         var owner = new Player("Owner");
-        var gameLobby = new GameLobby("Test", owner, GameLobby.Visibility.PUBLIC);
+        var gameLobby = new GameLobby("Test", owner);
         var player = new Player("P1");
         var emitter = new SseEmitter();
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);

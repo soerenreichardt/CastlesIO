@@ -25,13 +25,7 @@ public class Server {
     }
 
     public GameLobby createGameLobby(String name, Player owner) {
-        var gameLobby = new GameLobby(name, owner, GameLobby.Visibility.PUBLIC);
-        activeLobbies.put(gameLobby.getId(), gameLobby);
-        return gameLobby;
-    }
-
-    public GameLobby createGameLobby(String name, Player owner, GameLobby.Visibility visibility) {
-        var gameLobby = new GameLobby(name, owner, visibility);
+        var gameLobby = new GameLobby(name, owner);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         return gameLobby;
     }

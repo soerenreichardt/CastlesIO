@@ -1,6 +1,7 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.Visibility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,9 +50,10 @@ class ServerTest {
 
     @Test
     void shouldListPublicLobbies() {
-        GameLobby lobby1 = server.createGameLobby("lobby1", new Player("owner"), GameLobby.Visibility.PUBLIC);
-        GameLobby lobby2 = server.createGameLobby("lobby2", new Player("owner"), GameLobby.Visibility.PRIVATE);
-        GameLobby lobby3 = server.createGameLobby("lobby3", new Player("owner"), GameLobby.Visibility.PUBLIC);
+        GameLobby lobby1 = server.createGameLobby("lobby1", new Player("owner"));
+        GameLobby lobby2 = server.createGameLobby("lobby2", new Player("owner"));
+        lobby2.getLobbySettings().setVisibility(Visibility.PRIVATE);
+        GameLobby lobby3 = server.createGameLobby("lobby3", new Player("owner"));
 
         assertThat(server.publicGameLobbies()).containsExactlyInAnyOrderElementsOf(List.of(lobby1, lobby3));
     }
