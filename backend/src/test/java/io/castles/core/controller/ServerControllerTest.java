@@ -1,6 +1,8 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.LobbySettingsDTO;
 import io.castles.game.GameLobby;
+import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import org.junit.jupiter.api.Test;
@@ -8,9 +10,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,12 +33,27 @@ class ServerControllerTest {
     private Server server;
 
     @Test
+    void shouldGetDefaultSettings() throws Exception {
+        var lobbySettingsDefaults = GameLobbySettings.builder().build();
+        var defaultLobbySettingsDTO = LobbySettingsDTO.from(lobbySettingsDefaults);
+        String urlTemplate = "/settings";
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate)).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("visibility").value("PUBLIC"));
+    }
+
+    @Test
     void shouldCreateNewLobby() throws Exception {
         var lobbyName = "Test";
         var player = new Player("P1");
         var gameLobby = new GameLobby(lobbyName, player);
+        var defaultSettings = mvc.perform(MockMvcRequestBuilders.get("/settings"))
+                .andReturn().getResponse().getContentAsString();
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
-        mvc.perform(MockMvcRequestBuilders.post("/lobby").param("lobbyName", lobbyName).param("playerName", "P2"))
+        mvc.perform(MockMvcRequestBuilders.post("/lobby")
+                .param("lobbyName", lobbyName)
+                .param("playerName", "P2")
+                .content(defaultSettings)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(gameLobby.getId().toString())));
     }
