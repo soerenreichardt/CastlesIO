@@ -1,5 +1,8 @@
 package io.castles.core.service;
 
+import io.castles.core.GameMode;
+import io.castles.core.Visibility;
+import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
@@ -68,5 +71,13 @@ public class LobbyService {
             lobbyStateDTO.getLobbySettings().setEditable(true);
         }
         return lobbyStateDTO;
+    }
+
+    public void updateLobbySettings(GameLobby gameLobby, LobbySettingsDTO lobbySettingsDTO) {
+        var lobbySettings = gameLobby.getLobbySettings();
+        lobbySettings.setTurnTimeSeconds(lobbySettingsDTO.getTurnTimeSeconds());
+        lobbySettings.setMaxPlayers(lobbySettingsDTO.getMaxPlayers());
+        lobbySettings.setGameMode(GameMode.valueOf(lobbySettingsDTO.getGameMode()));
+        lobbySettings.setVisibility(Visibility.valueOf(lobbySettingsDTO.getVisibility()));
     }
 }

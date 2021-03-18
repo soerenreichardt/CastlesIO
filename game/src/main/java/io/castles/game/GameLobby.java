@@ -1,6 +1,7 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,20 +10,13 @@ public class GameLobby extends IdentifiableObject {
 
     public static final int MIN_PLAYERS = 2;
 
-    private final Visibility visibility;
     private final Set<Player> players;
     private final GameLobbySettings lobbySettings;
     private final String name;
     private Player owner;
 
-    public enum Visibility {
-        PUBLIC,
-        PRIVATE
-    }
-
-    public GameLobby(String name, Player owner, Visibility visibility) {
+    public GameLobby(String name, Player owner) {
         this.name = name;
-        this.visibility = visibility;
         this.players = new HashSet<>();
         this.owner = owner;
         this.players.add(owner);
@@ -30,7 +24,7 @@ public class GameLobby extends IdentifiableObject {
     }
 
     boolean isPublic() {
-        return visibility == Visibility.PUBLIC;
+        return this.lobbySettings.getVisibility() == Visibility.PUBLIC;
     }
 
     Game startGame() {

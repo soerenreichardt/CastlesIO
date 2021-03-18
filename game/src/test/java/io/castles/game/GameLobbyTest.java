@@ -15,7 +15,7 @@ class GameLobbyTest {
 
     @BeforeEach
     void setup() {
-        this.gameLobby = new GameLobby("Test", new Player("owner"), GameLobby.Visibility.PUBLIC);
+        this.gameLobby = new GameLobby("Test", new Player("owner"));
     }
 
     @Test
