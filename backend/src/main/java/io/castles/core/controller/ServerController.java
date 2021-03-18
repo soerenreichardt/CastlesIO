@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.PlayerIdentificationDTO;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,10 @@ public class ServerController {
 
     @PostMapping("/lobby")
     @ResponseBody
-    UUID createLobby(@RequestParam("lobbyName") String name, @RequestParam("playerName") String playerName) {
+    PlayerIdentificationDTO createLobby(@RequestParam("lobbyName") String name, @RequestParam("playerName") String playerName) {
         Player player = new Player(playerName);
-        return this.server.createGameLobby(name, player).getId();
+        var lobbyId = this.server.createGameLobby(name, player).getId();
+
+        return new PlayerIdentificationDTO(lobbyId, player.getId());
     }
 }
