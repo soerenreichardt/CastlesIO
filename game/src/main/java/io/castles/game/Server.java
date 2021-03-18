@@ -3,9 +3,11 @@ package io.castles.game;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Server {
 
@@ -23,7 +25,13 @@ public class Server {
     }
 
     public GameLobby createGameLobby(String name, Player owner) {
-        var gameLobby = new GameLobby(name, owner);
+        var gameLobby = new GameLobby(name, owner, GameLobby.Visibility.PUBLIC);
+        activeLobbies.put(gameLobby.getId(), gameLobby);
+        return gameLobby;
+    }
+
+    public GameLobby createGameLobby(String name, Player owner, GameLobby.Visibility visibility) {
+        var gameLobby = new GameLobby(name, owner, visibility);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         return gameLobby;
     }
@@ -33,6 +41,10 @@ public class Server {
             throw new IllegalArgumentException(String.format("No lobby with id %s was found.", id));
         }
         return activeLobbies.get(id);
+    }
+
+    public List<GameLobby> publicGameLobbies() {
+        return activeLobbies.values().stream().filter(GameLobby::isPublic).collect(Collectors.toList());
     }
 
     public Game gameById(UUID id) {

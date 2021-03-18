@@ -4,6 +4,9 @@ import io.castles.core.GameMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServerTest {
@@ -42,6 +45,14 @@ class ServerTest {
 
         assertNotNull(game);
         assertEquals(game.getCurrentGameState(), GameState.START);
+    }
 
+    @Test
+    void shouldListPublicLobbies() {
+        GameLobby lobby1 = server.createGameLobby("lobby1", new Player("owner"), GameLobby.Visibility.PUBLIC);
+        GameLobby lobby2 = server.createGameLobby("lobby2", new Player("owner"), GameLobby.Visibility.PRIVATE);
+        GameLobby lobby3 = server.createGameLobby("lobby3", new Player("owner"), GameLobby.Visibility.PUBLIC);
+
+        assertThat(server.publicGameLobbies()).containsExactlyInAnyOrderElementsOf(List.of(lobby1, lobby3));
     }
 }
