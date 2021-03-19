@@ -6,7 +6,6 @@ import {PlayerInfo} from '../models/player-info.interface';
 import {Lobby} from '../models/lobby.interface';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Clipboard} from '@angular/cdk/clipboard';
-import {debounce} from 'rxjs/operators';
 import {interval} from 'rxjs';
 
 @Component({
@@ -23,6 +22,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
     inviteLink: string;
 
     sseEventSource: EventSource;
+
+    updateLobbySettingsDebounceTimer: number;
 
     constructor(private lobbyService: LobbyService,
                 private localStorageService: LocalStorageService,
@@ -41,7 +42,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
         interval(1000).subscribe( () => {
             this.appRef.tick();
         });
-
     }
 
     ngOnDestroy(): void {
@@ -84,7 +84,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     updateLobbySettings(): void {
-        this.lobbyService.updateLobbySettings(this.playerId, this.lobby.lobbySettings).subscribe();
+        clearTimeout(this.updateLobbySettingsDebounceTimer);
+        this.updateLobbySettingsDebounceTimer = setTimeout(() => {
+            this.lobbyService.updateLobbySettings(this.playerId, this.lobby.lobbySettings).subscribe();
+        }, 500);
     }
 
 

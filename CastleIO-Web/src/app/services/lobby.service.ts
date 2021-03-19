@@ -1,11 +1,11 @@
 import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Observable, timer} from 'rxjs';
+import {Observable, pipe, Subject, timer} from 'rxjs';
 import {PublicLobby} from '../models/public-lobby.interface';
 import {Lobby} from '../models/lobby.interface';
 import {LobbySettings} from '../models/lobby-settings.interface';
-import {debounce} from 'rxjs/operators';
+import {debounceTime, map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -39,10 +39,7 @@ export class LobbyService {
             params: {
                 playerId
             }
-        }).pipe(
-            debounce(() => timer(3000))
-        );
-
+        });
     }
 
     leaveLobby(playerId: string): Observable<void> {
