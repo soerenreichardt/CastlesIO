@@ -3,14 +3,15 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class GameLobbySettings {
     @Builder.Default
     private int turnTimeSeconds = 40;

@@ -2,10 +2,11 @@ package io.castles.game;
 
 import io.castles.core.board.Board;
 import io.castles.core.tile.Tile;
+import io.castles.game.events.StatefulObject;
 
 import java.util.*;
 
-public class Game extends IdentifiableObject {
+public class Game extends StatefulObject {
 
     private final GameLogic gameLogic;
 

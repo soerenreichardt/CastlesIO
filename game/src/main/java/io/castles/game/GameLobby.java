@@ -3,24 +3,27 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
+import io.castles.game.events.Event;
+import io.castles.game.events.StatefulObject;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameLobby extends IdentifiableObject {
+public class GameLobby extends StatefulObject {
 
     public static final int MIN_PLAYERS = 2;
 
     private final Set<Player> players;
-    private final GameLobbySettings lobbySettings;
     private final String name;
     private Player owner;
+    private GameLobbySettings lobbySettings;
 
     public GameLobby(String name, Player owner) {
         this.name = name;
         this.players = new HashSet<>();
         this.owner = owner;
-        this.players.add(owner);
         this.lobbySettings = GameLobbySettings.builder().build();
+        addPlayer(owner);
     }
 
     boolean isPublic() {
@@ -39,6 +42,7 @@ public class GameLobby extends IdentifiableObject {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
+        triggerEvent(Event.PLAYER_ADDED, player);
     }
 
     public void removePlayer(Player player) {
@@ -49,6 +53,7 @@ public class GameLobby extends IdentifiableObject {
         if (player.getId() == owner.getId()) {
             replaceOwner();
         }
+        triggerEvent(Event.PLAYER_REMOVED, player);
     }
 
     public void removePlayer(UUID playerId) {
@@ -75,6 +80,11 @@ public class GameLobby extends IdentifiableObject {
 
     public int getNumPlayers() {
         return players.size();
+    }
+
+    public void changeSettings(GameLobbySettings gameLobbySettings) {
+        this.lobbySettings = gameLobbySettings;
+        triggerEvent(Event.SETTINGS_CHANGED, gameLobbySettings);
     }
 
     public void setGameMode(GameMode gameMode) {
@@ -111,5 +121,9 @@ public class GameLobby extends IdentifiableObject {
 
     public List<UUID> getPlayerIds() {
         return this.players.stream().map(Player::getId).collect(Collectors.toList());
+    }
+
+    public Collection<Player> getPlayers() {
+        return this.players;
     }
 }
