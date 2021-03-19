@@ -11,8 +11,6 @@
 
 .options.card {
     .card-content {
-        max-width: 300px;
-
         section {
             margin-bottom: 35px;
             &:last-child {
@@ -21,10 +19,10 @@
         }
 
         .small-controls {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
+            display: grid;
+            grid-auto-columns: auto 1fr;
+            grid-auto-flow: column;
+            grid-column-gap: 20px;
         }
     }
 }

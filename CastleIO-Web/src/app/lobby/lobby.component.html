@@ -17,7 +17,7 @@
     </div>
     <div class="options card">
         <h2>Game Settings</h2>
-        <div class="card-content">
+        <div class="card-content" *ngIf="lobby.lobbySettings.editable">
             <form>
                 <section class="small-controls">
                     <mat-checkbox (change)="changeLobbyVisibility()"
@@ -36,20 +36,48 @@
                     <div class="max-players label-value-slider">
                         <p>Max Players</p>
                         <span>{{lobby.lobbySettings.maxPlayers}}</span>
-                        <mat-slider *ngIf="lobby.lobbySettings.editable" min="2" max="10" step="1" tickInterval="1"
+                        <mat-slider min="2" max="10" step="1" tickInterval="1"
                                     [value]="lobby.lobbySettings.maxPlayers"
                                     (input)="lobby.lobbySettings.maxPlayers = $event.value"
-                                    (change)="updateLobbySettings()" name="maxPlayersSlider"></mat-slider>
+                                    (change)="updateLobbySettings()"></mat-slider>
                     </div>
                 </section>
 
                 <div class="turn-time label-value-slider">
                     <p>Turn Time</p>
                     <span>{{lobby.lobbySettings.turnTimeSeconds}} sec</span>
-                    <mat-slider *ngIf="lobby.lobbySettings.editable" min="10" max="120" step="5" tickInterval="2"
+                    <mat-slider min="10" max="120" step="5" tickInterval="2"
                                 [value]="lobby.lobbySettings.turnTimeSeconds"
                                 (input)="lobby.lobbySettings.turnTimeSeconds = $event.value"
-                                (change)="updateLobbySettings()" name="maxPlayersSlider"></mat-slider>
+                                (change)="updateLobbySettings()"></mat-slider>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-content" *ngIf="!lobby.lobbySettings.editable">
+            <form>
+                <section class="small-controls">
+                    <div class="label-with-value">
+                        <span class="label">Lobby Visibility</span>
+                        <span class="value">{{lobby.lobbySettings.visibility}}</span>
+                    </div>
+
+                    <div class="label-with-value">
+                        <span class="label">Game Mode</span>
+                        <span class="value">{{lobby.lobbySettings.gameMode}}</span>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="max-players label-value-slider">
+                        <p>Max Players</p>
+                        <span>{{lobby.lobbySettings.maxPlayers}}</span>
+                    </div>
+                </section>
+
+                <div class="turn-time label-value-slider">
+                    <p>Turn Time</p>
+                    <span>{{lobby.lobbySettings.turnTimeSeconds}} sec</span>
                 </div>
             </form>
         </div>
