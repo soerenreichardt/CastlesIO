@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PublicLobbyDTO;
 import io.castles.core.service.GameService;
@@ -9,6 +10,7 @@ import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -42,6 +44,18 @@ public class LobbyController {
     PublicLobbyDTO getPublicLobbyInfo(@PathVariable("id") UUID id) {
         GameLobby gameLobby = server.gameLobbyById(id);
         return PublicLobbyDTO.from(gameLobby);
+    }
+
+    @PostMapping("/update")
+    HttpStatus updateLobbySettings(@PathVariable("id") UUID id,
+                                   @RequestParam() UUID playerId,
+                                   @RequestBody LobbySettingsDTO settings) {
+        GameLobby gameLobby = server.gameLobbyById(id);
+        if (gameLobby.getOwnerId().equals(playerId)) {
+            this.lobbyService.updateLobbySettings(gameLobby, settings);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.FORBIDDEN;
     }
 
     @DeleteMapping("/leave")

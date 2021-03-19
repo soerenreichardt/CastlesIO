@@ -79,5 +79,7 @@ public class LobbyService {
         lobbySettings.setMaxPlayers(lobbySettingsDTO.getMaxPlayers());
         lobbySettings.setGameMode(GameMode.valueOf(lobbySettingsDTO.getGameMode()));
         lobbySettings.setVisibility(Visibility.valueOf(lobbySettingsDTO.getVisibility()));
+
+        updateLobbyState(gameLobby.getId());
     }
 }
