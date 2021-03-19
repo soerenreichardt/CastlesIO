@@ -6,6 +6,8 @@ import {PlayerInfo} from '../models/player-info.interface';
 import {Lobby} from '../models/lobby.interface';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Clipboard} from '@angular/cdk/clipboard';
+import {debounce} from 'rxjs/operators';
+import {interval} from 'rxjs';
 
 @Component({
     selector: 'app-lobby',
@@ -36,6 +38,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
         this.lobbyId = this.activatedRoute.snapshot.params.id;
         this.lobbyService.setLobbyUrl(this.lobbyId);
         this.setPlayerInfoFromStorage();
+        interval(1000).subscribe( () => {
+            this.appRef.tick();
+        });
+
     }
 
     ngOnDestroy(): void {
@@ -56,7 +62,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     updateLobbyStatus(lobby: Lobby): void {
         this.lobby = lobby;
         this.isLobbyPublic = lobby.lobbySettings.visibility === 'PUBLIC';
-        console.log(lobby);
+        console.log(this.lobby.lobbySettings);
     }
 
     initPostJoinProcess(): void {
@@ -69,17 +75,18 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
     changeLobbyVisibility(): void {
         if (this.isLobbyPublic) {
-            this.lobby.lobbySettings.visibility = 'PRIVATE';
-        } else {
             this.lobby.lobbySettings.visibility = 'PUBLIC';
+        } else {
+            this.lobby.lobbySettings.visibility = 'PRIVATE';
         }
 
         this.updateLobbySettings();
     }
 
     updateLobbySettings(): void {
-        console.log('settings are updating...');
+        this.lobbyService.updateLobbySettings(this.playerId, this.lobby.lobbySettings).subscribe();
     }
+
 
     copyUrlToClipboard(): void {
         this.clipboard.copy(this.inviteLink);
@@ -90,7 +97,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
         this.sseEventSource = this.lobbyService.subscribeToLobbyUpdates(this.lobbyId, this.playerId);
         this.sseEventSource.onmessage = (message) => {
             this.updateLobbyStatus(JSON.parse(message.data));
-            this.appRef.tick();
         };
     }
 

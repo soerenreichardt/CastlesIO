@@ -1,9 +1,11 @@
 import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Observable} from 'rxjs';
+import {Observable, timer} from 'rxjs';
 import {PublicLobby} from '../models/public-lobby.interface';
 import {Lobby} from '../models/lobby.interface';
+import {LobbySettings} from '../models/lobby-settings.interface';
+import {debounce} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -30,6 +32,17 @@ export class LobbyService {
 
     getLobbyStatus(playerId: string): Observable<Lobby> {
         return this.http.get<Lobby>(this.lobbyUrl + 'status/' + playerId);
+    }
+
+    updateLobbySettings(playerId: string, settings: LobbySettings): Observable<any> {
+        return this.http.post(this.lobbyUrl + 'update/', settings, {
+            params: {
+                playerId
+            }
+        }).pipe(
+            debounce(() => timer(3000))
+        );
+
     }
 
     leaveLobby(playerId: string): Observable<void> {
