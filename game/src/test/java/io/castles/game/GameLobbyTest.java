@@ -23,21 +23,21 @@ class GameLobbyTest {
         Player p1 = new Player("p1");
         Player p2 = new Player("p2");
 
-        assertEquals(1, gameLobby.getNumPlayers());
+        assertEquals(0, gameLobby.getNumPlayers());
 
         gameLobby.addPlayer(p1);
-        assertEquals(2, gameLobby.getNumPlayers());
-        gameLobby.addPlayer(p2);
-        assertEquals(3, gameLobby.getNumPlayers());
-        gameLobby.removePlayer(p1);
-        assertEquals(2, gameLobby.getNumPlayers());
-        gameLobby.removePlayer(p2.getId());
         assertEquals(1, gameLobby.getNumPlayers());
+        gameLobby.addPlayer(p2);
+        assertEquals(2, gameLobby.getNumPlayers());
+        gameLobby.removePlayer(p1);
+        assertEquals(1, gameLobby.getNumPlayers());
+        gameLobby.removePlayer(p2.getId());
+        assertEquals(0, gameLobby.getNumPlayers());
     }
 
     @Test
     void canOnlyStartWithCorrectPlayerNumber() {
-        for (int i = 1; i < GameLobby.MIN_PLAYERS - 1; i++) {
+        for (int i = 1; i < GameLobby.MIN_PLAYERS; i++) {
             gameLobby.addPlayer(new Player("" + i));
             assertFalse(gameLobby.canStart());
         }
@@ -64,7 +64,7 @@ class GameLobbyTest {
 
     @Test
     void shouldThrowWhenAddingPlayerWhileLobbyIsFull() {
-        for (int i = 1; i < gameLobby.getMaxPlayers(); i++) {
+        for (int i = 1; i <= gameLobby.getMaxPlayers(); i++) {
             gameLobby.addPlayer(new Player("" + i));
         }
         assertThatThrownBy(() -> gameLobby.addPlayer(new Player("foo")))
