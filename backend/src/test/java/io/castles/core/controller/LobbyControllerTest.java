@@ -63,18 +63,16 @@ class LobbyControllerTest {
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(sseEmitter);
         var urlTemplate = String.format("/lobby/%s/join", gameLobby.getId());
 
-        assertEquals(0, gameLobby.getNumPlayers());
+        assertEquals(1, gameLobby.getNumPlayers());
         mvc.perform(MockMvcRequestBuilders.put(urlTemplate).param("playerName", "Foo Bar"))
                 .andExpect(status().isOk());
-        assertEquals(1, gameLobby.getNumPlayers());
+        assertEquals(2, gameLobby.getNumPlayers());
     }
 
     @Test
     void shouldRemovePlayer() throws Exception {
         var owner = new Player("Owner");
         var gameLobby = new GameLobby("Test", owner);
-        gameLobby.addPlayer(owner);
-
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
 
         var urlTemplate = String.format("/lobby/%s/leave", gameLobby.getId());
@@ -110,7 +108,6 @@ class LobbyControllerTest {
         verify(server, times(1)).startGame(gameLobby.getId());
     }
 
-    @Test
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
         var owner = new Player("Owner");
         var gameLobby = new GameLobby("Test", owner);
@@ -123,6 +120,9 @@ class LobbyControllerTest {
         var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), player.getId());
 
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(String.format("{\"playerNames\":[],\"lobbyName\":\"%s\"}", gameLobby.getName()))));
     }
+
+    // TODO: exception handling
 }
