@@ -4,6 +4,7 @@ import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
+import io.castles.core.model.PlayerIdentificationDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
@@ -25,13 +26,17 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public void joinLobby(UUID id, Player player) throws IOException {
+    public GameLobby createLobbyWithOwner(String lobbyName, Player owner) {
+        var lobby = this.server.createGameLobby(lobbyName, owner);
+        emitterService.createPlayerEmitterForLobby(lobby.getId(), owner.getId());
+        return lobby;
+    }
 
+    public void joinLobby(UUID id, Player player) throws IOException {
         var gameLobby = server.gameLobbyById(id);
         gameLobby.addPlayer(player); // TODO: exception handling
 
-        var playerId = player.getId();
-        emitterService.createPlayerEmitterForLobby(id, playerId);
+        emitterService.createPlayerEmitterForLobby(id, player.getId());
 
         updateLobbyState(gameLobby.getId());
     }
@@ -65,9 +70,9 @@ public class LobbyService {
         }
     }
 
-    private LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
+    public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
         LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
-        if (gameLobby.getOwnerId() == playerId) {
+        if (gameLobby.getOwnerId().equals(playerId)) {
             lobbyStateDTO.getLobbySettings().setEditable(true);
         }
         return lobbyStateDTO;
@@ -79,5 +84,7 @@ public class LobbyService {
         lobbySettings.setMaxPlayers(lobbySettingsDTO.getMaxPlayers());
         lobbySettings.setGameMode(GameMode.valueOf(lobbySettingsDTO.getGameMode()));
         lobbySettings.setVisibility(Visibility.valueOf(lobbySettingsDTO.getVisibility()));
+
+        updateLobbyState(gameLobby.getId());
     }
 }

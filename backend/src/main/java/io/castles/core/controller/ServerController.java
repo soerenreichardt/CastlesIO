@@ -43,8 +43,8 @@ public class ServerController {
     PlayerIdentificationDTO createLobby(@RequestParam("lobbyName") String name,
                                         @RequestParam("playerName") String playerName,
                                         @RequestBody() LobbySettingsDTO settings) {
-        Player player = new Player(playerName);
-        var gameLobby = this.server.createGameLobby(name, player);
+        var player = new Player(playerName);
+        var gameLobby = this.lobbyService.createLobbyWithOwner(name, player);
         lobbyService.updateLobbySettings(gameLobby, settings);
 
         return new PlayerIdentificationDTO(gameLobby.getId(), player.getId());

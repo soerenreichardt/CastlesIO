@@ -1,5 +1,36 @@
-<form (ngSubmit)="createLobby()" name="CreateLobbyForm">
-    <input type="text" [(ngModel)]="lobbyName" name="lobbyName" required>
-    <button type="submit">create lobby</button>
-</form>
+<div class="content">
+        <div class="create-lobby-panel card">
+            <h2>Create new Game</h2>
+            <div class="card-content">
+                <form (ngSubmit)="createLobby()" #createLobbyForm="ngForm" autocomplete="off">
+                    <div class="form-row">
+                        <mat-form-field class="lobby-name">
+                            <mat-label>Lobby Name</mat-label>
+                            <input matInput placeholder="" [(ngModel)]="newLobbyName" name="lobbyName" required autofocus>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                        <mat-form-field class="player-name">
+                            <mat-label>Your Name</mat-label>
+                            <input matInput placeholder="" [(ngModel)]="newPlayerName" name="playerName" required>
+                        </mat-form-field>
+                        <mat-checkbox (change)="changeLobbyVisibility()" [(ngModel)]="isLobbyPublic" name="lobbyVisibility" labelPosition="before">Public</mat-checkbox>
+                    </div>
+                    <button mat-flat-button color="accent" [disabled]="!createLobbyForm.valid">Create Lobby</button>
+                </form>
+            </div>
+        </div>
 
+        <div class="join-lobby-panel card">
+            <h2>Join other Games</h2>
+            <div class="card-content">
+                <mat-selection-list [multiple]="false">
+                    <mat-list-option *ngFor="let lobby of publicLobbies" (click)="joinLobby(lobby.id)" [title]="lobby.name">
+                        <h4>{{lobby.name}}</h4>
+                        <p class="num-players">({{lobby.numPlayers}}/{{lobby.maxPlayers}}) players</p>
+                    </mat-list-option>
+                </mat-selection-list>
+                <p *ngIf="publicLobbies?.length === 0">No other games found.</p>
+            </div>
+        </div>
+</div>

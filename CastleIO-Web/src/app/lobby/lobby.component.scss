@@ -1,0 +1,50 @@
+.players {
+    .controls {
+        margin-left: 20px;
+        align-self: center;
+
+        & * {
+            cursor: pointer;
+        }
+    }
+}
+
+.options.card {
+    .card-content {
+        section {
+            margin-bottom: 35px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .small-controls {
+            display: grid;
+            grid-auto-columns: auto 1fr;
+            grid-auto-flow: column;
+            grid-column-gap: 20px;
+        }
+    }
+}
+
+.invite-link {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding-top: 40px;
+    max-width: 100%;
+    justify-content: center;
+
+    .label {
+        font-weight: bold;
+        margin-right: 20px;
+    }
+
+    p {
+        overflow: hidden;
+    }
+
+    button {
+        align-self: center;
+    }
+}

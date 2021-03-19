@@ -1,0 +1,24 @@
+.content {
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 10em;
+    grid-template-areas:
+        "content content"
+        ". ."
+        "footer footer";
+
+    .logo {
+        grid-area: header;
+    }
+
+    .content {
+        .join-lobby-panel, .create-lobby-panel{
+
+            mat-checkbox {
+                align-self: center;
+            }
+        }
+    }
+}

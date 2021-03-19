@@ -1,0 +1,9 @@
+@import "colors";
+
+.form-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 20px;
+    overflow: hidden;
+    width: 300px;
+}

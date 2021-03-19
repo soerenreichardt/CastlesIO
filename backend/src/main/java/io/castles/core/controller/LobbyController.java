@@ -1,5 +1,7 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.LobbySettingsDTO;
+import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PublicLobbyDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.service.LobbyService;
@@ -8,6 +10,7 @@ import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -43,6 +46,18 @@ public class LobbyController {
         return PublicLobbyDTO.from(gameLobby);
     }
 
+    @PostMapping("/update")
+    HttpStatus updateLobbySettings(@PathVariable("id") UUID id,
+                                   @RequestParam() UUID playerId,
+                                   @RequestBody LobbySettingsDTO settings) {
+        GameLobby gameLobby = server.gameLobbyById(id);
+        if (gameLobby.getOwnerId().equals(playerId)) {
+            this.lobbyService.updateLobbySettings(gameLobby, settings);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.FORBIDDEN;
+    }
+
     @DeleteMapping("/leave")
     void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {
         GameLobby gameLobby = server.gameLobbyById(id);
@@ -54,14 +69,24 @@ public class LobbyController {
         return gameService.createGame(id).getId();
     }
 
+    @GetMapping("/status/{playerId}")
+    @ResponseBody
+    LobbyStateDTO getLobbyState(@PathVariable("id") UUID id, @PathVariable UUID playerId) {
+        GameLobby gameLobby = server.gameLobbyById(id);
+        if (gameLobby.containsPlayer(playerId)) {
+            return this.lobbyService.getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);
+        } else {
+            throw new RuntimeException("You are no player of this lobby");
+        }
+    }
+
     @GetMapping("/subscribe/{playerId}")
-    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) throws IOException {
-        lobbyService.updateLobbyState(id);
+    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
         var playerEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
         if (playerEmitter == null) {
             playerEmitter = this.lobbyService.reconnectLobby(id, playerId);
-            this.lobbyService.updateLobbyStateToPlayer(id, playerId);
         }
+        lobbyService.updateLobbyState(id);
         return playerEmitter;
     }
 }

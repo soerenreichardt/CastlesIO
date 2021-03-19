@@ -1,7 +1,11 @@
 import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Observable} from 'rxjs';
+import {Observable, pipe, Subject, timer} from 'rxjs';
+import {PublicLobby} from '../models/public-lobby.interface';
+import {Lobby} from '../models/lobby.interface';
+import {LobbySettings} from '../models/lobby-settings.interface';
+import {debounceTime, map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +22,22 @@ export class LobbyService {
         return this.http.put<string>(this.lobbyUrl + 'join/', {}, {
             params: {
                 playerName
+            }
+        });
+    }
+
+    getPublicLobbyInfo(): Observable<PublicLobby> {
+        return this.http.get<PublicLobby>(this.lobbyUrl + 'info/');
+    }
+
+    getLobbyStatus(playerId: string): Observable<Lobby> {
+        return this.http.get<Lobby>(this.lobbyUrl + 'status/' + playerId);
+    }
+
+    updateLobbySettings(playerId: string, settings: LobbySettings): Observable<any> {
+        return this.http.post(this.lobbyUrl + 'update/', settings, {
+            params: {
+                playerId
             }
         });
     }

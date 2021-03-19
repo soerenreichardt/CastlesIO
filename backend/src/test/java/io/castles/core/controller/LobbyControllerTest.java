@@ -108,11 +108,15 @@ class LobbyControllerTest {
         verify(server, times(1)).startGame(gameLobby.getId());
     }
 
+    @Test
     void shouldBeAbleToSubscribeToSseEmitter() throws Exception {
         var owner = new Player("Owner");
         var gameLobby = new GameLobby("Test", owner);
         var player = new Player("P1");
         var emitter = new SseEmitter();
+
+        this.emitterService.createPlayerEmitterForLobby(gameLobby.getId(), owner.getId());
+
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);
@@ -120,9 +124,6 @@ class LobbyControllerTest {
         var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), player.getId());
 
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString(String.format("{\"playerNames\":[],\"lobbyName\":\"%s\"}", gameLobby.getName()))));
+                .andExpect(status().isOk());
     }
-
-    // TODO: exception handling
 }
