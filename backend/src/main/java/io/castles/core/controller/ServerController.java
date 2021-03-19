@@ -2,7 +2,6 @@ package io.castles.core.controller;
 
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.PlayerIdentificationDTO;
-import io.castles.core.model.PublicLobbyDTO;
 import io.castles.core.service.LobbyService;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,10 +42,9 @@ public class ServerController {
     @ResponseBody
     PlayerIdentificationDTO createLobby(@RequestParam("lobbyName") String name,
                                         @RequestParam("playerName") String playerName,
-                                        @RequestBody() LobbySettingsDTO settings) throws IOException {
+                                        @RequestBody() LobbySettingsDTO settings) {
         Player player = new Player(playerName);
         var gameLobby = this.server.createGameLobby(name, player);
-        lobbyService.joinLobby(gameLobby.getId(), player);
         lobbyService.updateLobbySettings(gameLobby, settings);
 
         return new PlayerIdentificationDTO(gameLobby.getId(), player.getId());
@@ -55,7 +52,7 @@ public class ServerController {
 
     @GetMapping("/lobbies")
     @ResponseBody
-    List<PublicLobbyDTO> listPublicLobbies() {
-        return this.server.publicGameLobbies().stream().map(PublicLobbyDTO::from).collect(Collectors.toList());
+    List<LobbyStateDTO> listPublicLobbies() {
+        return this.server.publicGameLobbies().stream().map(LobbyStateDTO::from).collect(Collectors.toList());
     }
 }

@@ -19,6 +19,7 @@ public class GameLobby extends IdentifiableObject {
         this.name = name;
         this.players = new HashSet<>();
         this.owner = owner;
+        this.players.add(owner);
         this.lobbySettings = GameLobbySettings.builder().build();
     }
 
