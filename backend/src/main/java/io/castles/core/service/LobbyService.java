@@ -27,16 +27,12 @@ public class LobbyService {
     }
 
     public GameLobby createLobbyWithOwner(String lobbyName, Player owner) {
-        var lobby = this.server.createGameLobby(lobbyName, owner);
-        emitterService.createPlayerEmitterForLobby(lobby.getId(), owner.getId());
-        return lobby;
+        return this.server.createGameLobby(lobbyName, owner);
     }
 
     public void joinLobby(UUID id, Player player) throws IOException {
         var gameLobby = server.gameLobbyById(id);
         gameLobby.addPlayer(player); // TODO: exception handling
-
-        emitterService.createPlayerEmitterForLobby(id, player.getId());
 
         updateLobbyState(gameLobby.getId());
     }
@@ -54,7 +50,7 @@ public class LobbyService {
         var gameLobby = server.gameLobbyById(id);
         var playerIds = gameLobby.getPlayerIds();
         for (var playerId : playerIds) {
-                updateLobbyStateToPlayer(id, playerId);
+            updateLobbyStateToPlayer(id, playerId);
         }
     }
 
@@ -79,12 +75,6 @@ public class LobbyService {
     }
 
     public void updateLobbySettings(GameLobby gameLobby, LobbySettingsDTO lobbySettingsDTO) {
-        var lobbySettings = gameLobby.getLobbySettings();
-        lobbySettings.setTurnTimeSeconds(lobbySettingsDTO.getTurnTimeSeconds());
-        lobbySettings.setMaxPlayers(lobbySettingsDTO.getMaxPlayers());
-        lobbySettings.setGameMode(GameMode.valueOf(lobbySettingsDTO.getGameMode()));
-        lobbySettings.setVisibility(Visibility.valueOf(lobbySettingsDTO.getVisibility()));
-
-        updateLobbyState(gameLobby.getId());
+        gameLobby.changeSettings(lobbySettingsDTO.toGameLobbySettings());
     }
 }

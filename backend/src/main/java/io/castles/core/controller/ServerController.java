@@ -3,17 +3,16 @@ package io.castles.core.controller;
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.PlayerIdentificationDTO;
 import io.castles.core.service.LobbyService;
+import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.game.Server;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -24,6 +23,7 @@ public class ServerController {
 
     private final Server server;
     private final LobbyService lobbyService;
+    private final SseEmitterService emitterService;
 
     @GetMapping("/status")
     @ResponseBody
@@ -45,6 +45,7 @@ public class ServerController {
                                         @RequestBody() LobbySettingsDTO settings) {
         var player = new Player(playerName);
         var gameLobby = this.lobbyService.createLobbyWithOwner(name, player);
+        gameLobby.registerCallback(emitterService.eventConsumerFor(gameLobby));
         lobbyService.updateLobbySettings(gameLobby, settings);
 
         return new PlayerIdentificationDTO(gameLobby.getId(), player.getId());

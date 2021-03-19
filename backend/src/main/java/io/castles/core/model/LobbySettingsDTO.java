@@ -7,11 +7,8 @@ import io.castles.game.GameLobbySettings;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +24,10 @@ public class LobbySettingsDTO {
     private final List<String> visibilities;
 
     private boolean editable = false;
+
+    public GameLobbySettings toGameLobbySettings() {
+        return new GameLobbySettings(turnTimeSeconds, maxPlayers, GameMode.valueOf(gameMode), List.of(), Visibility.valueOf(visibility));
+    }
 
     public static LobbySettingsDTO from(GameLobbySettings lobbySettings) {
         return new LobbySettingsDTO(
