@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PublicLobbyDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.service.LobbyService;
@@ -54,14 +55,24 @@ public class LobbyController {
         return gameService.createGame(id).getId();
     }
 
+    @GetMapping("/status/{playerId}")
+    @ResponseBody
+    LobbyStateDTO getLobbyState(@PathVariable("id") UUID id, @PathVariable UUID playerId) {
+        GameLobby gameLobby = server.gameLobbyById(id);
+        if (gameLobby.containsPlayer(playerId)) {
+            return this.lobbyService.getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);
+        } else {
+            throw new RuntimeException("You are no player of this lobby");
+        }
+    }
+
     @GetMapping("/subscribe/{playerId}")
-    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) throws IOException {
-        lobbyService.updateLobbyState(id);
+    SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
         var playerEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
         if (playerEmitter == null) {
             playerEmitter = this.lobbyService.reconnectLobby(id, playerId);
-            this.lobbyService.updateLobbyStateToPlayer(id, playerId);
         }
+        lobbyService.updateLobbyState(id);
         return playerEmitter;
     }
 }
