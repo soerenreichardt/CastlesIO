@@ -65,9 +65,9 @@ public class LobbyService {
         }
     }
 
-    private LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
+    public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
         LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
-        if (gameLobby.getOwnerId() == playerId) {
+        if (gameLobby.getOwnerId().equals(playerId)) {
             lobbyStateDTO.getLobbySettings().setEditable(true);
         }
         return lobbyStateDTO;

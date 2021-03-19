@@ -13,7 +13,7 @@ import java.util.Optional;
 @Builder
 public class GameLobbySettings {
     @Builder.Default
-    private int turnTimeSeconds = 0;
+    private int turnTimeSeconds = 40;
     @Builder.Default
     private int maxPlayers = 5;
     @Builder.Default
