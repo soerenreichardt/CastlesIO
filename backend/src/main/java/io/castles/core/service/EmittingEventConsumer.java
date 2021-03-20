@@ -26,11 +26,16 @@ class EmittingEventConsumer implements ServerEventConsumer {
     @Override
     public void onPlayerAdded(Player player) {
         playerEmitters.create(player.getId());
-        LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
-        if (gameLobby.getOwnerId().equals(player.getId())) {
-            lobbyStateDTO.getLobbySettings().setEditable(true);
-        }
-        sendToAllPlayers(lobbyStateDTO);
+        var lobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        var ownerLobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        ownerLobbyStateDTO.getLobbySettings().setEditable(true);
+        gameLobby.getPlayers().forEach(p -> {
+            if (gameLobby.getOwnerId().equals(p.getId())) {
+                playerEmitters.sendToPlayer(p, ownerLobbyStateDTO);
+            } else {
+                playerEmitters.sendToPlayer(p, lobbyStateDTO);
+            }
+        });
     }
 
     @Override
