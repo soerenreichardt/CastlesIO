@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class StatefulObject extends IdentifiableObject {
+public abstract class StatefulObject extends IdentifiableObject {
 
     private final List<EventConsumer> eventCallbacks;
 
@@ -20,6 +20,8 @@ public class StatefulObject extends IdentifiableObject {
         super(id);
         this.eventCallbacks = new ArrayList<>();
     }
+
+    public abstract void initializeWith(EventConsumer eventConsumer);
 
     public void registerCallback(EventConsumer callback) {
         this.eventCallbacks.add(callback);

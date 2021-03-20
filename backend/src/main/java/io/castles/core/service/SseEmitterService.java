@@ -1,5 +1,6 @@
 package io.castles.core.service;
 
+import io.castles.core.events.ServerEventConsumer;
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.game.GameLobby;
@@ -16,29 +17,38 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseEmitterService {
 
-    public static final long EMITTER_TIMEOUT = 3600000L; //1h in milliseconds
-    private final Map<UUID, Map<UUID, SseEmitter>> sseEmitters;
+    private final Map<UUID, EmittingEventConsumer> sseEmitters;
 
     public SseEmitterService() {
         this.sseEmitters = new ConcurrentHashMap<>();
     }
 
+    public SseEmitter connectToLobby(UUID lobbyId, UUID playerId) {
+        var emittingEventConsumer = this.sseEmitters.get(lobbyId);
+        if (!emittingEventConsumer.playerEmitters().containsKey(playerId)) {
+            emittingEventConsumer.createEmitterForPlayer(playerId);
+        }
+        emittingEventConsumer.onPlayerReconnected(playerId);
+        return emittingEventConsumer.playerEmitters().get(playerId);
+    }
+
     public void createPlayerEmitterForLobby(UUID lobbyId, UUID playerId) {
-        SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
-        sseEmitter.onCompletion(() -> sseEmitters.get(lobbyId).remove(playerId));
-        Map<UUID, SseEmitter> lobbyEmitters = sseEmitters.computeIfAbsent(lobbyId, id -> new ConcurrentHashMap<>());
-        lobbyEmitters.put(playerId, sseEmitter);
+        sseEmitters.get(lobbyId).createEmitterForPlayer(playerId);
     }
 
     public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
-        return this.sseEmitters.get(lobbyId).get(playerId);
+        return this.sseEmitters.get(lobbyId).playerEmitters().get(playerId);
     }
 
-    public EmittingEventConsumer eventConsumerFor(GameLobby gameLobby) {
-        return new EmittingEventConsumer(gameLobby);
+    public StatefulObject.EventConsumer eventConsumerFor(GameLobby gameLobby) {
+        var emittingEventConsumer = new EmittingEventConsumer(gameLobby);
+        sseEmitters.put(gameLobby.getId(), emittingEventConsumer);
+        return emittingEventConsumer;
     }
 
     static class EmittingEventConsumer implements StatefulObject.EventConsumer {
+
+        public static final long EMITTER_TIMEOUT = 3600000L; //1h in milliseconds
 
         private final GameLobby gameLobby;
         private final Map<UUID, SseEmitter> playerEmitters;
@@ -46,6 +56,14 @@ public class SseEmitterService {
         public EmittingEventConsumer(GameLobby gameLobby) {
             this.gameLobby = gameLobby;
             this.playerEmitters = new HashMap<>();
+        }
+
+        public Map<UUID, SseEmitter> playerEmitters() {
+            return playerEmitters;
+        }
+
+        public void onPlayerReconnected(UUID playerId) {
+            sendToAllPlayers(String.format("Player %s connected", gameLobby.getPlayerById(playerId)));
         }
 
         @Override
@@ -69,6 +87,16 @@ public class SseEmitterService {
             sendToAllPlayers(LobbySettingsDTO.from(gameLobbySettings));
         }
 
+        void createEmitterForPlayer(Player player) {
+            createEmitterForPlayer(player.getId());
+        }
+
+        void createEmitterForPlayer(UUID playerId) {
+            SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
+            sseEmitter.onCompletion(() -> playerEmitters.remove(playerId));
+            playerEmitters.put(playerId, sseEmitter);
+        }
+
         private void sendToAllPlayers(Object message) {
             gameLobby.getPlayers().forEach(player -> sendToPlayer(player, message));
         }
@@ -82,15 +110,12 @@ public class SseEmitterService {
             }
         }
 
-        private void createEmitterForPlayer(Player player) {
-            var playerId = player.getId();
-            SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
-            sseEmitter.onCompletion(() -> playerEmitters.remove(playerId));
-            playerEmitters.put(playerId, sseEmitter);
+        private void removePlayerEmitter(Player player) {
+            removePlayerEmitter(player.getId());
         }
 
-        private void removePlayerEmitter(Player player) {
-            playerEmitters.remove(player.getId());
+        private void removePlayerEmitter(UUID playerId) {
+            playerEmitters.remove(playerId);
         }
     }
 }

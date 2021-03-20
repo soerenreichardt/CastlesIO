@@ -52,7 +52,7 @@ public class LobbyController {
                                    @RequestBody LobbySettingsDTO settings) {
         GameLobby gameLobby = server.gameLobbyById(id);
         if (gameLobby.getOwnerId().equals(playerId)) {
-            this.lobbyService.updateLobbySettings(gameLobby, settings);
+            gameLobby.changeSettings(settings.toGameLobbySettings());
             return HttpStatus.OK;
         }
         return HttpStatus.FORBIDDEN;
@@ -82,11 +82,6 @@ public class LobbyController {
 
     @GetMapping("/subscribe/{playerId}")
     SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
-        var playerEmitter = this.emitterService.getLobbyEmitterForPlayer(id, playerId);
-        if (playerEmitter == null) {
-            playerEmitter = this.lobbyService.reconnectLobby(id, playerId);
-        }
-        lobbyService.updateLobbyState(id);
-        return playerEmitter;
+        return lobbyService.reconnectToLobby(id, playerId);
     }
 }

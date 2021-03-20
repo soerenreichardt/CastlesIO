@@ -1,12 +1,12 @@
 package io.castles.core.controller;
 
 import io.castles.core.model.LobbySettingsDTO;
+import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PlayerIdentificationDTO;
 import io.castles.core.service.LobbyService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
-import io.castles.core.model.LobbyStateDTO;
 import io.castles.game.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,9 +44,9 @@ public class ServerController {
                                         @RequestParam("playerName") String playerName,
                                         @RequestBody() LobbySettingsDTO settings) {
         var player = new Player(playerName);
-        var gameLobby = this.lobbyService.createLobbyWithOwner(name, player);
-        gameLobby.registerCallback(emitterService.eventConsumerFor(gameLobby));
-        lobbyService.updateLobbySettings(gameLobby, settings);
+        var gameLobby = this.server.createGameLobby(name, player);
+        gameLobby.initializeWith(emitterService.eventConsumerFor(gameLobby));
+        gameLobby.changeSettings(settings.toGameLobbySettings());
 
         return new PlayerIdentificationDTO(gameLobby.getId(), player.getId());
     }

@@ -1,10 +1,6 @@
 package io.castles.core.service;
 
-import io.castles.core.GameMode;
-import io.castles.core.Visibility;
-import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
-import io.castles.core.model.PlayerIdentificationDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
 import io.castles.game.Server;
@@ -26,44 +22,17 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public GameLobby createLobbyWithOwner(String lobbyName, Player owner) {
-        return this.server.createGameLobby(lobbyName, owner);
-    }
-
     public void joinLobby(UUID id, Player player) throws IOException {
         var gameLobby = server.gameLobbyById(id);
-        gameLobby.addPlayer(player); // TODO: exception handling
-
-        updateLobbyState(gameLobby.getId());
+        gameLobby.addPlayer(player);
     }
 
-    public SseEmitter reconnectLobby(UUID id, UUID playerId) {
+    public SseEmitter reconnectToLobby(UUID id, UUID playerId) {
         var gameLobby = server.gameLobbyById(id);
         if (!gameLobby.containsPlayer(playerId)) {
             throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
         }
-        this.emitterService.createPlayerEmitterForLobby(id, playerId);
-        return this.emitterService.getLobbyEmitterForPlayer(id, playerId);
-    }
-
-    public void updateLobbyState(UUID id) {
-        var gameLobby = server.gameLobbyById(id);
-        var playerIds = gameLobby.getPlayerIds();
-        for (var playerId : playerIds) {
-            updateLobbyStateToPlayer(id, playerId);
-        }
-    }
-
-    public void updateLobbyStateToPlayer(UUID id, UUID playerId) {
-        var gameLobby = server.gameLobbyById(id);
-        var playerLobbyStateDTO = getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);
-        var playerSseEmitter = this.emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), playerId);
-
-        try {
-            playerSseEmitter.send(playerLobbyStateDTO);
-        } catch (IOException e) {
-            playerSseEmitter.complete();
-        }
+        return emitterService.connectToLobby(id, playerId);
     }
 
     public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
@@ -72,9 +41,5 @@ public class LobbyService {
             lobbyStateDTO.getLobbySettings().setEditable(true);
         }
         return lobbyStateDTO;
-    }
-
-    public void updateLobbySettings(GameLobby gameLobby, LobbySettingsDTO lobbySettingsDTO) {
-        gameLobby.changeSettings(lobbySettingsDTO.toGameLobbySettings());
     }
 }

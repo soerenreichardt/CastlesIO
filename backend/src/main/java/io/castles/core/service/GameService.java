@@ -39,6 +39,7 @@ public class GameService {
                 game.getTile(0, 0)
         );
         for (Player player : game.getPlayers()) {
+            // TODO: remove when implementing game start event
             this.emitterService.getLobbyEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
         }
         return game;

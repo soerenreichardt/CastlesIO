@@ -1,13 +1,14 @@
 package io.castles.core.controller;
 
 import io.castles.core.model.LobbySettingsDTO;
-import io.castles.core.service.LobbyService;
 import io.castles.core.service.SseEmitterService;
+import io.castles.core.util.CollectingEventConsumer;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.Server;
+import io.castles.game.events.Event;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,10 +58,14 @@ class ServerControllerTest {
         var lobbyName = "Test";
         var player = new Player("P1");
         var gameLobby = new GameLobby(lobbyName, player);
-        var defaultSettings = JsonHelper.serializeObject(GameLobbySettings.builder().build());
+        var gameLobbySettings = GameLobbySettings.builder().build();
+        var defaultSettings = JsonHelper.serializeObject(gameLobbySettings);
+        var eventConsumer = new CollectingEventConsumer();
+
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(new SseEmitter());
+        Mockito.when(emitterService.eventConsumerFor(any(GameLobby.class))).thenReturn(eventConsumer);
         mvc.perform(MockMvcRequestBuilders.post("/lobby")
                 .param("lobbyName", lobbyName)
                 .param("playerName", "P1")
@@ -67,5 +73,12 @@ class ServerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(gameLobby.getId().toString())));
+
+        assertThat(eventConsumer.events()).isEqualTo(
+                Map.of(
+                        Event.PLAYER_ADDED, List.of(player.toString()),
+                        Event.SETTINGS_CHANGED, List.of(gameLobbySettings.toString())
+                )
+        );
     }
 }

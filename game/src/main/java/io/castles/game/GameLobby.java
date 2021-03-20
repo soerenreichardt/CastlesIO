@@ -26,6 +26,12 @@ public class GameLobby extends StatefulObject {
         addPlayer(owner);
     }
 
+    @Override
+    public void initializeWith(EventConsumer eventConsumer) {
+        registerCallback(eventConsumer);
+        triggerEvent(Event.PLAYER_ADDED, owner);
+    }
+
     boolean isPublic() {
         return this.lobbySettings.getVisibility() == Visibility.PUBLIC;
     }
@@ -60,17 +66,17 @@ public class GameLobby extends StatefulObject {
         removePlayer(getPlayerById(playerId));
     }
 
-    private void replaceOwner() {
-        if (!this.players.isEmpty()) {
-            this.owner = this.players.iterator().next();
-        }
-    }
-
-    private Player getPlayerById(UUID playerId) {
+    public Player getPlayerById(UUID playerId) {
         return this.players.stream()
                 .filter(player -> player.getId().equals(playerId))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    private void replaceOwner() {
+        if (!this.players.isEmpty()) {
+            this.owner = this.players.iterator().next();
+        }
     }
 
     public boolean containsPlayer(UUID playerId) {
