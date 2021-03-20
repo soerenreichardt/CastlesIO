@@ -3,7 +3,8 @@ package io.castles.core.controller;
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PlayerIdentificationDTO;
-import io.castles.core.service.LobbyService;
+import io.castles.core.service.PlayerEmitters;
+import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
@@ -22,8 +23,8 @@ import java.util.stream.Collectors;
 public class ServerController {
 
     private final Server server;
-    private final LobbyService lobbyService;
     private final SseEmitterService emitterService;
+    private final ServerEventService serverEventService;
 
     @GetMapping("/status")
     @ResponseBody
@@ -44,9 +45,15 @@ public class ServerController {
                                         @RequestParam("playerName") String playerName,
                                         @RequestBody() LobbySettingsDTO settings) {
         var player = new Player(playerName);
+
         var gameLobby = this.server.createGameLobby(name, player);
-        gameLobby.initializeWith(emitterService.eventConsumerFor(gameLobby));
+        emitterService.createLobbyEmitter(gameLobby);
+        var eventConsumer = emitterService.eventConsumerForLobby(gameLobby);
+
+        gameLobby.initializeWith(eventConsumer);
         gameLobby.changeSettings(settings.toGameLobbySettings());
+
+        serverEventService.registerEventConsumer(gameLobby.getId(), eventConsumer);
 
         return new PlayerIdentificationDTO(gameLobby.getId(), player.getId());
     }

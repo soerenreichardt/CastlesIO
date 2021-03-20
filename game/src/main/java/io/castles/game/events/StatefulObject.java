@@ -27,7 +27,7 @@ public abstract class StatefulObject extends IdentifiableObject {
         this.eventCallbacks.add(callback);
     }
 
-    protected void triggerEvent(Event event, Object... objects) {
+    public void triggerEvent(Event event, Object... objects) {
         switch (event) {
             case PLAYER_ADDED -> eventCallbacks.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
             case PLAYER_REMOVED -> eventCallbacks.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));

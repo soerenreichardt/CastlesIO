@@ -65,7 +65,7 @@ class ServerControllerTest {
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(new SseEmitter());
-        Mockito.when(emitterService.eventConsumerFor(any(GameLobby.class))).thenReturn(eventConsumer);
+        Mockito.when(emitterService.eventConsumerForLobby(any(GameLobby.class))).thenReturn(eventConsumer);
         mvc.perform(MockMvcRequestBuilders.post("/lobby")
                 .param("lobbyName", lobbyName)
                 .param("playerName", "P1")

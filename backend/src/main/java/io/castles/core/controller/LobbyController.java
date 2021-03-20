@@ -25,7 +25,6 @@ public class LobbyController {
 
     private final Server server;
     private final GameService gameService;
-    private final SseEmitterService emitterService;
     private final LobbyService lobbyService;
 
     @PutMapping("/join")
