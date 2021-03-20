@@ -76,8 +76,8 @@ class ServerControllerTest {
 
         assertThat(eventConsumer.events()).isEqualTo(
                 Map.of(
-                        Event.PLAYER_ADDED, List.of(player.toString()),
-                        Event.SETTINGS_CHANGED, List.of(gameLobbySettings.toString())
+                        Event.PLAYER_ADDED.name(), List.of(player.toString()),
+                        Event.SETTINGS_CHANGED.name(), List.of(gameLobbySettings.toString())
                 )
         );
     }

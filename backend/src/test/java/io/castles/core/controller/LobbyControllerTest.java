@@ -1,6 +1,7 @@
 package io.castles.core.controller;
 
 import io.castles.core.GameMode;
+import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.*;
 import org.junit.jupiter.api.Test;
@@ -113,13 +114,11 @@ class LobbyControllerTest {
         var owner = new Player("Owner");
         var gameLobby = new GameLobby("Test", owner);
         var player = new Player("P1");
-        var emitter = new SseEmitter();
 
         this.emitterService.createPlayerEmitterForLobby(gameLobby.getId(), owner.getId());
 
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);
-        Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);
 
         var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), player.getId());
 
