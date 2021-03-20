@@ -115,6 +115,7 @@ class LobbyControllerTest {
         var gameLobby = new GameLobby("Test", owner);
         var player = new Player("P1");
 
+        gameLobby.addPlayer(player);
         this.emitterService.createPlayerEmitterForLobby(gameLobby.getId(), owner.getId());
 
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
