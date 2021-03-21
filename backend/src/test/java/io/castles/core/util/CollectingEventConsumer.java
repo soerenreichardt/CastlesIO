@@ -35,4 +35,8 @@ public class CollectingEventConsumer implements ServerEventConsumer {
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
         events.computeIfAbsent(Event.SETTINGS_CHANGED.name(), __ -> new ArrayList<>()).add(gameLobbySettings.toString());
     }
+
+    public void reset() {
+        events.clear();
+    }
 }

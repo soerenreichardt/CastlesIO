@@ -22,14 +22,10 @@ public class SseEmitterService {
     }
 
     public SseEmitter connectToLobby(UUID lobbyId, UUID playerId) {
-        var playerEmitter = this.sseEmitters.get(lobbyId);
+        var playerEmitter = getPlayerEmitters(lobbyId);
         var emitter = playerEmitter.getOrCreate(playerId);
         serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, playerId);
         return emitter;
-    }
-
-    public void createPlayerEmitterForLobby(UUID lobbyId, UUID playerId) {
-        sseEmitters.get(lobbyId).create(playerId);
     }
 
     public void createLobbyEmitter(GameLobby lobby) {
@@ -38,10 +34,14 @@ public class SseEmitterService {
     }
 
     public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
-        return this.sseEmitters.get(lobbyId).get(playerId);
+        return getPlayerEmitters(lobbyId).get(playerId);
     }
 
     public ServerEventConsumer eventConsumerForLobby(GameLobby gameLobby) {
-        return new EmittingEventConsumer(gameLobby, sseEmitters.get(gameLobby.getId()));
+        return new EmittingEventConsumer(gameLobby, getPlayerEmitters(gameLobby.getId()));
+    }
+
+    public PlayerEmitters getPlayerEmitters(UUID lobbyId) {
+        return this.sseEmitters.get(lobbyId);
     }
 }

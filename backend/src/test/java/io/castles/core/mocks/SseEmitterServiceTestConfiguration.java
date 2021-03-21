@@ -1,7 +1,9 @@
 package io.castles.core.mocks;
 
+import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

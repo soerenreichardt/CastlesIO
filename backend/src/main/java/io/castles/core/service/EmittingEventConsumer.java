@@ -20,17 +20,13 @@ class EmittingEventConsumer implements ServerEventConsumer {
     }
 
     public void onPlayerReconnected(UUID playerId) {
-        sendToAllPlayers(String.format("Player %s connected", gameLobby.getPlayerById(playerId)));
+        sendLobbyStateToAllPlayers();
     }
 
     @Override
     public void onPlayerAdded(Player player) {
-        playerEmitters.create(player.getId());
-        LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
-        if (gameLobby.getOwnerId().equals(player.getId())) {
-            lobbyStateDTO.getLobbySettings().setEditable(true);
-        }
-        sendToAllPlayers(lobbyStateDTO);
+        createPlayerEmitter(player);
+        sendLobbyStateToAllPlayers();
     }
 
     @Override
@@ -41,7 +37,24 @@ class EmittingEventConsumer implements ServerEventConsumer {
 
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
-        sendToAllPlayers(LobbySettingsDTO.from(gameLobbySettings));
+        sendLobbyStateToAllPlayers();
+    }
+
+    private void createPlayerEmitter(Player player) {
+        playerEmitters.create(player.getId());
+    }
+
+    private void sendLobbyStateToAllPlayers() {
+        var lobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        var ownerLobbyStateDTO = LobbyStateDTO.from(gameLobby);
+        ownerLobbyStateDTO.getLobbySettings().setEditable(true);
+        gameLobby.getPlayers().forEach(p -> {
+            if (gameLobby.getOwnerId().equals(p.getId())) {
+                playerEmitters.sendToPlayer(p, ownerLobbyStateDTO);
+            } else {
+                playerEmitters.sendToPlayer(p, lobbyStateDTO);
+            }
+        });
     }
 
     private void sendToAllPlayers(Object message) {
