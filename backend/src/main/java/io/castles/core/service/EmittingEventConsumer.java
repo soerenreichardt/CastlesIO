@@ -37,7 +37,7 @@ class EmittingEventConsumer implements ServerEventConsumer {
 
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
-        sendToAllPlayers(LobbySettingsDTO.from(gameLobbySettings));
+        sendLobbyStateToAllPlayers();
     }
 
     private void createPlayerEmitter(Player player) {
