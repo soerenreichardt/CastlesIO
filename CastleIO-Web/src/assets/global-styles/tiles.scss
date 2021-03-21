@@ -1,0 +1,23 @@
+*[id^='grass'] {
+    fill: green;
+}
+
+*[id^='castle'] {
+    fill: saddlebrown;
+}
+
+*[id^='grass'] {
+    fill: green;
+}
+
+*[id^='street'] {
+    fill: lightyellow;
+}
+
+*[id^='chapel'] {
+    fill: rebeccapurple;
+}
+
+g[id^='tile'] {
+    transform-origin: center center;
+}

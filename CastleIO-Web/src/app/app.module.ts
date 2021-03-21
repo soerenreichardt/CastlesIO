@@ -21,6 +21,10 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import { GameComponent } from './game/game.component';
+import { GameBoardComponent } from './game/game-board/game-board.component';
+import { GamePeepzComponent } from './game/game-peepz/game-peepz.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
@@ -28,7 +32,10 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
         LobbyComponent,
         LandingComponent,
         CreatePlayerComponent,
-        ModalDirective
+        ModalDirective,
+        GameComponent,
+        GameBoardComponent,
+        GamePeepzComponent
     ],
     imports: [
         BrowserModule,
@@ -46,6 +53,7 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
         MatSelectModule,
         MatSliderModule,
         MatSnackBarModule,
+        MatDialogModule,
         ClipboardModule,
         ReactiveFormsModule
     ],

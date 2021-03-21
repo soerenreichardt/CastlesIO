@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {PlayerInfo} from '../models/player-info.interface';
+import {PlayerAuthentication} from '../models/player-authentication.interface';
 
 @Injectable({
   providedIn: 'root'

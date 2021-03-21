@@ -1,7 +1,8 @@
 import {LobbySettings} from './lobby-settings.interface';
+import {PlayerDTO} from './dtos/player-dto.interface';
 
 export interface Lobby {
-    playerNames: string[];
+    players: PlayerDTO[];
     lobbyName: string;
     lobbySettings: LobbySettings;
 }
