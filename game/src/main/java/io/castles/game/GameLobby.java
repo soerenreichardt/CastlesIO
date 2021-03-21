@@ -40,7 +40,9 @@ public class GameLobby extends StatefulObject {
         if (!canStart()) {
             throw new IllegalStateException("Unable to start game");
         }
-        return new Game(getId(), GameSettings.from(lobbySettings), this.players);
+        var game = new Game(getId(), GameSettings.from(lobbySettings), this.players);
+        triggerEvent(Event.GAME_STARTED, game);
+        return game;
     }
 
     public void addPlayer(Player player) {

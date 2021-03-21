@@ -2,6 +2,7 @@ package io.castles.core.util;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.events.ServerEventConsumer;
+import io.castles.game.Game;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.events.Event;
@@ -34,5 +35,14 @@ public class CollectingEventConsumer implements ServerEventConsumer {
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
         events.computeIfAbsent(Event.SETTINGS_CHANGED.name(), __ -> new ArrayList<>()).add(gameLobbySettings.toString());
+    }
+
+    @Override
+    public void onGameStarted(Game game) {
+        events.computeIfAbsent(Event.GAME_STARTED.name(), __ -> new ArrayList<>()).add(game.toString());
+    }
+
+    public void reset() {
+        events.clear();
     }
 }

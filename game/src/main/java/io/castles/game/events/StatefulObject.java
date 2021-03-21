@@ -1,5 +1,6 @@
 package io.castles.game.events;
 
+import io.castles.game.Game;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.IdentifiableObject;
 import io.castles.game.Player;
@@ -32,6 +33,7 @@ public abstract class StatefulObject extends IdentifiableObject {
             case PLAYER_ADDED -> eventCallbacks.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
             case PLAYER_REMOVED -> eventCallbacks.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));
             case SETTINGS_CHANGED -> eventCallbacks.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
+            case GAME_STARTED -> eventCallbacks.forEach(consumer -> consumer.onGameStarted((Game) objects[0]));
         }
     }
 
@@ -42,5 +44,7 @@ public abstract class StatefulObject extends IdentifiableObject {
         void onPlayerRemoved(Player player);
 
         void onSettingsChanged(GameLobbySettings gameLobbySettings);
+
+        void onGameStarted(Game game);
     }
 }
