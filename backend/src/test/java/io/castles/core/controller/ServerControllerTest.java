@@ -9,6 +9,7 @@ import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.Server;
 import io.castles.game.events.Event;
+import io.castles.game.events.EventHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +58,12 @@ class ServerControllerTest {
     void shouldCreateNewLobby() throws Exception {
         var lobbyName = "Test";
         var player = new Player("P1");
-        var gameLobby = new GameLobby(lobbyName, player);
+        var eventHandler = new EventHandler();
+        var eventConsumer = new CollectingEventConsumer();
+        eventHandler.registerEventConsumer(eventConsumer);
+        var gameLobby = new GameLobby(lobbyName, player, eventHandler);
         var gameLobbySettings = GameLobbySettings.builder().build();
         var defaultSettings = JsonHelper.serializeObject(gameLobbySettings);
-        var eventConsumer = new CollectingEventConsumer();
 
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
         Mockito.when(server.gameLobbyById(any(UUID.class))).thenReturn(gameLobby);

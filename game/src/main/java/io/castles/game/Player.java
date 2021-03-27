@@ -12,6 +12,7 @@ public class Player extends IdentifiableObject {
     String name;
 
     public Player(String name) {
+        super(IdentifiableObject.randomUUID());
         this.name = name;
     }
 

@@ -7,6 +7,7 @@ import io.castles.core.service.PlayerEmitters;
 import io.castles.core.service.SseEmitterService;
 import io.castles.core.util.CollectingEventConsumer;
 import io.castles.game.*;
+import io.castles.game.events.EventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -58,7 +59,7 @@ class LobbyControllerTest {
     @BeforeEach
     void setup() {
         owner = new Player("Owner");
-        gameLobby = new GameLobby("Test", owner);
+        gameLobby = new GameLobby("Test", owner, new EventHandler());
         eventConsumer = new CollectingEventConsumer();
 
         Mockito.when(server.createGameLobby(any(String.class), any(Player.class))).thenReturn(gameLobby);
@@ -112,7 +113,7 @@ class LobbyControllerTest {
         var emitter = new SseEmitter();
         var lobbySettings = gameLobby.getLobbySettings();
         lobbySettings.setGameMode(GameMode.DEBUG);
-        var game = new Game(gameLobby.getId(), GameSettings.from(lobbySettings), Set.of(new Player("foo")));
+        var game = new Game(gameLobby.getId(), GameSettings.from(lobbySettings), Set.of(new Player("foo")), gameLobby.eventHandler());
         Mockito.when(server.startGame(any(UUID.class))).thenReturn(game);
         Mockito.when(emitterService.getLobbyEmitterForPlayer(any(UUID.class), any(UUID.class))).thenReturn(emitter);
 

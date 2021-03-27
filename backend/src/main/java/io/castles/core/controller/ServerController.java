@@ -50,7 +50,6 @@ public class ServerController {
         emitterService.createLobbyEmitter(gameLobby);
         var eventConsumer = emitterService.eventConsumerForLobby(gameLobby);
 
-        gameLobby.initializeWith(eventConsumer);
         gameLobby.changeSettings(settings.toGameLobbySettings());
 
         serverEventService.registerEventConsumer(gameLobby.getId(), eventConsumer);

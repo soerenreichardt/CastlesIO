@@ -15,7 +15,7 @@ class GameLobbyTest {
 
     @BeforeEach
     void setup() {
-        this.gameLobby = new GameLobby("Test", new Player("owner"));
+        this.gameLobby = new GameLobby("Test", new Player("owner"), Server.getInstance().eventHandler());
     }
 
     @Test
