@@ -6,7 +6,7 @@ import io.castles.game.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventHandler implements EventProducer {
+public class EventHandler implements EventProducer<GameEvent> {
 
     private final List<EventConsumer> eventCallbacks;
 
@@ -19,7 +19,7 @@ public class EventHandler implements EventProducer {
     }
 
     @Override
-    public void triggerEvent(Event event, Object... objects) {
+    public void triggerEvent(GameEvent event, Object... objects) {
         switch (event) {
             case PLAYER_ADDED -> eventCallbacks.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
             case PLAYER_REMOVED -> eventCallbacks.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));

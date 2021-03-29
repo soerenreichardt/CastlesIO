@@ -4,7 +4,7 @@ import io.castles.game.IdentifiableObject;
 
 import java.util.UUID;
 
-public abstract class StatefulObject extends IdentifiableObject implements EventProducer {
+public abstract class StatefulObject extends IdentifiableObject implements EventProducer<GameEvent> {
 
     protected final EventHandler eventHandler;
 
@@ -14,7 +14,7 @@ public abstract class StatefulObject extends IdentifiableObject implements Event
     }
 
     @Override
-    public void triggerEvent(Event event, Object... objects) {
+    public void triggerEvent(GameEvent event, Object... objects) {
         this.eventHandler.triggerEvent(event, objects);
     }
 

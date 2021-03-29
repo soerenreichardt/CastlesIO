@@ -3,13 +3,11 @@ package io.castles.core.controller;
 import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.core.model.PlayerIdentificationDTO;
-import io.castles.core.service.PlayerEmitters;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.Server;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

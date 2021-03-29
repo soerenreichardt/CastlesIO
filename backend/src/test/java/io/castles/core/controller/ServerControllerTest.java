@@ -8,7 +8,7 @@ import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.Server;
-import io.castles.game.events.Event;
+import io.castles.game.events.GameEvent;
 import io.castles.game.events.EventHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -79,8 +79,8 @@ class ServerControllerTest {
 
         assertThat(eventConsumer.events()).isEqualTo(
                 Map.of(
-                        Event.PLAYER_ADDED.name(), List.of(player.toString()),
-                        Event.SETTINGS_CHANGED.name(), List.of(gameLobbySettings.toString())
+                        GameEvent.PLAYER_ADDED.name(), List.of(player.toString()),
+                        GameEvent.SETTINGS_CHANGED.name(), List.of(gameLobbySettings.toString())
                 )
         );
     }
