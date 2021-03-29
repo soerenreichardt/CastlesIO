@@ -1,10 +1,14 @@
 package io.castles.core.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlayerIdentificationDTO {
     UUID lobbyId;
     UUID playerId;

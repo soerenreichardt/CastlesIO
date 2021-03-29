@@ -1,6 +1,7 @@
 package io.castles.game;
 
 import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
@@ -30,6 +31,7 @@ public class Server {
     public GameLobby createGameLobby(String name, Player owner) {
         var gameLobby = new GameLobby(name, owner, eventHandler);
         activeLobbies.put(gameLobby.getId(), gameLobby);
+        gameLobby.triggerEvent(GameEvent.LOBBY_CREATED, gameLobby);
         return gameLobby;
     }
 
@@ -69,6 +71,16 @@ public class Server {
 
     public EventHandler eventHandler() {
         return eventHandler;
+    }
+
+    @TestOnly
+    public void addGameLobby(GameLobby gameLobby) {
+        this.activeLobbies.put(gameLobby.getId(), gameLobby);
+    }
+
+    @TestOnly
+    public void addGame(Game game) {
+        this.activeGames.put(game.getId(), game);
     }
 
     @TestOnly
