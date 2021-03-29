@@ -1,15 +1,15 @@
 package io.castles.core.service;
 
 import io.castles.core.events.ServerEventConsumer;
-import io.castles.core.model.LobbySettingsDTO;
 import io.castles.core.model.LobbyStateDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
+import io.castles.game.events.GameEventConsumer;
 
 import java.util.UUID;
 
-class EmittingEventConsumer implements ServerEventConsumer {
+class EmittingEventConsumer implements ServerEventConsumer, GameEventConsumer {
 
     private final GameLobby gameLobby;
     private final PlayerEmitters playerEmitters;

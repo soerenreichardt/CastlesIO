@@ -3,7 +3,7 @@ package io.castles.game.events;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 
-public interface EventConsumer {
+public interface GameEventConsumer {
 
     void onPlayerAdded(Player player);
 

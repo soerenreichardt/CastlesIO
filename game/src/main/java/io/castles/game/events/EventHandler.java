@@ -8,13 +8,13 @@ import java.util.List;
 
 public class EventHandler implements EventProducer<GameEvent> {
 
-    private final List<EventConsumer> eventCallbacks;
+    private final List<GameEventConsumer> eventCallbacks;
 
     public EventHandler() {
         this.eventCallbacks = new ArrayList<>();
     }
 
-    public void registerEventConsumer(EventConsumer callback) {
+    public void registerEventConsumer(GameEventConsumer callback) {
         this.eventCallbacks.add(callback);
     }
 

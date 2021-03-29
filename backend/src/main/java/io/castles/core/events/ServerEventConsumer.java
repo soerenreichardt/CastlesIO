@@ -1,9 +1,7 @@
 package io.castles.core.events;
 
-import io.castles.game.events.EventConsumer;
-
 import java.util.UUID;
 
-public interface ServerEventConsumer extends EventConsumer {
+public interface ServerEventConsumer {
     void onPlayerReconnected(UUID playerId);
 }
