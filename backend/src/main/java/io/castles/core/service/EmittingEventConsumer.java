@@ -9,7 +9,7 @@ import io.castles.game.events.GameEventConsumer;
 
 import java.util.UUID;
 
-class EmittingEventConsumer implements ServerEventConsumer, GameEventConsumer {
+public class EmittingEventConsumer implements ServerEventConsumer, GameEventConsumer {
 
     private final GameLobby gameLobby;
     private final PlayerEmitters playerEmitters;
@@ -38,6 +38,11 @@ class EmittingEventConsumer implements ServerEventConsumer, GameEventConsumer {
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
         sendLobbyStateToAllPlayers();
+    }
+
+    @Override
+    public void onLobbyCreated(GameLobby gameLobby) {
+        // TODO
     }
 
     private void createPlayerEmitter(Player player) {
