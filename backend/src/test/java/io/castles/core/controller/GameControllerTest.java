@@ -54,6 +54,7 @@ class GameControllerTest {
     void shouldGetTileAtSpecificPosition() throws Exception {
         Tile tile = game.getTile(0, 0);
         String tileJson = JsonHelper.serializeObject(TileDTO.from(tile));
+        Mockito.when(gameService.gameById(any())).thenReturn(game);
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/tile", game.getId().toString()))
                 .param("x", "0")
@@ -79,6 +80,7 @@ class GameControllerTest {
     @Test
     void shouldGetCurrentGameState() throws Exception {
         String gameStateJson = JsonHelper.serializeObject(new GameStateDTO(game.getCurrentGameState(), game.getActivePlayer()));
+        Mockito.when(gameService.gameById(any())).thenReturn(game);
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/state", game.getId().toString()))
                 .accept(MediaType.APPLICATION_JSON))
