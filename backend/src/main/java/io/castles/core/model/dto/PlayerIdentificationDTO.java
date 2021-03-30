@@ -1,4 +1,4 @@
-package io.castles.core.model;
+package io.castles.core.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

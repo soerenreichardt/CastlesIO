@@ -1,8 +1,8 @@
 package io.castles.core.controller;
 
-import io.castles.core.model.LobbySettingsDTO;
-import io.castles.core.model.LobbyStateDTO;
-import io.castles.core.model.PublicLobbyDTO;
+import io.castles.core.model.dto.LobbySettingsDTO;
+import io.castles.core.model.dto.LobbyStateDTO;
+import io.castles.core.model.dto.PublicLobbyDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.service.LobbyService;
 import io.castles.game.GameLobby;

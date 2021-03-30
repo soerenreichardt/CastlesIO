@@ -2,7 +2,7 @@ package io.castles.core.controller;
 
 import io.castles.core.GameMode;
 import io.castles.core.events.ServerEvent;
-import io.castles.core.model.LobbySettingsDTO;
+import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.service.SseEmitterService;
 import io.castles.core.util.CollectingEventConsumer;
 import io.castles.game.*;

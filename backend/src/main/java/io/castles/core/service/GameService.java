@@ -1,7 +1,7 @@
 package io.castles.core.service;
 
-import io.castles.core.model.GameStartDTO;
-import io.castles.core.model.TileDTO;
+import io.castles.core.model.dto.GameStartDTO;
+import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
 import io.castles.core.util.JsonTileLoader;
 import io.castles.game.Game;

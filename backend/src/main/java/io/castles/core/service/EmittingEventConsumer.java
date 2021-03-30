@@ -1,7 +1,7 @@
 package io.castles.core.service;
 
 import io.castles.core.events.ServerEventConsumer;
-import io.castles.core.model.LobbyStateDTO;
+import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;

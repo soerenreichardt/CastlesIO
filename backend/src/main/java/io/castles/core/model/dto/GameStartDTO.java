@@ -1,4 +1,4 @@
-package io.castles.core.model;
+package io.castles.core.model.dto;
 
 import io.castles.core.tile.Tile;
 import io.castles.game.GameSettings;

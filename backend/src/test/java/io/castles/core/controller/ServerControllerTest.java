@@ -1,7 +1,7 @@
 package io.castles.core.controller;
 
-import io.castles.core.model.LobbySettingsDTO;
-import io.castles.core.model.PlayerIdentificationDTO;
+import io.castles.core.model.dto.LobbySettingsDTO;
+import io.castles.core.model.dto.PlayerIdentificationDTO;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Server;

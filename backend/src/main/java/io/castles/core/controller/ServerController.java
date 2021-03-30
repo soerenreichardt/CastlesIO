@@ -1,9 +1,9 @@
 package io.castles.core.controller;
 
 import io.castles.core.events.SetupEventConsumer;
-import io.castles.core.model.LobbySettingsDTO;
-import io.castles.core.model.LobbyStateDTO;
-import io.castles.core.model.PlayerIdentificationDTO;
+import io.castles.core.model.dto.LobbySettingsDTO;
+import io.castles.core.model.dto.LobbyStateDTO;
+import io.castles.core.model.dto.PlayerIdentificationDTO;
 import io.castles.core.service.EmittingEventConsumer;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;

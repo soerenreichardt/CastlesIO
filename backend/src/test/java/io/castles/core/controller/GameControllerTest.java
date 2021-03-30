@@ -1,15 +1,14 @@
 package io.castles.core.controller;
 
 import io.castles.core.GameMode;
-import io.castles.core.model.GameStateDTO;
-import io.castles.core.model.TileDTO;
+import io.castles.core.model.dto.GameStateDTO;
+import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
