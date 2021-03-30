@@ -1,5 +1,7 @@
 package io.castles.game;
 
+import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,7 @@ class GameLobbyTest {
     @BeforeEach
     void setup() {
         this.gameLobby = new GameLobby("Test", new Player("owner"), Server.getInstance().eventHandler());
+        this.gameLobby.initialize();
     }
 
     @Test
@@ -70,5 +73,13 @@ class GameLobbyTest {
         assertThatThrownBy(() -> gameLobby.addPlayer(new Player("foo")))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Maximum number of players reached");
+    }
+
+    @Test
+    void shouldThrowWhenEventIsTriggeredOnUninitializedLobby() {
+        var gameLobby = new GameLobby("Test", new Player("p1"), new EventHandler());
+        assertThatThrownBy(() -> gameLobby.triggerEvent(GameEvent.LOBBY_CREATED))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("uninitialized class");
     }
 }

@@ -31,6 +31,7 @@ public class Server {
     public GameLobby createGameLobby(String name, Player owner) {
         var gameLobby = new GameLobby(name, owner, eventHandler);
         activeLobbies.put(gameLobby.getId(), gameLobby);
+        gameLobby.initialize();
         gameLobby.triggerEvent(GameEvent.LOBBY_CREATED, gameLobby);
         return gameLobby;
     }
@@ -84,7 +85,7 @@ public class Server {
     }
 
     @TestOnly
-    void reset() {
+    public void reset() {
         activeLobbies.clear();
         activeGames.clear();
     }

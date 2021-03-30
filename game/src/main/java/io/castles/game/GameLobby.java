@@ -25,7 +25,10 @@ public class GameLobby extends StatefulObject {
         this.players = new HashSet<>();
         this.owner = owner;
         this.lobbySettings = GameLobbySettings.builder().build();
+    }
 
+    @Override
+    protected void init() {
         addPlayer(owner);
     }
 

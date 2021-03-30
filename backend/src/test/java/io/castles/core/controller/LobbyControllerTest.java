@@ -56,6 +56,7 @@ class LobbyControllerTest {
     void setup() {
         owner = new Player("Owner");
         gameLobby = new GameLobby("Test", owner, new EventHandler());
+        gameLobby.initialize();
         eventConsumer = new CollectingEventConsumer();
 
         server.addGameLobby(gameLobby);

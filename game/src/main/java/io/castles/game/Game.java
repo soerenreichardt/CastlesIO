@@ -25,6 +25,11 @@ public class Game extends StatefulObject {
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
     }
 
+    @Override
+    protected void init() {
+
+    }
+
     public Tile getNewTile() {
         return this.board.getNewTile();
     }

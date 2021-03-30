@@ -12,6 +12,8 @@ public class ServerTestConfiguration {
     @Primary
     @Scope(SCOPE_PROTOTYPE)
     public Server getServerInstance() {
-        return Server.getInstance();
+        Server server = Server.getInstance();
+        server.reset();
+        return server;
     }
 }
