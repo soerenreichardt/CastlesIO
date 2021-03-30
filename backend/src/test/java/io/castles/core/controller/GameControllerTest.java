@@ -3,6 +3,7 @@ package io.castles.core.controller;
 import io.castles.core.GameMode;
 import io.castles.core.model.GameStateDTO;
 import io.castles.core.model.TileDTO;
+import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.util.JsonHelper;
@@ -10,9 +11,11 @@ import io.castles.game.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +39,9 @@ class GameControllerTest {
 
     @Autowired
     private Server server;
+
+    @MockBean
+    private GameService gameService;
 
     Game game;
 
@@ -52,7 +59,8 @@ class GameControllerTest {
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/tile", game.getId().toString()))
                 .param("x", "0")
-                .param("y", "0").accept(MediaType.APPLICATION_JSON))
+                .param("y", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson));
     }
@@ -62,11 +70,12 @@ class GameControllerTest {
         Tile tile = Tile.drawStatic(TileContent.GRAS);
         String tileJson = JsonHelper.serializeObject(TileDTO.from(tile));
 
+        Mockito.when(gameService.getNewTile(any())).thenReturn(tile);
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/new_tile", game.getId().toString()))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(tileJson.substring(8)))); // do not check for Tile id
+                .andExpect(content().string(tileJson)); // do not check for Tile id
     }
 
     @Test
@@ -79,7 +88,7 @@ class GameControllerTest {
                 .andExpect(content().string(gameStateJson));
     }
 
-    @Disabled("waiting for other game state actions to take place")
+    @Test
     void shouldInsertTile() throws Exception {
         TileDTO tile = TileDTO.from(Tile.drawStatic(TileContent.GRAS));
 

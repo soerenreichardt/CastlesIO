@@ -1,6 +1,8 @@
 package io.castles.core.service;
 
 import io.castles.core.model.GameStartDTO;
+import io.castles.core.model.TileDTO;
+import io.castles.core.tile.Tile;
 import io.castles.core.util.JsonTileLoader;
 import io.castles.game.Game;
 import io.castles.game.Player;
@@ -43,6 +45,14 @@ public class GameService {
             this.emitterService.getLobbyEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
         }
         return game;
+    }
+
+    public Tile getNewTile(UUID gameId) {
+        return gameById(gameId).getNewTile();
+    }
+
+    public void placeTile(UUID gameId, int x, int y, TileDTO tileDTO) {
+        gameById(gameId).placeTile(tileDTO.toTile(), x, y);
     }
 
     private void setDefaultTileList(UUID id) throws IOException {
