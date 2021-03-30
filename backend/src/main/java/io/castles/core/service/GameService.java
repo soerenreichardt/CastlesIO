@@ -38,7 +38,7 @@ public class GameService {
                 game.getPlayers(),
                 game.getActivePlayer(),
                 game.getSettings(),
-                game.getTile(0, 0)
+                TileDTO.from(game.getTile(0, 0))
         );
         for (Player player : game.getPlayers()) {
             // TODO: remove when implementing game start event
