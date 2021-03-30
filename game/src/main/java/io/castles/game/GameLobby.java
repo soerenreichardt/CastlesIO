@@ -3,7 +3,8 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
-import io.castles.game.events.Event;
+import io.castles.game.events.GameEvent;
+import io.castles.game.events.EventHandler;
 import io.castles.game.events.StatefulObject;
 
 import java.util.*;
@@ -18,18 +19,17 @@ public class GameLobby extends StatefulObject {
     private Player owner;
     private GameLobbySettings lobbySettings;
 
-    public GameLobby(String name, Player owner) {
+    public GameLobby(String name, Player owner, EventHandler eventHandler) {
+        super(IdentifiableObject.randomUUID(), eventHandler);
         this.name = name;
         this.players = new HashSet<>();
         this.owner = owner;
         this.lobbySettings = GameLobbySettings.builder().build();
-        addPlayer(owner);
     }
 
     @Override
-    public void initializeWith(EventConsumer eventConsumer) {
-        registerCallback(eventConsumer);
-        triggerEvent(Event.PLAYER_ADDED, owner);
+    protected void init() {
+        addPlayer(owner);
     }
 
     boolean isPublic() {
@@ -40,7 +40,7 @@ public class GameLobby extends StatefulObject {
         if (!canStart()) {
             throw new IllegalStateException("Unable to start game");
         }
-        return new Game(getId(), GameSettings.from(lobbySettings), this.players);
+        return new Game(getId(), GameSettings.from(lobbySettings), this.players, this.eventHandler);
     }
 
     public void addPlayer(Player player) {
@@ -48,7 +48,7 @@ public class GameLobby extends StatefulObject {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
-        triggerEvent(Event.PLAYER_ADDED, player);
+        triggerEvent(GameEvent.PLAYER_ADDED, player);
     }
 
     public void removePlayer(Player player) {
@@ -59,7 +59,7 @@ public class GameLobby extends StatefulObject {
         if (player.getId() == owner.getId()) {
             replaceOwner();
         }
-        triggerEvent(Event.PLAYER_REMOVED, player);
+        triggerEvent(GameEvent.PLAYER_REMOVED, player);
     }
 
     public void removePlayer(UUID playerId) {
@@ -90,7 +90,7 @@ public class GameLobby extends StatefulObject {
 
     public void changeSettings(GameLobbySettings gameLobbySettings) {
         this.lobbySettings = gameLobbySettings;
-        triggerEvent(Event.SETTINGS_CHANGED, gameLobbySettings);
+        triggerEvent(GameEvent.SETTINGS_CHANGED, gameLobbySettings);
     }
 
     public void setGameMode(GameMode gameMode) {

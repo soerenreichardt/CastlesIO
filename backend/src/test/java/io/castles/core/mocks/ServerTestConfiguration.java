@@ -1,18 +1,19 @@
 package io.castles.core.mocks;
 
 import io.castles.game.Server;
-import org.mockito.Mockito;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Profile("test")
 @Configuration
 public class ServerTestConfiguration {
     @Bean
     @Primary
-    public Server getMockServer() {
-        return Mockito.mock(Server.class);
+    @Scope(SCOPE_PROTOTYPE)
+    public Server getServerInstance() {
+        Server server = Server.getInstance();
+        server.reset();
+        return server;
     }
 }

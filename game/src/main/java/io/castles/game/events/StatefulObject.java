@@ -1,46 +1,36 @@
 package io.castles.game.events;
 
-import io.castles.game.GameLobbySettings;
 import io.castles.game.IdentifiableObject;
-import io.castles.game.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-public abstract class StatefulObject extends IdentifiableObject {
+public abstract class StatefulObject extends IdentifiableObject implements EventProducer<GameEvent> {
 
-    private final List<EventConsumer> eventCallbacks;
+    protected final EventHandler eventHandler;
+    private boolean initialized;
 
-    protected StatefulObject() {
-        this(UUID.randomUUID());
-    }
-
-    protected StatefulObject(UUID id) {
+    public StatefulObject(UUID id, EventHandler eventHandler) {
         super(id);
-        this.eventCallbacks = new ArrayList<>();
+        this.eventHandler = eventHandler;
+        this.initialized = false;
     }
 
-    public abstract void initializeWith(EventConsumer eventConsumer);
-
-    public void registerCallback(EventConsumer callback) {
-        this.eventCallbacks.add(callback);
-    }
-
-    public void triggerEvent(Event event, Object... objects) {
-        switch (event) {
-            case PLAYER_ADDED -> eventCallbacks.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
-            case PLAYER_REMOVED -> eventCallbacks.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));
-            case SETTINGS_CHANGED -> eventCallbacks.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
+    @Override
+    public void triggerEvent(GameEvent event, Object... objects) {
+        if (!initialized) {
+            throw new IllegalStateException("Cannot trigger event on uninitialized class. Please call `StatefulObject#initialize");
         }
+        this.eventHandler.triggerEvent(event, objects);
     }
 
-    public interface EventConsumer {
-
-        void onPlayerAdded(Player player);
-
-        void onPlayerRemoved(Player player);
-
-        void onSettingsChanged(GameLobbySettings gameLobbySettings);
+    public EventHandler eventHandler() {
+        return this.eventHandler;
     }
+
+    public void initialize() {
+        this.initialized = true;
+        init();
+    }
+
+    protected abstract void init();
 }

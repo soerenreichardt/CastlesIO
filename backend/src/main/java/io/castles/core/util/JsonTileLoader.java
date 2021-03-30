@@ -1,7 +1,7 @@
 package io.castles.core.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.castles.core.model.TileDTO;
+import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
 
 import java.io.IOException;

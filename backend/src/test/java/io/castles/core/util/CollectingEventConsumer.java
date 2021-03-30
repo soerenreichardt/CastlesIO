@@ -2,13 +2,15 @@ package io.castles.core.util;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.events.ServerEventConsumer;
+import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
-import io.castles.game.events.Event;
+import io.castles.game.events.GameEvent;
+import io.castles.game.events.GameEventConsumer;
 
 import java.util.*;
 
-public class CollectingEventConsumer implements ServerEventConsumer {
+public class CollectingEventConsumer implements ServerEventConsumer, GameEventConsumer {
 
     Map<String, List<String>> events = new HashMap<>();
 
@@ -23,17 +25,22 @@ public class CollectingEventConsumer implements ServerEventConsumer {
 
     @Override
     public void onPlayerAdded(Player player) {
-        events.computeIfAbsent(Event.PLAYER_ADDED.name(), __ -> new ArrayList<>()).add(player.toString());
+        events.computeIfAbsent(GameEvent.PLAYER_ADDED.name(), __ -> new ArrayList<>()).add(player.toString());
     }
 
     @Override
     public void onPlayerRemoved(Player player) {
-        events.computeIfAbsent(Event.PLAYER_REMOVED.name(), __ -> new ArrayList<>()).add(player.toString());
+        events.computeIfAbsent(GameEvent.PLAYER_REMOVED.name(), __ -> new ArrayList<>()).add(player.toString());
     }
 
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
-        events.computeIfAbsent(Event.SETTINGS_CHANGED.name(), __ -> new ArrayList<>()).add(gameLobbySettings.toString());
+        events.computeIfAbsent(GameEvent.SETTINGS_CHANGED.name(), __ -> new ArrayList<>()).add(gameLobbySettings.toString());
+    }
+
+    @Override
+    public void onLobbyCreated(GameLobby gameLobby) {
+        events.computeIfAbsent(GameEvent.LOBBY_CREATED.name(), __ -> new ArrayList<>()).add(gameLobby.toString());
     }
 
     public void reset() {

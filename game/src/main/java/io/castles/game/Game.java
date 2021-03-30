@@ -2,6 +2,7 @@ package io.castles.game;
 
 import io.castles.core.board.Board;
 import io.castles.core.tile.Tile;
+import io.castles.game.events.EventHandler;
 import io.castles.game.events.StatefulObject;
 
 import java.util.*;
@@ -13,8 +14,8 @@ public class Game extends StatefulObject {
     private final Board board;
     private final GameSettings settings;
 
-    public Game(UUID lobbyId, GameSettings settings, Set<Player> players) {
-        super(lobbyId);
+    public Game(UUID lobbyId, GameSettings settings, Set<Player> players, EventHandler eventHandler) {
+        super(lobbyId, eventHandler);
         this.settings = settings;
         // Transforming the players set into a list might be
         // necessary if a player leaves the game while the
@@ -25,8 +26,8 @@ public class Game extends StatefulObject {
     }
 
     @Override
-    public void initializeWith(EventConsumer eventConsumer) {
-        throw new UnsupportedOperationException();
+    protected void init() {
+
     }
 
     public Tile getNewTile() {

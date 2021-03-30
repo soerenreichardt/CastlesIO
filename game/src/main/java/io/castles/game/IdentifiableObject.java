@@ -9,15 +9,15 @@ public abstract class IdentifiableObject {
 
     private final UUID id;
 
-    public IdentifiableObject() {
-        this(UUID.randomUUID());
-    }
-
     public IdentifiableObject(UUID id) {
         this.id = id;
     }
 
     public UUID getId() {
         return this.id;
+    }
+
+    protected static UUID randomUUID() {
+        return UUID.randomUUID();
     }
 }

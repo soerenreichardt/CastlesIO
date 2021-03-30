@@ -1,7 +1,7 @@
 package io.castles.core.controller;
 
-import io.castles.core.model.GameStateDTO;
-import io.castles.core.model.TileDTO;
+import io.castles.core.model.dto.GameStateDTO;
+import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
 import io.castles.core.service.GameService;
 import io.castles.game.Game;
@@ -23,8 +23,7 @@ public class GameController {
     @GetMapping("/new_tile")
     @ResponseBody
     TileDTO getNextTile(@PathVariable("id") UUID id) {
-        Game game = gameService.gameById(id);
-        Tile newTile = game.getNewTile();
+        Tile newTile = gameService.getNewTile(id);
         return TileDTO.from(newTile);
     }
 
@@ -45,7 +44,6 @@ public class GameController {
 
     @PostMapping(value = "/tile")
     void insertTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
-        Game game = gameService.gameById(id);
-        game.placeTile(tile.toTile(), x, y);
+        gameService.placeTile(id, x, y, tile);
     }
 }

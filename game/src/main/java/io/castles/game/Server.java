@@ -1,5 +1,7 @@
 package io.castles.game;
 
+import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
@@ -18,15 +20,19 @@ public class Server {
 
     private final Map<UUID, Game> activeGames;
     private final Map<UUID, GameLobby> activeLobbies;
+    private final EventHandler eventHandler;
 
     private Server() {
         this.activeGames = new ConcurrentHashMap<>();
         this.activeLobbies = new ConcurrentHashMap<>();
+        this.eventHandler = new EventHandler();
     }
 
     public GameLobby createGameLobby(String name, Player owner) {
-        var gameLobby = new GameLobby(name, owner);
+        var gameLobby = new GameLobby(name, owner, eventHandler);
         activeLobbies.put(gameLobby.getId(), gameLobby);
+        gameLobby.initialize();
+        gameLobby.triggerEvent(GameEvent.LOBBY_CREATED, gameLobby);
         return gameLobby;
     }
 
@@ -64,8 +70,22 @@ public class Server {
         return this.activeLobbies.values();
     }
 
+    public EventHandler eventHandler() {
+        return eventHandler;
+    }
+
     @TestOnly
-    void reset() {
+    public void addGameLobby(GameLobby gameLobby) {
+        this.activeLobbies.put(gameLobby.getId(), gameLobby);
+    }
+
+    @TestOnly
+    public void addGame(Game game) {
+        this.activeGames.put(game.getId(), game);
+    }
+
+    @TestOnly
+    public void reset() {
         activeLobbies.clear();
         activeGames.clear();
     }

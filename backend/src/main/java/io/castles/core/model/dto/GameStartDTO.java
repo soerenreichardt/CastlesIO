@@ -1,6 +1,5 @@
-package io.castles.core.model;
+package io.castles.core.model.dto;
 
-import io.castles.core.tile.Tile;
 import io.castles.game.GameSettings;
 import io.castles.game.Player;
 import lombok.Value;
@@ -14,5 +13,5 @@ public class GameStartDTO {
     List<Player> players;
     Player startingPlayer;
     GameSettings settings;
-    Tile startTile;
+    TileDTO startTile;
 }
