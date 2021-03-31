@@ -33,8 +33,8 @@ public class ServerEventService {
                 .forEach(eventConsumer -> serverEventConsumers.put(id, eventConsumer));
     }
 
-    public void triggerEvent(UUID lobbyId, ServerEvent serverEvent, Object... objects) {
-        var serverEventConsumer = serverEventConsumers.get(lobbyId);
+    public void triggerEvent(UUID id, ServerEvent serverEvent, Object... objects) {
+        var serverEventConsumer = serverEventConsumers.get(id);
         switch (serverEvent) {
             case PLAYER_RECONNECTED -> serverEventConsumer.onPlayerReconnected((Player) objects[0]);
             case PLAYER_DISCONNECTED -> serverEventConsumer.onPlayerDisconnected((Player) objects[0]);

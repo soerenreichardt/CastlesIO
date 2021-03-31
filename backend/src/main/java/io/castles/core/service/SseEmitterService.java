@@ -28,16 +28,12 @@ public class SseEmitterService {
     }
 
     public void createLobbyEmitter(GameLobby lobby) {
-        PlayerEmitters playerEmitters = new PlayerEmitters();
+        PlayerEmitters playerEmitters = new PlayerEmitters(lobby.getId(), serverEventService);
         sseEmitters.put(lobby.getId(), playerEmitters);
     }
 
     public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
         return getPlayerEmitters(lobbyId).get(playerId);
-    }
-
-    public ServerEventConsumer eventConsumerForLobby(GameLobby gameLobby) {
-        return new EmittingEventConsumer(gameLobby, getPlayerEmitters(gameLobby.getId()));
     }
 
     public PlayerEmitters getPlayerEmitters(UUID lobbyId) {
