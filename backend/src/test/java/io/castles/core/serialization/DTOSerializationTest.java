@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class DTOSerializationTest {
 
 
@@ -42,6 +44,12 @@ public class DTOSerializationTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("dtoClassesAndInstances")
     void testDtoSerialization(String className, Class<?> dtoClass, Object dtoInstance) {
-        String dtoJson = JsonHelper.serializeObject(dtoInstance);
+        assertDoesNotThrow(() -> JsonHelper.serializeObject(dtoInstance));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("dtoClassesAndInstances")
+    void testEventMessageSerialization(String className, Class<?> dtoClass, Object dtoInstance) {
+        assertDoesNotThrow(() -> JsonHelper.serializeObject(new EventMessageDTO<>("testEvent", dtoInstance)));
     }
 }
