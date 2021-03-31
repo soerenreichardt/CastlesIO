@@ -19,28 +19,37 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
     }
 
     @Override
-    public void onPlayerReconnected(UUID playerId) {
-        events.computeIfAbsent(ServerEvent.PLAYER_RECONNECTED.name(), __ -> new ArrayList<>()).add(playerId.toString());
+    public void onPlayerReconnected(Player player) {
+        collect(ServerEvent.PLAYER_RECONNECTED.name(), player.getId());
+    }
+
+    @Override
+    public void onPlayerDisconnected(Player player) {
+        collect(ServerEvent.PLAYER_DISCONNECTED.name(), player.getId());
     }
 
     @Override
     public void onPlayerAdded(Player player) {
-        events.computeIfAbsent(GameEvent.PLAYER_ADDED.name(), __ -> new ArrayList<>()).add(player.toString());
+        collect(GameEvent.PLAYER_ADDED.name(), player);
     }
 
     @Override
     public void onPlayerRemoved(Player player) {
-        events.computeIfAbsent(GameEvent.PLAYER_REMOVED.name(), __ -> new ArrayList<>()).add(player.toString());
+        collect(GameEvent.PLAYER_REMOVED.name(), player);
     }
 
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
-        events.computeIfAbsent(GameEvent.SETTINGS_CHANGED.name(), __ -> new ArrayList<>()).add(gameLobbySettings.toString());
+        collect(GameEvent.SETTINGS_CHANGED.name(), gameLobbySettings);
     }
 
     @Override
     public void onLobbyCreated(GameLobby gameLobby) {
-        events.computeIfAbsent(GameEvent.LOBBY_CREATED.name(), __ -> new ArrayList<>()).add(gameLobby.toString());
+        collect(GameEvent.LOBBY_CREATED.name(), gameLobby);
+    }
+
+    public void collect(String event, Object data) {
+        events.computeIfAbsent(event, __ -> new ArrayList<>()).add(data.toString());
     }
 
     public void reset() {
