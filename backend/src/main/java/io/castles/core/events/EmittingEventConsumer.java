@@ -1,18 +1,15 @@
-package io.castles.core.service;
+package io.castles.core.events;
 
-import io.castles.core.events.ServerEvent;
-import io.castles.core.events.ServerEventConsumer;
 import io.castles.core.model.dto.EventMessageDTO;
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PlayerDTO;
+import io.castles.core.service.PlayerEmitters;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
-
-import java.util.UUID;
 
 public class EmittingEventConsumer implements ServerEventConsumer, GameEventConsumer {
 
@@ -24,8 +21,14 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
         this.playerEmitters = playerEmitters;
     }
 
-    public void onPlayerReconnected(UUID playerId) {
-        sendToAllPlayers(new EventMessageDTO<>(ServerEvent.PLAYER_RECONNECTED.name(), PlayerDTO.from(gameLobby.getPlayerById(playerId))));
+    @Override
+    public void onPlayerReconnected(Player player) {
+        sendToAllPlayers(new EventMessageDTO<>(ServerEvent.PLAYER_DISCONNECTED.name(), PlayerDTO.from(player)));
+    }
+
+    @Override
+    public void onPlayerDisconnected(Player player) {
+        sendToAllPlayers(new EventMessageDTO<>(ServerEvent.PLAYER_RECONNECTED.name(), PlayerDTO.from(player)));
     }
 
     @Override

@@ -1,7 +1,6 @@
 package io.castles.core.service;
 
 import io.castles.core.events.ServerEvent;
-import io.castles.core.events.ServerEventConsumer;
 import io.castles.game.GameLobby;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

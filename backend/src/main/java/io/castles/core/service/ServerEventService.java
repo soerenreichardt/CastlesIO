@@ -2,6 +2,7 @@ package io.castles.core.service;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.events.ServerEventConsumer;
+import io.castles.game.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class ServerEventService {
     public void triggerEvent(UUID lobbyId, ServerEvent serverEvent, Object... objects) {
         var serverEventConsumer = serverEventConsumers.get(lobbyId);
         switch (serverEvent) {
-            case PLAYER_RECONNECTED -> serverEventConsumer.onPlayerReconnected((UUID) objects[0]);
+            case PLAYER_RECONNECTED -> serverEventConsumer.onPlayerReconnected((Player) objects[0]);
+            case PLAYER_DISCONNECTED -> serverEventConsumer.onPlayerDisconnected((Player) objects[0]);
         }
     }
 
