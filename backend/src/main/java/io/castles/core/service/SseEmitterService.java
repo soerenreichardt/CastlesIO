@@ -20,10 +20,11 @@ public class SseEmitterService {
         this.sseEmitters = new ConcurrentHashMap<>();
     }
 
-    public SseEmitter connectToLobby(UUID lobbyId, UUID playerId) {
+    public SseEmitter connectToLobby(GameLobby lobby, UUID playerId) {
+        UUID lobbyId = lobby.getId();
         var playerEmitter = getPlayerEmitters(lobbyId);
         var emitter = playerEmitter.getOrCreate(playerId);
-        serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, playerId);
+        serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, lobby.getPlayerById(playerId));
         return emitter;
     }
 

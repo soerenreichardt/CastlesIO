@@ -32,7 +32,6 @@ public class Server {
         var gameLobby = new GameLobby(name, owner, eventHandler);
         activeLobbies.put(gameLobby.getId(), gameLobby);
         gameLobby.initialize();
-        gameLobby.triggerEvent(GameEvent.LOBBY_CREATED, gameLobby);
         return gameLobby;
     }
 

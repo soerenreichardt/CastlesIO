@@ -1,15 +1,13 @@
 package io.castles.core.controller;
 
 import io.castles.core.GameMode;
-import io.castles.core.events.ServerEvent;
-import io.castles.core.model.dto.LobbySettingsDTO;
+import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.core.util.CollectingEventConsumer;
 import io.castles.game.*;
-import io.castles.game.events.EventHandler;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,17 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,10 +35,7 @@ class LobbyControllerTest {
     private Server server;
 
     @Autowired
-    private SseEmitterService emitterService;
-
-    @Autowired
-    private ServerController serverController;
+    private ServerEventService serverEventService;
 
     Player owner;
     GameLobby gameLobby;
@@ -54,14 +43,15 @@ class LobbyControllerTest {
 
     @BeforeEach
     void setup() {
-        owner = new Player("Owner");
-        gameLobby = new GameLobby("Test", owner, new EventHandler());
-        gameLobby.initialize();
         eventConsumer = new CollectingEventConsumer();
+        serverEventService.registerEventConsumerSupplier(id -> eventConsumer);
 
-        server.addGameLobby(gameLobby);
-        var lobbySettingsDTO = LobbySettingsDTO.from(GameLobbySettings.builder().build());
-        serverController.createLobby("Test", "P1", lobbySettingsDTO);
+        owner = new Player("Owner");
+        gameLobby = server.createGameLobby("Test", owner);
+    }
+
+    @AfterEach
+    void tearDown() {
         eventConsumer.reset();
     }
 
@@ -107,8 +97,6 @@ class LobbyControllerTest {
         var game = new Game(gameLobby.getId(), GameSettings.from(lobbySettings), Set.of(new Player("foo")), gameLobby.eventHandler());
 
         var urlTemplate = String.format("/lobby/%s/start", gameLobby.getId());
-
-        Mockito.when(emitterService.getLobbyEmitterForPlayer(any(), any())).thenReturn(new SseEmitter());
 
         assertEquals(0, server.getActiveGames().size());
         mvc.perform(MockMvcRequestBuilders.post(urlTemplate))

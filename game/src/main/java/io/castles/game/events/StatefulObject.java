@@ -29,6 +29,7 @@ public abstract class StatefulObject extends IdentifiableObject implements Event
 
     public void initialize() {
         this.initialized = true;
+        triggerEvent(GameEvent.LOBBY_CREATED, this);
         init();
     }
 

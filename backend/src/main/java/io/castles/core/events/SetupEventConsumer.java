@@ -17,7 +17,7 @@ public class SetupEventConsumer extends GameEventConsumer.Adapter {
 
     @Override
     public void onLobbyCreated(GameLobby gameLobby) {
-        serverEventService.initializeEventConsumersWithId(gameLobby.getId());
         emitterService.createLobbyEmitter(gameLobby);
+        serverEventService.initializeEventConsumersWithId(gameLobby.getId());
     }
 }

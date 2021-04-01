@@ -27,7 +27,6 @@ public class ServerController {
         this.server = server;
 
         this.server.eventHandler().registerEventConsumer(new SetupEventConsumer(serverEventService, emitterService));
-
         serverEventService.registerEventConsumerSupplier(id -> new EmittingEventConsumer(server.gameLobbyById(id), emitterService.getPlayerEmitters(id)));
     }
 

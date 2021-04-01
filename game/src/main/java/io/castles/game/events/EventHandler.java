@@ -10,13 +10,19 @@ import java.util.List;
 public class EventHandler implements EventProducer<GameEvent> {
 
     private final List<GameEventConsumer> eventCallbacks;
+    private final List<GameEventConsumer> lateRegisteredCallbacks;
 
     public EventHandler() {
         this.eventCallbacks = new ArrayList<>();
+        this.lateRegisteredCallbacks = new ArrayList<>();
     }
 
     public void registerEventConsumer(GameEventConsumer callback) {
         this.eventCallbacks.add(callback);
+    }
+
+    public void registerEventConsumerLate(GameEventConsumer callback) {
+        this.lateRegisteredCallbacks.add(callback);
     }
 
     @Override
@@ -27,6 +33,12 @@ public class EventHandler implements EventProducer<GameEvent> {
             case SETTINGS_CHANGED -> eventCallbacks.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
             case LOBBY_CREATED -> eventCallbacks.forEach(consumer -> consumer.onLobbyCreated((GameLobby) objects[0]));
         }
+        mergeLateRegisteredCallbacks();
     }
 
+    private void mergeLateRegisteredCallbacks() {
+        if (!lateRegisteredCallbacks.isEmpty()) {
+            eventCallbacks.addAll(lateRegisteredCallbacks);
+        }
+    }
 }

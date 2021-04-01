@@ -22,7 +22,7 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public void joinLobby(UUID id, Player player) throws IOException {
+    public void joinLobby(UUID id, Player player) {
         var gameLobby = server.gameLobbyById(id);
         gameLobby.addPlayer(player);
     }
@@ -32,7 +32,7 @@ public class LobbyService {
         if (!gameLobby.containsPlayer(playerId)) {
             throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
         }
-        return emitterService.connectToLobby(id, playerId);
+        return emitterService.connectToLobby(gameLobby, playerId);
     }
 
     public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {

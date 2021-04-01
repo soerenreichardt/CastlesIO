@@ -29,12 +29,7 @@ public class LobbyController {
     @PutMapping("/join")
     UUID addPlayer(@PathVariable("id") UUID id, @RequestParam("playerName") String playerName) {
         var player = new Player(playerName);
-        try {
-            lobbyService.joinLobby(id, player);
-        } catch (IOException e) {
-            // TODO: exception handling
-            throw new RuntimeException(e);
-        }
+        lobbyService.joinLobby(id, player);
         return player.getId();
     }
 
