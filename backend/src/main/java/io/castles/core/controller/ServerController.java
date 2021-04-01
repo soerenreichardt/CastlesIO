@@ -5,6 +5,7 @@ import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PlayerIdentificationDTO;
 import io.castles.core.events.EmittingEventConsumer;
+import io.castles.core.service.ClockService;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobbySettings;
@@ -22,12 +23,14 @@ import java.util.stream.Collectors;
 public class ServerController {
 
     private final Server server;
+    private final ClockService clockService;
 
-    public ServerController(Server server, SseEmitterService emitterService, ServerEventService serverEventService) {
+    public ServerController(Server server, SseEmitterService emitterService, ServerEventService serverEventService, ClockService clockService) {
         this.server = server;
+        this.clockService = clockService;
 
         this.server.eventHandler().registerEventConsumer(new SetupEventConsumer(serverEventService, emitterService));
-        serverEventService.registerEventConsumerSupplier(id -> new EmittingEventConsumer(server.gameLobbyById(id), emitterService.getPlayerEmitters(id)));
+        serverEventService.registerEventConsumerSupplier(id -> new EmittingEventConsumer(server.gameLobbyById(id), emitterService.getPlayerEmitters(id), clockService));
     }
 
     @GetMapping("/status")

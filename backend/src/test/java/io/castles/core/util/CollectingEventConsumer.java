@@ -19,6 +19,16 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
     }
 
     @Override
+    public void onPlayerReconnectAttempt(Player player) {
+        collect(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name(), player.getId());
+    }
+
+    @Override
+    public void onPlayerTimeout(Player player) {
+        collect(ServerEvent.PLAYER_TIMEOUT.name(), player.getId());
+    }
+
+    @Override
     public void onPlayerReconnected(Player player) {
         collect(ServerEvent.PLAYER_RECONNECTED.name(), player.getId());
     }

@@ -1,5 +1,6 @@
 package io.castles.core.controller;
 
+import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PublicLobbyDTO;
@@ -75,6 +76,10 @@ public class LobbyController {
 
     @GetMapping("/subscribe/{playerId}")
     SseEmitter subscribe(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
-        return lobbyService.reconnectToLobby(id, playerId);
+        try {
+            return lobbyService.reconnectToLobby(id, playerId);
+        } catch (UnableToReconnectException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

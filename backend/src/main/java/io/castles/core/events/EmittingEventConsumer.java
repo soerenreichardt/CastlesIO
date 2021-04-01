@@ -4,6 +4,7 @@ import io.castles.core.model.dto.EventMessageDTO;
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PlayerDTO;
+import io.castles.core.service.ClockService;
 import io.castles.core.service.PlayerEmitters;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
@@ -15,10 +16,17 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     private final GameLobby gameLobby;
     private final PlayerEmitters playerEmitters;
+    private final ConnectionHandler connectionHandler;
 
-    public EmittingEventConsumer(GameLobby gameLobby, PlayerEmitters playerEmitters) {
+    public EmittingEventConsumer(GameLobby gameLobby, PlayerEmitters playerEmitters, ClockService clockService) {
         this.gameLobby = gameLobby;
         this.playerEmitters = playerEmitters;
+        this.connectionHandler = new ConnectionHandler(playerEmitters, clockService);
+    }
+
+    @Override
+    public void onPlayerReconnectAttempt(Player player) {
+        connectionHandler.tryReconnectPlayer(player);
     }
 
     @Override
@@ -28,7 +36,13 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onPlayerDisconnected(Player player) {
+        connectionHandler.playerDisconnected(player);
         sendToAllPlayers(new EventMessageDTO<>(ServerEvent.PLAYER_RECONNECTED.name(), PlayerDTO.from(player)));
+    }
+
+    @Override
+    public void onPlayerTimeout(Player player) {
+        sendToAllPlayers(new EventMessageDTO<>(ServerEvent.PLAYER_TIMEOUT.name(), PlayerDTO.from(player)));
     }
 
     @Override
@@ -58,6 +72,12 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     private void sendToAllPlayers(Object message) {
-        gameLobby.getPlayers().forEach(player -> playerEmitters.sendToPlayer(player, message));
+        connectionHandler.checkDisconnectionTimeout();
+        var disconnectedPlayers = connectionHandler.disconnectedPlayers();
+        gameLobby.getPlayers().forEach(player -> {
+            if (!disconnectedPlayers.contains(player)) {
+                playerEmitters.sendToPlayer(player, message);
+            }
+        });
     }
 }

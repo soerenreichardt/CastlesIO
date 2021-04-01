@@ -1,6 +1,10 @@
 package io.castles.core.controller;
 
 import io.castles.core.GameMode;
+import io.castles.core.events.ConnectionHandler;
+import io.castles.core.events.ServerEvent;
+import io.castles.core.service.ClockService;
+import io.castles.core.service.PlayerEmitters;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.core.util.CollectingEventConsumer;
@@ -8,16 +12,21 @@ import io.castles.game.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.Clock;
+import java.time.Duration;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,12 +46,19 @@ class LobbyControllerTest {
     @Autowired
     private ServerEventService serverEventService;
 
+    @Autowired
+    private SseEmitterService emitterService;
+
+    @MockBean
+    private ClockService clockService;
+
     Player owner;
     GameLobby gameLobby;
     CollectingEventConsumer eventConsumer;
 
     @BeforeEach
     void setup() {
+        Mockito.when(clockService.instance()).thenReturn(Clock.systemUTC());
         eventConsumer = new CollectingEventConsumer();
         serverEventService.registerEventConsumerSupplier(id -> eventConsumer);
 
@@ -114,17 +130,34 @@ class LobbyControllerTest {
 
     }
 
-    static void assertEvents(Map<String, List<String>> actual, Map<ServerEvent, List<String>> expected) {
-        assertThat(actual).isEqualTo(
-                expected
-                        .entrySet()
-                        .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        entry -> entry.getKey().name(),
-                                        Map.Entry::getValue
-                                )
-                        )
+    @Test
+    void shouldTriggerPlayerDisconnectedEvent() {
+        PlayerEmitters playerEmitters = new PlayerEmitters(gameLobby.getId(), serverEventService);
+        playerEmitters.create(owner.getId());
+        playerEmitters.get(owner.getId()).complete();
+        playerEmitters.sendToPlayer(owner, "Foo");
+
+        assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_DISCONNECTED.name())).isTrue();
+        assertThat(eventConsumer.events().get(ServerEvent.PLAYER_DISCONNECTED.name())).containsExactlyInAnyOrder(
+                owner.getId().toString()
         );
+    }
+
+    @Test
+    void shouldReconnectDisconnectedPlayer() throws Exception {
+        var emitter = emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId());
+        emitter.complete();
+        emitterService.getPlayerEmitters(gameLobby.getId()).sendToPlayer(owner, "should not send");
+
+        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
+
+        Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT)));
+        var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), owner.getId());
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(status().isOk());
+
+        assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
+        assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECTED.name())).isTrue();
+        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNotNull();
     }
 }

@@ -1,6 +1,7 @@
 package io.castles.core.service;
 
 import io.castles.core.events.ServerEvent;
+import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.game.GameLobby;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,12 +21,16 @@ public class SseEmitterService {
         this.sseEmitters = new ConcurrentHashMap<>();
     }
 
-    public SseEmitter connectToLobby(GameLobby lobby, UUID playerId) {
-        UUID lobbyId = lobby.getId();
-        var playerEmitter = getPlayerEmitters(lobbyId);
-        var emitter = playerEmitter.getOrCreate(playerId);
+    public SseEmitter reconnectToLobby(GameLobby lobby, UUID playerId) throws UnableToReconnectException {
+        var lobbyId = lobby.getId();
+        serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECT_ATTEMPT, lobby.getPlayerById(playerId));
+        var playerEmitters = getPlayerEmitters(lobbyId);
+        if (playerEmitters.get(playerId) == null) {
+            throw new UnableToReconnectException("Player timed out");
+        }
+        SseEmitter sseEmitter = playerEmitters.getOrCreate(playerId);
         serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, lobby.getPlayerById(playerId));
-        return emitter;
+        return sseEmitter;
     }
 
     public void createLobbyEmitter(GameLobby lobby) {

@@ -43,7 +43,7 @@ public class PlayerEmitters {
         SseEmitter playerSseEmitter = playerEmitters.get(player.getId());
         try {
             playerSseEmitter.send(message);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             playerSseEmitter.complete();
             serverEventService.triggerEvent(id, ServerEvent.PLAYER_DISCONNECTED, player);
         }
