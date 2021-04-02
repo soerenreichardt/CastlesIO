@@ -39,7 +39,7 @@ public class ServerEventService {
                         serverEventConsumers.computeIfAbsent(id, __ -> new ArrayList<>()).add((ServerEventConsumer) eventConsumer);
                     }
                     if (eventConsumer instanceof GameEventConsumer) {
-                        server.eventHandler().registerEventConsumerLate((GameEventConsumer) eventConsumer);
+                        server.eventHandler().registerLocalEventConsumer(id, (GameEventConsumer) eventConsumer);
                     }
                 });
     }

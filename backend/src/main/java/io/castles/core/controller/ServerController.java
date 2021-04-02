@@ -29,7 +29,7 @@ public class ServerController {
         this.server = server;
         this.clockService = clockService;
 
-        this.server.eventHandler().registerEventConsumer(new SetupEventConsumer(serverEventService, emitterService));
+        this.server.eventHandler().registerGlobalEventConsumer(new SetupEventConsumer(serverEventService, emitterService));
         serverEventService.registerEventConsumerSupplier(id -> new EmittingEventConsumer(server.gameLobbyById(id), emitterService.getPlayerEmitters(id), clockService));
     }
 

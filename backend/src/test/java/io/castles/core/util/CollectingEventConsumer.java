@@ -7,10 +7,11 @@ import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
+import io.castles.game.events.GlobalEventConsumer;
 
 import java.util.*;
 
-public class CollectingEventConsumer implements ServerEventConsumer, GameEventConsumer {
+public class CollectingEventConsumer implements ServerEventConsumer, GameEventConsumer, GlobalEventConsumer {
 
     Map<String, List<String>> events = new HashMap<>();
 

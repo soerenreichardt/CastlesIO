@@ -63,11 +63,6 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), LobbySettingsDTO.from(gameLobbySettings)));
     }
 
-    @Override
-    public void onLobbyCreated(GameLobby gameLobby) {
-        sendToAllPlayers(new EventMessageDTO<>(GameEvent.LOBBY_CREATED.name(), LobbyStateDTO.from(gameLobby)));
-    }
-
     private void createPlayerEmitter(Player player) {
         playerEmitters.create(player.getId());
     }
