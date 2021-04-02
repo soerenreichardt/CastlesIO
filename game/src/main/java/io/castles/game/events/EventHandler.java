@@ -38,10 +38,12 @@ public class EventHandler implements EventProducer<GameEvent> {
     @Override
     public void triggerLocalEvent(UUID id, GameEvent event, Object... objects) {
         var eventConsumers = localEventCallbacks.get(id);
-        switch (event) {
-            case PLAYER_ADDED -> eventConsumers.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
-            case PLAYER_REMOVED -> eventConsumers.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));
-            case SETTINGS_CHANGED -> eventConsumers.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
+        if (eventConsumers != null) {
+            switch (event) {
+                case PLAYER_ADDED -> eventConsumers.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
+                case PLAYER_REMOVED -> eventConsumers.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));
+                case SETTINGS_CHANGED -> eventConsumers.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
+            }
         }
     }
 

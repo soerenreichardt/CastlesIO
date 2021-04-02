@@ -78,7 +78,7 @@ class GameLobbyTest {
     @Test
     void shouldThrowWhenEventIsTriggeredOnUninitializedLobby() {
         var gameLobby = new GameLobby("Test", new Player("p1"), new EventHandler());
-        assertThatThrownBy(() -> gameLobby.triggerGlobalEvent(GameEvent.LOBBY_CREATED))
+        assertThatThrownBy(() -> gameLobby.triggerLocalEvent(gameLobby.getId(), GameEvent.PLAYER_ADDED))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("uninitialized class");
     }
