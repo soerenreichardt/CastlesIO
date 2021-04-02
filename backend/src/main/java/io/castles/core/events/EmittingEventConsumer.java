@@ -26,6 +26,7 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onPlayerReconnectAttempt(Player player) {
+        connectionHandler.checkDisconnectionTimeout();
         connectionHandler.tryReconnectPlayer(player);
     }
 

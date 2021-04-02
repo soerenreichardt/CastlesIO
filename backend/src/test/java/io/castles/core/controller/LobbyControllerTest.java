@@ -3,6 +3,7 @@ package io.castles.core.controller;
 import io.castles.core.GameMode;
 import io.castles.core.events.ConnectionHandler;
 import io.castles.core.events.ServerEvent;
+import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.PlayerEmitters;
 import io.castles.core.service.ServerEventService;
@@ -24,6 +25,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +61,7 @@ class LobbyControllerTest {
 
     @BeforeEach
     void setup() {
-        Mockito.when(clockService.instance()).thenReturn(Clock.systemUTC());
+        Mockito.when(clockService.instance()).thenReturn(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
         eventConsumer = new CollectingEventConsumer();
         serverEventService.registerEventConsumerSupplier(id -> eventConsumer);
 
@@ -151,7 +154,6 @@ class LobbyControllerTest {
 
         assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
 
-        Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT)));
         var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), owner.getId());
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(status().isOk());
@@ -159,5 +161,26 @@ class LobbyControllerTest {
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECTED.name())).isTrue();
         assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNotNull();
+    }
+
+    @Test
+    void shouldNotBeAbleToReconnectAfterTimeout() throws Exception {
+        var emitter = emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId());
+        emitter.complete();
+        emitterService.getPlayerEmitters(gameLobby.getId()).sendToPlayer(owner, "should not send");
+
+        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
+
+        Mockito.reset(clockService);
+        Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT + 1)));
+        var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), owner.getId());
+        mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertThat(result.getResolvedException().getCause() instanceof UnableToReconnectException).isTrue())
+                .andExpect(result -> assertThat(result.getResolvedException().getCause().getMessage()).contains(owner.getName()));
+
+        assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
+        assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_DISCONNECTED.name())).isTrue();
+        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
     }
 }

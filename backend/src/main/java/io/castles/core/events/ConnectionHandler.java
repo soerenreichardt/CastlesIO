@@ -4,7 +4,6 @@ import io.castles.core.service.ClockService;
 import io.castles.core.service.PlayerEmitters;
 import io.castles.game.Player;
 
-import java.time.Clock;
 import java.util.*;
 
 public class ConnectionHandler {
@@ -12,12 +11,12 @@ public class ConnectionHandler {
     public static final long DISCONNECT_TIMEOUT = 60_000L;
 
     private final PlayerEmitters playerEmitters;
-    private final Clock clock;
+    private final ClockService clockService;
     private final Map<Player, Long> disconnectedPlayers;
 
     public ConnectionHandler(PlayerEmitters playerEmitters, ClockService clockService) {
         this.playerEmitters = playerEmitters;
-        this.clock = clockService.instance();
+        this.clockService = clockService;
         this.disconnectedPlayers = new HashMap<>();
     }
 
@@ -30,7 +29,7 @@ public class ConnectionHandler {
     }
 
     public void checkDisconnectionTimeout() {
-        var currentTime = clock.millis();
+        var currentTime = clockService.instance().millis();
         List<Player> timeoutPlayers = new ArrayList<>();
         disconnectedPlayers.forEach((player, disconnectionTime) -> {
             if (currentTime - disconnectionTime > DISCONNECT_TIMEOUT) {
@@ -41,7 +40,7 @@ public class ConnectionHandler {
     }
 
     public void playerDisconnected(Player player) {
-        disconnectedPlayers.put(player, clock.millis());
+        disconnectedPlayers.put(player, clockService.instance().millis());
         playerEmitters.remove(player.getId());
     }
 
