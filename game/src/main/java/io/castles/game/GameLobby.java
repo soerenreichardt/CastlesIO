@@ -48,7 +48,7 @@ public class GameLobby extends StatefulObject {
             throw new IllegalArgumentException("Maximum number of players reached for this game.");
         }
         this.players.add(player);
-        triggerEvent(GameEvent.PLAYER_ADDED, player);
+        triggerLocalEvent(getId(), GameEvent.PLAYER_ADDED, player);
     }
 
     public void removePlayer(Player player) {
@@ -59,7 +59,7 @@ public class GameLobby extends StatefulObject {
         if (player.getId() == owner.getId()) {
             replaceOwner();
         }
-        triggerEvent(GameEvent.PLAYER_REMOVED, player);
+        triggerLocalEvent(getId(), GameEvent.PLAYER_REMOVED, player);
     }
 
     public void removePlayer(UUID playerId) {
@@ -90,7 +90,7 @@ public class GameLobby extends StatefulObject {
 
     public void changeSettings(GameLobbySettings gameLobbySettings) {
         this.lobbySettings = gameLobbySettings;
-        triggerEvent(GameEvent.SETTINGS_CHANGED, gameLobbySettings);
+        triggerLocalEvent(getId(), GameEvent.SETTINGS_CHANGED, gameLobbySettings);
     }
 
     public void setGameMode(GameMode gameMode) {

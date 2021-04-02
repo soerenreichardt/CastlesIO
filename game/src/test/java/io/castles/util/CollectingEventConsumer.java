@@ -1,7 +1,5 @@
-package io.castles.core.util;
+package io.castles.util;
 
-import io.castles.core.events.ServerEvent;
-import io.castles.core.events.ServerEventConsumer;
 import io.castles.game.GameLobby;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Player;
@@ -9,34 +7,17 @@ import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
 import io.castles.game.events.GlobalEventConsumer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class CollectingEventConsumer implements ServerEventConsumer, GameEventConsumer, GlobalEventConsumer {
+public class CollectingEventConsumer implements GameEventConsumer, GlobalEventConsumer {
 
     Map<String, List<String>> events = new HashMap<>();
 
     public Map<String, List<String>> events() {
         return events;
-    }
-
-    @Override
-    public void onPlayerReconnectAttempt(Player player) {
-        collect(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerTimeout(Player player) {
-        collect(ServerEvent.PLAYER_TIMEOUT.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerReconnected(Player player) {
-        collect(ServerEvent.PLAYER_RECONNECTED.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerDisconnected(Player player) {
-        collect(ServerEvent.PLAYER_DISCONNECTED.name(), player.getId());
     }
 
     @Override

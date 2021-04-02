@@ -1,5 +1,6 @@
 package io.castles.core.service;
 
+import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.game.GameLobby;
 import io.castles.game.Player;
@@ -7,7 +8,6 @@ import io.castles.game.Server;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -22,17 +22,17 @@ public class LobbyService {
         this.emitterService = emitterService;
     }
 
-    public void joinLobby(UUID id, Player player) throws IOException {
+    public void joinLobby(UUID id, Player player) {
         var gameLobby = server.gameLobbyById(id);
         gameLobby.addPlayer(player);
     }
 
-    public SseEmitter reconnectToLobby(UUID id, UUID playerId) {
+    public SseEmitter reconnectToLobby(UUID id, UUID playerId) throws UnableToReconnectException {
         var gameLobby = server.gameLobbyById(id);
         if (!gameLobby.containsPlayer(playerId)) {
             throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
         }
-        return emitterService.connectToLobby(id, playerId);
+        return emitterService.reconnectToLobby(gameLobby, playerId);
     }
 
     public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {

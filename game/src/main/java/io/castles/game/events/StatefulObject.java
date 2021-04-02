@@ -16,11 +16,16 @@ public abstract class StatefulObject extends IdentifiableObject implements Event
     }
 
     @Override
-    public void triggerEvent(GameEvent event, Object... objects) {
+    public void triggerGlobalEvent(GameEvent event, Object... objects) {
+        this.eventHandler.triggerGlobalEvent(event, objects);
+    }
+
+    @Override
+    public void triggerLocalEvent(UUID id, GameEvent event, Object... objects) {
         if (!initialized) {
             throw new IllegalStateException("Cannot trigger event on uninitialized class. Please call `StatefulObject#initialize");
         }
-        this.eventHandler.triggerEvent(event, objects);
+        this.eventHandler.triggerLocalEvent(getId(), event, objects);
     }
 
     public EventHandler eventHandler() {
@@ -29,6 +34,7 @@ public abstract class StatefulObject extends IdentifiableObject implements Event
 
     public void initialize() {
         this.initialized = true;
+        triggerGlobalEvent(GameEvent.LOBBY_CREATED, this);
         init();
     }
 

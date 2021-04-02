@@ -3,9 +3,9 @@ package io.castles.core.events;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
 import io.castles.game.GameLobby;
-import io.castles.game.events.GameEventConsumer;
+import io.castles.game.events.GlobalEventConsumer;
 
-public class SetupEventConsumer extends GameEventConsumer.Adapter {
+public class SetupEventConsumer implements GlobalEventConsumer {
 
     private final ServerEventService serverEventService;
     private final SseEmitterService emitterService;
@@ -17,7 +17,7 @@ public class SetupEventConsumer extends GameEventConsumer.Adapter {
 
     @Override
     public void onLobbyCreated(GameLobby gameLobby) {
-        serverEventService.initializeEventConsumersWithId(gameLobby.getId());
         emitterService.createLobbyEmitter(gameLobby);
+        serverEventService.initializeEventConsumersWithId(gameLobby.getId());
     }
 }

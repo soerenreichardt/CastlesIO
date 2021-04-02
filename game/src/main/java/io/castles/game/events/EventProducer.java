@@ -1,6 +1,8 @@
 package io.castles.game.events;
 
-@FunctionalInterface
+import java.util.UUID;
+
 public interface EventProducer<T> {
-    void triggerEvent(T event, Object... objects);
+    void triggerGlobalEvent(T event, Object... objects);
+    void triggerLocalEvent(UUID id, T event, Object... objects);
 }

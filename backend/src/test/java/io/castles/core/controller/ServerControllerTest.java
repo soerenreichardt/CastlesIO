@@ -2,17 +2,22 @@ package io.castles.core.controller;
 
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.PlayerIdentificationDTO;
+import io.castles.core.service.ClockService;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.Server;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +33,9 @@ class ServerControllerTest {
     @Autowired
     private Server server;
 
+    @MockBean
+    private ClockService clockService;
+
     @Test
     void shouldGetDefaultSettings() throws Exception {
         var lobbySettingsDefaults = GameLobbySettings.builder().build();
@@ -39,6 +47,7 @@ class ServerControllerTest {
 
     @Test
     void shouldCreateNewLobby() throws Exception {
+        Mockito.when(clockService.instance()).thenReturn(Clock.systemUTC());
         var gameLobbySettings = GameLobbySettings.builder().build();
         var defaultSettings = JsonHelper.serializeObject(gameLobbySettings);
 

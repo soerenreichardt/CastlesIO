@@ -1,5 +1,6 @@
 package io.castles.core.service;
 
+import io.castles.core.events.ServerEvent;
 import io.castles.game.Player;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -12,10 +13,14 @@ public class PlayerEmitters {
 
     public static final long EMITTER_TIMEOUT = 3600000L; //1h in milliseconds
 
-    Map<UUID, SseEmitter> playerEmitters;
+    private final Map<UUID, SseEmitter> playerEmitters;
+    private final ServerEventService serverEventService;
+    private final UUID id;
 
-    public PlayerEmitters() {
+    public PlayerEmitters(UUID id, ServerEventService serverEventService) {
+        this.id = id;
         this.playerEmitters = new HashMap<>();
+        this.serverEventService = serverEventService;
     }
 
     public void create(UUID playerId) {
@@ -38,8 +43,9 @@ public class PlayerEmitters {
         SseEmitter playerSseEmitter = playerEmitters.get(player.getId());
         try {
             playerSseEmitter.send(message);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             playerSseEmitter.complete();
+            serverEventService.triggerEvent(id, ServerEvent.PLAYER_DISCONNECTED, player);
         }
     }
 
