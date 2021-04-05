@@ -18,7 +18,7 @@ class GameLogicTest {
 
         assertEquals(gameLogic.getGameState(), GameState.START);
         var activePlayer = gameLogic.getActivePlayer();
-        gameLogic.nextPhase();
+        gameLogic.initialize();
         assertEquals(gameLogic.getGameState(), GameState.DRAW);
         gameLogic.nextPhase();
         assertEquals(gameLogic.getGameState(), GameState.PLACE_TILE);

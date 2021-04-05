@@ -22,8 +22,8 @@ public class GameController {
 
     @GetMapping("/new_tile")
     @ResponseBody
-    TileDTO getNextTile(@PathVariable("id") UUID id) {
-        Tile newTile = gameService.getNewTile(id);
+    TileDTO getNextTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {
+        Tile newTile = gameService.getNewTile(id, playerId);
         return TileDTO.from(newTile);
     }
 
@@ -43,7 +43,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/tile")
-    void insertTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
-        gameService.placeTile(id, x, y, tile);
+    void insertTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
+        gameService.placeTile(id, playerId, x, y, tile);
     }
 }

@@ -32,8 +32,13 @@ public class Game extends StatefulObject {
         gameLogic.initialize();
     }
 
-    public Tile getNewTile() {
+    public Tile getNewTile(Player player) {
+        validateAction(player, GameState.DRAW);
         return this.board.getNewTile();
+    }
+
+    public Tile getStartTile() {
+        return this.board.getTile(0, 0);
     }
 
     public Tile getTile(int x, int y) {
@@ -56,13 +61,24 @@ public class Game extends StatefulObject {
         return this.settings;
     }
 
-    public void placeTile(Tile tile, int x, int y) {
-        validateAction(GameState.PLACE_TILE);
+    public Player getPlayerById(UUID playerId) {
+        var players = this.gameLogic.getPlayers();
+        return players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    public void placeTile(Player player, Tile tile, int x, int y) {
+        validateAction(player, GameState.PLACE_TILE);
         this.board.insertTileToBoard(tile, x, y);
         this.gameLogic.nextPhase();
     }
 
-    private void validateAction(GameState expectedState) throws IllegalStateException {
+    private void validateAction(Player player, GameState expectedState) throws IllegalStateException {
+        if (player == getActivePlayer()) {
+            throw new IllegalStateException(String.format("Player %s is not the active player %s", player, getActivePlayer()));
+        }
         if (expectedState != getCurrentGameState()) {
             throw new IllegalStateException(String.format("Expected GameState to be %s, but was %s", expectedState, getCurrentGameState()));
         }
