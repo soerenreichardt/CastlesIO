@@ -69,9 +69,10 @@ class GameControllerTest {
         Tile tile = Tile.drawStatic(TileContent.GRAS);
         String tileJson = JsonHelper.serializeObject(TileDTO.from(tile));
 
-        Mockito.when(gameService.getNewTile(any())).thenReturn(tile);
+        Mockito.when(gameService.getNewTile(any(), any())).thenReturn(tile);
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/new_tile", game.getId().toString()))
+                .param("playerId", UUID.randomUUID().toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson)); // do not check for Tile id
@@ -95,6 +96,7 @@ class GameControllerTest {
         String tileJson = JsonHelper.serializeObject(tile);
         mvc.perform(MockMvcRequestBuilders
                 .post(String.format("/game/%s/tile", game.getId().toString()))
+                .param("playerId", game.getActivePlayer().getId().toString())
                 .param("x", "0")
                 .param("y", "1")
                 .contentType(MediaType.APPLICATION_JSON)

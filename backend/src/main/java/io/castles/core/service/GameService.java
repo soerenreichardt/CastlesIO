@@ -47,12 +47,16 @@ public class GameService {
         return game;
     }
 
-    public Tile getNewTile(UUID gameId) {
-        return gameById(gameId).getNewTile();
+    public Tile getNewTile(UUID gameId, UUID playerId) {
+        var game = gameById(gameId);
+        var player = game.getPlayerById(playerId);
+        return game.getNewTile(player);
     }
 
-    public void placeTile(UUID gameId, int x, int y, TileDTO tileDTO) {
-        gameById(gameId).placeTile(tileDTO.toTile(), x, y);
+    public void placeTile(UUID gameId, UUID playerId, int x, int y, TileDTO tileDTO) {
+        var game = gameById(gameId);
+        var player = game.getPlayerById(playerId);
+        game.placeTile(player, tileDTO.toTile(), x, y);
     }
 
     private void setDefaultTileList(UUID id) throws IOException {

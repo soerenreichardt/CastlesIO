@@ -45,7 +45,7 @@ class ServerTest {
         assertEquals(1, server.getActiveGames().size());
 
         assertNotNull(game);
-        assertEquals(game.getCurrentGameState(), GameState.START);
+        assertEquals(game.getCurrentGameState(), GameState.DRAW);
     }
 
     @Test

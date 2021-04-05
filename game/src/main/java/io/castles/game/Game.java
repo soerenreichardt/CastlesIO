@@ -3,6 +3,7 @@ package io.castles.game;
 import io.castles.core.board.Board;
 import io.castles.core.tile.Tile;
 import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
 
 import java.util.*;
@@ -21,17 +22,23 @@ public class Game extends StatefulObject {
         // necessary if a player leaves the game while the
         // game is running. A set might trigger a rehash and
         // shuffle the order of players.
-        this.gameLogic = new GameLogic(settings.getGameMode(), new LinkedList<>(players));
+        this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
     }
 
     @Override
     protected void init() {
-
+        triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
+        gameLogic.initialize();
     }
 
-    public Tile getNewTile() {
+    public Tile getNewTile(Player player) {
+        validateAction(player, GameState.DRAW);
         return this.board.getNewTile();
+    }
+
+    public Tile getStartTile() {
+        return this.board.getTile(0, 0);
     }
 
     public Tile getTile(int x, int y) {
@@ -54,13 +61,24 @@ public class Game extends StatefulObject {
         return this.settings;
     }
 
-    public void placeTile(Tile tile, int x, int y) {
-        validateAction(GameState.PLACE_TILE);
+    public Player getPlayerById(UUID playerId) {
+        var players = this.gameLogic.getPlayers();
+        return players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    public void placeTile(Player player, Tile tile, int x, int y) {
+        validateAction(player, GameState.PLACE_TILE);
         this.board.insertTileToBoard(tile, x, y);
         this.gameLogic.nextPhase();
     }
 
-    private void validateAction(GameState expectedState) throws IllegalStateException {
+    private void validateAction(Player player, GameState expectedState) throws IllegalStateException {
+        if (player == getActivePlayer()) {
+            throw new IllegalStateException(String.format("Player %s is not the active player %s", player, getActivePlayer()));
+        }
         if (expectedState != getCurrentGameState()) {
             throw new IllegalStateException(String.format("Expected GameState to be %s, but was %s", expectedState, getCurrentGameState()));
         }

@@ -29,6 +29,7 @@ public class GameLobby extends StatefulObject {
 
     @Override
     protected void init() {
+        triggerGlobalEvent(GameEvent.LOBBY_CREATED, this);
         addPlayer(owner);
     }
 
