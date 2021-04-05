@@ -1,5 +1,6 @@
 package io.castles.core.model.dto;
 
+import io.castles.game.Game;
 import io.castles.game.GameSettings;
 import io.castles.game.Player;
 import lombok.Value;
@@ -14,4 +15,14 @@ public class GameStartDTO {
     Player startingPlayer;
     GameSettings settings;
     TileDTO startTile;
+
+    public static GameStartDTO from(Game game) {
+        return new GameStartDTO(
+                game.getId(),
+                game.getPlayers(),
+                game.getActivePlayer(),
+                game.getSettings(),
+                TileDTO.from(game.getStartTile())
+        );
+    }
 }

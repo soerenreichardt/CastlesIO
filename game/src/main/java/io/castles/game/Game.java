@@ -3,6 +3,7 @@ package io.castles.game;
 import io.castles.core.board.Board;
 import io.castles.core.tile.Tile;
 import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
 
 import java.util.*;
@@ -21,13 +22,14 @@ public class Game extends StatefulObject {
         // necessary if a player leaves the game while the
         // game is running. A set might trigger a rehash and
         // shuffle the order of players.
-        this.gameLogic = new GameLogic(settings.getGameMode(), new LinkedList<>(players));
+        this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
     }
 
     @Override
     protected void init() {
-
+        triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
+        gameLogic.initialize();
     }
 
     public Tile getNewTile() {

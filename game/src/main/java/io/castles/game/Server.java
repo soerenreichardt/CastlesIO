@@ -56,6 +56,7 @@ public class Server {
     public Game startGame(UUID lobbyId) {
         var gameLobby = gameLobbyById(lobbyId);
         var game = gameLobby.startGame();
+        game.initialize();
         activeGames.put(game.getId(), game);
         activeLobbies.remove(lobbyId);
         return game;

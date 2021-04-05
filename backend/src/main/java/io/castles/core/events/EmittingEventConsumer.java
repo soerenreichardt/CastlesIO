@@ -1,14 +1,9 @@
 package io.castles.core.events;
 
-import io.castles.core.model.dto.EventMessageDTO;
-import io.castles.core.model.dto.LobbySettingsDTO;
-import io.castles.core.model.dto.LobbyStateDTO;
-import io.castles.core.model.dto.PlayerDTO;
+import io.castles.core.model.dto.*;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.PlayerEmitters;
-import io.castles.game.GameLobby;
-import io.castles.game.GameLobbySettings;
-import io.castles.game.Player;
+import io.castles.game.*;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
 
@@ -61,6 +56,21 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), LobbySettingsDTO.from(gameLobbySettings)));
+    }
+
+    @Override
+    public void onGameStarted(Game game) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.GAME_STARTED.name(), GameStartDTO.from(game)));
+    }
+
+    @Override
+    public void onActivePlayerSwitched(Player activePlayer) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.ACTIVE_PLAYER_SWITCHED.name(), PlayerDTO.from(activePlayer)));
+    }
+
+    @Override
+    public void onPhaseSwitched(GameState from, GameState to) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.PHASE_SWITCHED.name(), new PhaseSwitchDTO(from, to)));
     }
 
     private void createPlayerEmitter(Player player) {

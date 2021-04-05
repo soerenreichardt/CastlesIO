@@ -1,8 +1,6 @@
 package io.castles.game.events;
 
-import io.castles.game.GameLobby;
-import io.castles.game.GameLobbySettings;
-import io.castles.game.Player;
+import io.castles.game.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +41,10 @@ public class EventHandler implements EventProducer<GameEvent> {
                 case PLAYER_ADDED -> eventConsumers.forEach(consumer -> consumer.onPlayerAdded((Player) objects[0]));
                 case PLAYER_REMOVED -> eventConsumers.forEach(consumer -> consumer.onPlayerRemoved((Player) objects[0]));
                 case SETTINGS_CHANGED -> eventConsumers.forEach(consumer -> consumer.onSettingsChanged((GameLobbySettings) objects[0]));
+                case GAME_STARTED -> eventConsumers.forEach(consumer -> consumer.onGameStarted((Game) objects[0]));
+                case PHASE_SWITCHED -> eventConsumers.forEach(consumer -> consumer.onPhaseSwitched((GameState) objects[0], (GameState) objects[1]));
+                case ACTIVE_PLAYER_SWITCHED -> eventConsumers.forEach(consumer -> consumer.onActivePlayerSwitched((Player) objects[0]));
             }
         }
-    }
-
-    public void reset() {
-        globalEventCallbacks.clear();
-        localEventCallbacks.clear();
     }
 }

@@ -1,10 +1,7 @@
 package io.castles.game.events;
 
 import io.castles.core.GameMode;
-import io.castles.game.GameLobby;
-import io.castles.game.GameLobbySettings;
-import io.castles.game.Player;
-import io.castles.game.Server;
+import io.castles.game.*;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +65,7 @@ class EventHandlerTest {
         void shouldTriggerWhenPlayerIsAddedToLobby() {
             var player = new Player("P1");
             gameLobby.addPlayer(player);
-            assertThat(eventConsumer.events().containsKey(GameEvent.PLAYER_ADDED.name()));
+            assertThat(eventConsumer.events()).containsKey(GameEvent.PLAYER_ADDED.name());
             assertThat(eventConsumer.events().get(GameEvent.PLAYER_ADDED.name()).size()).isEqualTo(2);
             assertThat(eventConsumer.events().get(GameEvent.PLAYER_ADDED.name())).contains(player.toString());
         }
@@ -78,7 +75,7 @@ class EventHandlerTest {
             var player = new Player("P1");
             gameLobby.addPlayer(player);
             gameLobby.removePlayer(player);
-            assertThat(eventConsumer.events().containsKey(GameEvent.PLAYER_REMOVED.name()));
+            assertThat(eventConsumer.events()).containsKey(GameEvent.PLAYER_REMOVED.name());
             assertThat(eventConsumer.events().get(GameEvent.PLAYER_REMOVED.name())).contains(player.toString());
         }
 
@@ -86,8 +83,36 @@ class EventHandlerTest {
         void shouldTriggerSettingsWereChanged() {
             var gameLobbySettings = GameLobbySettings.builder().build();
             gameLobby.changeSettings(gameLobbySettings);
-            assertThat(eventConsumer.events().containsKey(GameEvent.SETTINGS_CHANGED.name()));
+            assertThat(eventConsumer.events()).containsKey(GameEvent.SETTINGS_CHANGED.name());
             assertThat(eventConsumer.events().get(GameEvent.SETTINGS_CHANGED.name())).contains(gameLobbySettings.toString());
+        }
+
+        @Test
+        void shouldStartAGame() {
+            var player = new Player("P1");
+            gameLobby.addPlayer(player);
+            gameLobby.setGameMode(GameMode.DEBUG);
+            Game game = server.startGame(gameLobby.getId());
+            assertThat(eventConsumer.events()).containsKey(GameEvent.GAME_STARTED.name());
+            assertThat(eventConsumer.events()).containsKey(GameEvent.PHASE_SWITCHED.name());
+            assertThat(eventConsumer.events()).containsKey(GameEvent.ACTIVE_PLAYER_SWITCHED.name());
+
+            assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(String.join(", ", GameState.START.toString(), GameState.DRAW.toString()));
+            assertThat(eventConsumer.events().get(GameEvent.ACTIVE_PLAYER_SWITCHED.name())).contains(game.getActivePlayer().toString());
+        }
+
+        @Nested
+        class ForGame {
+
+            Game game;
+
+            @BeforeEach
+            void setup() {
+                var player = new Player("P1");
+                gameLobby.addPlayer(player);
+                gameLobby.setGameMode(GameMode.DEBUG);
+                game = server.startGame(gameLobby.getId());
+            }
         }
     }
 }
