@@ -38,11 +38,9 @@ public class GameLogic extends StatefulObject {
     }
 
     public void skipPhase() {
-        if (gameState.isSkippable()) {
-            gameState.advance();
-            return;
+        if (!gameState.isSkippable()) {
+            throw new IllegalArgumentException(String.format("Unable to skip phase %s", gameState));
         }
-        throw new IllegalArgumentException(String.format("Unable to skip phase %s", gameState));
     }
 
     public void nextPhase() {

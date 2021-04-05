@@ -5,6 +5,7 @@ import io.castles.core.tile.Tile;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -65,6 +66,13 @@ public class Game extends StatefulObject {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
     }
 
+    @TestOnly
+    void setGameState(GameState gameState) {
+        while(gameLogic.getGameState() != gameState) {
+            gameLogic.nextPhase();
+        }
+    }
+
     // ========== ACTIONS =========
 
     public Tile getNewTile(Player player) {
@@ -73,6 +81,11 @@ public class Game extends StatefulObject {
 
     public void placeTile(Player player, Tile tile, int x, int y) {
         gameAction(player, GameState.PLACE_TILE, () -> this.board.insertTileToBoard(tile, x, y));
+    }
+
+    public void skipPhase(Player player) {
+        var gameState = getCurrentGameState();
+        gameAction(player, gameState, gameLogic::skipPhase);
     }
 
     private void gameAction(Player player, GameState gameState, Runnable action) {

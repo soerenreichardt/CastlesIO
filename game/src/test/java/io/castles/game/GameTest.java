@@ -34,6 +34,7 @@ class GameTest {
         var tile = game.getNewTile(activePlayer);
         assertThat(tile).isNotNull();
         assertPhaseSwitched(GameState.DRAW, GameState.PLACE_TILE);
+        assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_TILE);
     }
 
     @Test
@@ -50,10 +51,23 @@ class GameTest {
         var tile = game.getNewTile(activePlayer);
         game.placeTile(activePlayer, tile, 0, 1);
         assertPhaseSwitched(GameState.PLACE_TILE, GameState.PLACE_FIGURE);
+        assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_FIGURE);
+    }
+
+    @Test
+    void shouldBeAbleToSkipFigurePlacingAndProceedWithNextTurn() {
+        game.setGameState(GameState.PLACE_FIGURE);
+        var activePlayer = game.getActivePlayer();
+        game.skipPhase(activePlayer);
+        assertPhaseSwitched(GameState.PLACE_FIGURE, GameState.NEXT_PLAYER);
+
+        // next turn
+        assertThat(game.getCurrentGameState()).isEqualTo(GameState.DRAW);
+        assertPhaseSwitched(GameState.NEXT_PLAYER, GameState.DRAW);
+        assertThat(game.getActivePlayer()).isNotEqualTo(activePlayer);
     }
 
     private void assertPhaseSwitched(GameState from, GameState to) {
-        assertThat(game.getCurrentGameState()).isEqualTo(to);
         assertThat(eventConsumer.events()).containsKey(GameEvent.PHASE_SWITCHED.name());
         assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(String.join(", ", from.toString(), to.toString()));
     }
