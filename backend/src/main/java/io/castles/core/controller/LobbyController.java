@@ -65,7 +65,7 @@ public class LobbyController {
 
     @GetMapping("/status/{playerId}")
     @ResponseBody
-    LobbyStateDTO getLobbyState(@PathVariable("id") UUID id, @PathVariable UUID playerId) {
+    LobbyStateDTO getLobbyState(@PathVariable("id") UUID id, @PathVariable("playerId") UUID playerId) {
         GameLobby gameLobby = server.gameLobbyById(id);
         if (gameLobby.containsPlayer(playerId)) {
             return this.lobbyService.getLobbyStateDTOFromGameLobbyForPlayer(gameLobby, playerId);

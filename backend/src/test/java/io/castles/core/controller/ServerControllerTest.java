@@ -48,7 +48,7 @@ class ServerControllerTest {
     @Test
     void shouldCreateNewLobby() throws Exception {
         Mockito.when(clockService.instance()).thenReturn(Clock.systemUTC());
-        var gameLobbySettings = GameLobbySettings.builder().build();
+        var gameLobbySettings = LobbySettingsDTO.from(GameLobbySettings.builder().build());
         var defaultSettings = JsonHelper.serializeObject(gameLobbySettings);
 
         String result = mvc.perform(MockMvcRequestBuilders.post("/lobby")
