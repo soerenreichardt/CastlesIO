@@ -5,8 +5,10 @@ import io.castles.core.tile.Tile;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class Game extends StatefulObject {
 
@@ -30,11 +32,6 @@ public class Game extends StatefulObject {
     protected void init() {
         triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
         gameLogic.initialize();
-    }
-
-    public Tile getNewTile(Player player) {
-        validateAction(player, GameState.DRAW);
-        return this.board.getNewTile();
     }
 
     public Tile getStartTile() {
@@ -69,14 +66,43 @@ public class Game extends StatefulObject {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
     }
 
+    @TestOnly
+    void setGameState(GameState gameState) {
+        while(gameLogic.getGameState() != gameState) {
+            gameLogic.nextPhase();
+        }
+    }
+
+    // ========== ACTIONS =========
+
+    public Tile getNewTile(Player player) {
+        return gameAction(player, GameState.DRAW, board::getNewTile);
+    }
+
     public void placeTile(Player player, Tile tile, int x, int y) {
-        validateAction(player, GameState.PLACE_TILE);
-        this.board.insertTileToBoard(tile, x, y);
-        this.gameLogic.nextPhase();
+        gameAction(player, GameState.PLACE_TILE, () -> this.board.insertTileToBoard(tile, x, y));
+    }
+
+    public void skipPhase(Player player) {
+        var gameState = getCurrentGameState();
+        gameAction(player, gameState, gameLogic::skipPhase);
+    }
+
+    private void gameAction(Player player, GameState gameState, Runnable action) {
+        validateAction(player, gameState);
+        action.run();
+        gameLogic.nextPhase();
+    }
+
+    private <T> T gameAction(Player player, GameState gameState, Supplier<T> action) {
+        validateAction(player, gameState);
+        T result = action.get();
+        gameLogic.nextPhase();
+        return result;
     }
 
     private void validateAction(Player player, GameState expectedState) throws IllegalStateException {
-        if (player == getActivePlayer()) {
+        if (player != getActivePlayer()) {
             throw new IllegalStateException(String.format("Player %s is not the active player %s", player, getActivePlayer()));
         }
         if (expectedState != getCurrentGameState()) {
