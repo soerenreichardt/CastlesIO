@@ -80,7 +80,10 @@ public class Game extends StatefulObject {
     }
 
     public void placeTile(Player player, Tile tile, int x, int y) {
-        gameAction(player, GameState.PLACE_TILE, () -> this.board.insertTileToBoard(tile, x, y));
+        gameAction(player, GameState.PLACE_TILE, () -> {
+            this.board.insertTileToBoard(tile, x, y);
+            triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y);
+        });
     }
 
     public void skipPhase(Player player) {

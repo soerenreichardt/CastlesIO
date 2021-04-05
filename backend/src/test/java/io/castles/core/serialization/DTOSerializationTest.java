@@ -38,7 +38,8 @@ public class DTOSerializationTest {
                 Arguments.of("TileContentMatrixDTO", TileContentMatrixDTO.class, TileContentMatrixDTO.from(tile.<MatrixTileLayout>getTileLayout().getContent())),
                 Arguments.of("TileDTO", TileDTO.class, TileDTO.from(tile)),
                 Arguments.of("TileLayoutDTO", TileLayoutDTO.class, TileLayoutDTO.from(tile.getTileLayout())),
-                Arguments.of("PhaseSwitchDTO", PhaseSwitchDTO.class, new PhaseSwitchDTO(GameState.START, GameState.DRAW))
+                Arguments.of("PhaseSwitchDTO", PhaseSwitchDTO.class, new PhaseSwitchDTO(GameState.START, GameState.DRAW)),
+                Arguments.of("PlacedTileDTO", PlacedTileDTO.class, new PlacedTileDTO(TileDTO.from(tile), 0, 1))
         );
     }
 

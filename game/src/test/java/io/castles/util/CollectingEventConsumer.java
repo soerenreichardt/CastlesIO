@@ -1,5 +1,6 @@
 package io.castles.util;
 
+import io.castles.core.tile.Tile;
 import io.castles.game.*;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
@@ -51,9 +52,18 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
         collect(GameEvent.PHASE_SWITCHED.name(), from, to);
     }
 
+    @Override
+    public void onTilePlaced(Tile tile, int x, int y) {
+        collect(GameEvent.TILE_PLACED.name(), tile, x, y);
+    }
+
     public void collect(String event, Object... data) {
-        var objectsList = Arrays.stream(data).map(Object::toString).collect(Collectors.toList());
-        events.computeIfAbsent(event, __ -> new ArrayList<>()).add(String.join(", ", objectsList));
+        events.computeIfAbsent(event, __ -> new ArrayList<>()).add(stringFrom(data));
+    }
+
+    public static String stringFrom(Object... objects) {
+        var objectsList = Arrays.stream(objects).map(Object::toString).collect(Collectors.toList());
+        return String.join(", ", objectsList);
     }
 
     public void reset() {

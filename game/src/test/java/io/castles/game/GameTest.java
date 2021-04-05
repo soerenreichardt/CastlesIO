@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 import java.util.UUID;
 
+import static io.castles.util.CollectingEventConsumer.stringFrom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,8 +51,14 @@ class GameTest {
         var activePlayer = game.getActivePlayer();
         var tile = game.getNewTile(activePlayer);
         game.placeTile(activePlayer, tile, 0, 1);
+
+        assertThat(game.getTile(0, 1)).isEqualTo(tile);
+
         assertPhaseSwitched(GameState.PLACE_TILE, GameState.PLACE_FIGURE);
         assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_FIGURE);
+
+        assertThat(eventConsumer.events()).containsKey(GameEvent.TILE_PLACED.name());
+        assertThat(eventConsumer.events().get(GameEvent.TILE_PLACED.name())).contains(stringFrom(tile, 0, 1));
     }
 
     @Test

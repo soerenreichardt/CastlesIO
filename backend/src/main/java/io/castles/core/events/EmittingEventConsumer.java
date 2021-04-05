@@ -3,6 +3,7 @@ package io.castles.core.events;
 import io.castles.core.model.dto.*;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.PlayerEmitters;
+import io.castles.core.tile.Tile;
 import io.castles.game.*;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
@@ -71,6 +72,11 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     @Override
     public void onPhaseSwitched(GameState from, GameState to) {
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.PHASE_SWITCHED.name(), new PhaseSwitchDTO(from, to)));
+    }
+
+    @Override
+    public void onTilePlaced(Tile tile, int x, int y) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), new PlacedTileDTO(TileDTO.from(tile), x, y)));
     }
 
     private void createPlayerEmitter(Player player) {
