@@ -51,7 +51,10 @@ public class PlayerEmitters {
 
     private SseEmitter createEmitter(UUID playerId) {
         SseEmitter sseEmitter = new SseEmitter(EMITTER_TIMEOUT);
-        sseEmitter.onCompletion(() -> playerEmitters.remove(playerId));
+        sseEmitter.onCompletion(() -> {
+            playerEmitters.remove(playerId);
+            System.out.println("removed!");
+        });
         return sseEmitter;
     }
 }

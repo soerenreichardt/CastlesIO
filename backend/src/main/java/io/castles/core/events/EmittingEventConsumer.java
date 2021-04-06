@@ -84,12 +84,6 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     private void sendToAllPlayers(Object message) {
-        connectionHandler.checkDisconnectionTimeout();
-        var disconnectedPlayers = connectionHandler.disconnectedPlayers();
-        gameLobby.getPlayers().forEach(player -> {
-            if (!disconnectedPlayers.contains(player)) {
-                playerEmitters.sendToPlayer(player, message);
-            }
-        });
+        connectionHandler.forEachConnectedPlayer(gameLobby.getPlayers(), player -> playerEmitters.sendToPlayer(player, message));
     }
 }
