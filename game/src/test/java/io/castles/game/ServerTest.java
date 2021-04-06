@@ -2,13 +2,16 @@ package io.castles.game;
 
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
+import io.castles.exceptions.UnableToStartException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ServerTest {
 
@@ -56,5 +59,16 @@ class ServerTest {
         GameLobby lobby3 = server.createGameLobby("lobby3", new Player("owner"));
 
         assertThat(server.publicGameLobbies()).containsExactlyInAnyOrderElementsOf(List.of(lobby1, lobby3));
+    }
+
+    @Test
+    void shouldNotRemoveLobbyOnUnsuccessfulGameStart() {
+        var gameLobby = server.createGameLobby("Test", new Player("owner"));
+        assertThatThrownBy(() -> server.startGame(gameLobby.getId()))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(UnableToStartException.class);
+
+        assertThat(server.getActiveGames()).isEmpty();
+        assertThat(server.getActiveGameLobbies()).contains(gameLobby);
     }
 }

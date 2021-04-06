@@ -23,6 +23,10 @@ public class ConnectionHandler {
         this.timeoutPlayers = new HashSet<>();
     }
 
+    public Set<Player> timeoutPlayers() {
+        return timeoutPlayers;
+    }
+
     public boolean tryReconnectPlayer(Player player) {
         if (disconnectedPlayers.containsKey(player)) {
             playerEmitters.create(player.getId());
