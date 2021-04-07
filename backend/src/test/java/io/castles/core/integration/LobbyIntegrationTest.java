@@ -1,12 +1,16 @@
 package io.castles.core.integration;
 
+import io.castles.core.GameMode;
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.PlayerIdentificationDTO;
+import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.ServerEventService;
+import io.castles.core.tile.Tile;
 import io.castles.core.util.CollectingEventConsumer;
 import io.castles.core.util.JsonHelper;
 import io.castles.game.GameLobbySettings;
+import io.castles.game.Player;
 import io.castles.game.Server;
 import io.castles.game.events.GameEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +65,9 @@ public class LobbyIntegrationTest {
         joinPlayer(lobbyId, "Player4");
         removePlayer(lobbyId, "Player4");
 
+        var gameLobbySettings = GameLobbySettings.builder().gameMode(GameMode.DEBUG).build();
+        changeSettings(lobbyId, server.gameLobbyById(lobbyId).getOwnerId(), gameLobbySettings);
+
         var gameLobby = server.gameLobbyById(lobbyId);
         assertThat(gameLobby.getNumPlayers()).isEqualTo(3);
         assertThat(eventConsumer.events().keySet()).containsExactlyInAnyOrder(
@@ -69,6 +76,15 @@ public class LobbyIntegrationTest {
                 GameEvent.PLAYER_ADDED.name(),
                 GameEvent.PLAYER_REMOVED.name()
         );
+
+        startGame(lobbyId);
+
+        var game = server.gameById(gameLobby.getId());
+        var activePlayer = game.getActivePlayer();
+
+        Tile startTile = getTile(lobbyId, 0, 0);
+        Tile drawnTile = newTile(lobbyId, activePlayer);
+        placeTile(lobbyId, activePlayer, drawnTile, 0, 1);
     }
 
     private UUID createLobby() throws Exception {
@@ -105,5 +121,60 @@ public class LobbyIntegrationTest {
         mvc.perform(MockMvcRequestBuilders.delete(playerRemoveUrl)
                 .param("playerId", playerToBeRemoved.getId().toString()))
                 .andExpect(status().isOk());
+    }
+
+    private void changeSettings(UUID lobbyId, UUID owner, GameLobbySettings lobbySettings) throws Exception {
+        String changeSettingsUrl = String.format("/lobby/%s/update", lobbyId);
+        var settingsJson = JsonHelper.serializeObject(LobbySettingsDTO.from(lobbySettings));
+        mvc.perform(MockMvcRequestBuilders.post(changeSettingsUrl)
+                .param("playerId", owner.toString())
+                .content(settingsJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private void startGame(UUID lobbyId) throws Exception {
+        String startGameUrl = String.format("/lobby/%s/start", lobbyId);
+        mvc.perform(MockMvcRequestBuilders.post(startGameUrl))
+                .andExpect(status().isOk());
+    }
+
+    private Tile getTile(UUID lobbyId, int x, int y) throws Exception {
+        var newTileUrl = String.format("/game/%s/tile", lobbyId);
+        var result = mvc.perform(MockMvcRequestBuilders.get(newTileUrl)
+                .param("x", ((Integer) x).toString())
+                .param("y", ((Integer) y).toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return JsonHelper.deserializeObject(result, TileDTO.class).toTile();
+    }
+
+    private Tile newTile(UUID lobbyId, Player activePlayer) throws Exception {
+        var newTileUrl = String.format("/game/%s/new_tile", lobbyId);
+        var result = mvc.perform(MockMvcRequestBuilders.get(newTileUrl).param("playerId", activePlayer.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return JsonHelper.deserializeObject(result, TileDTO.class).toTile();
+    }
+
+    private void placeTile(UUID lobbyId, Player activePlayer, Tile tile, int x, int y) throws Exception {
+        var newTileUrl = String.format("/game/%s/tile", lobbyId);
+        var tileJson = JsonHelper.serializeObject(TileDTO.from(tile));
+        var result = mvc.perform(MockMvcRequestBuilders.post(newTileUrl)
+                .param("playerId", activePlayer.getId().toString())
+                .param("x", Integer.toString(x))
+                .param("y", Integer.toString(y))
+                .content(tileJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
     }
 }
