@@ -1,6 +1,7 @@
 package io.castles.core.controller;
 
 import io.castles.core.exceptions.UnableToReconnectException;
+import io.castles.core.model.dto.GameStartDTO;
 import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PublicLobbyDTO;
@@ -59,8 +60,9 @@ public class LobbyController {
     }
 
     @PostMapping("/start")
-    UUID startGame(@PathVariable("id") UUID id) throws IOException {
-        return gameService.createGame(id).getId();
+    GameStartDTO startGame(@PathVariable("id") UUID id) throws IOException {
+        var game = gameService.createGame(id);
+        return GameStartDTO.from(game);
     }
 
     @GetMapping("/status/{playerId}")
