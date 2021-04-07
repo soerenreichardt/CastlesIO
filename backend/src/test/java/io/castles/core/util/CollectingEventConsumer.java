@@ -2,6 +2,7 @@ package io.castles.core.util;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.events.ServerEventConsumer;
+import io.castles.core.tile.Tile;
 import io.castles.game.*;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
@@ -66,6 +67,11 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
     @Override
     public void onPhaseSwitched(GameState from, GameState to) {
         collect(GameEvent.PHASE_SWITCHED.name(), from, to);
+    }
+
+    @Override
+    public void onTilePlaced(Tile tile, int x, int y) {
+        collect(GameEvent.TILE_PLACED.name(), tile, x, y);
     }
 
     @Override

@@ -1,9 +1,10 @@
 package io.castles.core.controller;
 
 import io.castles.core.model.dto.GameStateDTO;
+import io.castles.core.model.dto.PlayerDTO;
 import io.castles.core.model.dto.TileDTO;
-import io.castles.core.tile.Tile;
 import io.castles.core.service.GameService;
+import io.castles.core.tile.Tile;
 import io.castles.game.Game;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class GameController {
     @ResponseBody
     GameStateDTO getGameState(@PathVariable("id") UUID id) {
         Game game = gameService.gameById(id);
-        return new GameStateDTO(game.getCurrentGameState(), game.getActivePlayer());
+        return new GameStateDTO(game.getCurrentGameState(), PlayerDTO.from(game.getActivePlayer()));
     }
 
     @PostMapping(value = "/tile")

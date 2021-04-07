@@ -33,13 +33,7 @@ public class GameService {
 
         Game game = this.server.startGame(id);
         UUID gameId = game.getId();
-        GameStartDTO gameStartDTO = new GameStartDTO(
-                id,
-                game.getPlayers(),
-                game.getActivePlayer(),
-                game.getSettings(),
-                TileDTO.from(game.getTile(0, 0))
-        );
+        GameStartDTO gameStartDTO = GameStartDTO.from(game);
         for (Player player : game.getPlayers()) {
             // TODO: remove when implementing game start event
             this.emitterService.getLobbyEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);

@@ -1,5 +1,6 @@
 package io.castles.game.events;
 
+import io.castles.core.tile.Tile;
 import io.castles.game.Game;
 import io.castles.game.GameLobbySettings;
 import io.castles.game.GameState;
@@ -18,6 +19,8 @@ public interface GameEventConsumer {
     void onActivePlayerSwitched(Player activePlayer);
 
     void onPhaseSwitched(GameState from, GameState to);
+
+    void onTilePlaced(Tile tile, int x, int y);
 
     class Adapter implements GameEventConsumer {
         @Override
@@ -47,6 +50,11 @@ public interface GameEventConsumer {
 
         @Override
         public void onPhaseSwitched(GameState from, GameState to) {
+
+        }
+
+        @Override
+        public void onTilePlaced(Tile tile, int x, int y) {
 
         }
     }

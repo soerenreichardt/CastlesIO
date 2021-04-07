@@ -2,6 +2,7 @@ package io.castles.core.controller;
 
 import io.castles.core.GameMode;
 import io.castles.core.model.dto.GameStateDTO;
+import io.castles.core.model.dto.PlayerDTO;
 import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
@@ -80,7 +81,7 @@ class GameControllerTest {
 
     @Test
     void shouldGetCurrentGameState() throws Exception {
-        String gameStateJson = JsonHelper.serializeObject(new GameStateDTO(game.getCurrentGameState(), game.getActivePlayer()));
+        String gameStateJson = JsonHelper.serializeObject(new GameStateDTO(game.getCurrentGameState(), PlayerDTO.from(game.getActivePlayer())));
         Mockito.when(gameService.gameById(any())).thenReturn(game);
         mvc.perform(MockMvcRequestBuilders
                 .get(String.format("/game/%s/state", game.getId().toString()))
