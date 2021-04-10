@@ -115,5 +115,15 @@ class BoardTest {
         public void onTileAdded(Tile tile) {
             this.tiles.add(tile);
         }
+
+        @Override
+        public void initialize() {
+
+        }
+
+        @Override
+        public void restart() {
+
+        }
     }
 }

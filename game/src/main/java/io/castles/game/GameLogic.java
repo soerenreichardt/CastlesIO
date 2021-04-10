@@ -37,6 +37,13 @@ public class GameLogic extends StatefulObject {
         triggerLocalEvent(getId(), GameEvent.ACTIVE_PLAYER_SWITCHED, activePlayer);
     }
 
+    @Override
+    public void restart() {
+        gameState = GameState.START;
+        activePlayer = chooseRandomStartPlayer();
+        init();
+    }
+
     public void skipPhase() {
         if (!gameState.isSkippable()) {
             throw new IllegalArgumentException(String.format("Unable to skip phase %s", gameState));

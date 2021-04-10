@@ -3,8 +3,8 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
-import io.castles.game.events.GameEvent;
 import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
 
 import java.util.*;
@@ -31,6 +31,11 @@ public class GameLobby extends StatefulObject {
     protected void init() {
         triggerGlobalEvent(GameEvent.LOBBY_CREATED, this);
         addPlayer(owner);
+    }
+
+    @Override
+    public void restart() {
+        changeSettings(GameLobbySettings.builder().build());
     }
 
     boolean isPublic() {
