@@ -100,8 +100,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     startGame(): void {
-        this.lobbyService.startGame().subscribe((gameId: string) => {
-            this.navigateToGame(gameId);
+        this.lobbyService.startGame().subscribe((gameStartDTO) => {
+            this.navigateToGame(gameStartDTO.gameId);
         });
     }
 
@@ -147,12 +147,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     private addPlayer(playerToAdd: PlayerDTO): void {
-        this.lobby.players.forEach(player => {
-            if (player.id === playerToAdd.id) {
-                return;
-            }
-        });
-
+        const playerExists = this.lobby.players.some(player => player.id === playerToAdd.id);
+        if (playerExists) { return; }
         this.lobby.players.push(playerToAdd);
     }
 

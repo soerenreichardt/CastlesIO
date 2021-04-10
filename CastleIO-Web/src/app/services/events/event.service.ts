@@ -64,7 +64,6 @@ export class EventService {
         const eventSource = new EventSource(this.baseUrl + lobbyId + '/subscribe/' + playerId);
         eventSource.onmessage = (message) => {
             const data: EventType = JSON.parse(message.data);
-            console.log(data);
             if (data.event === 'PLAYER_ADDED') {
                 this.playerAdded.next(data.payload);
             }
@@ -83,6 +82,10 @@ export class EventService {
 
             if (data.event === 'PLAYER_REMOVED') {
                 this.playerRemoved.next(data.payload);
+            }
+
+            if (data.event === 'GAME_STARTED') {
+                this.gameStarted.next(data.payload);
             }
 
             if (data.event === 'SETTINGS_CHANGED') {

@@ -6,6 +6,7 @@ import {PublicLobby} from '../models/public-lobby.interface';
 import {Lobby} from '../models/lobby.interface';
 import {LobbySettings} from '../models/lobby-settings.interface';
 import {debounceTime, map} from 'rxjs/operators';
+import {GameStartDTO} from '../models/dtos/game-start-dto.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -55,8 +56,8 @@ export class LobbyService {
     }
 
     // returns gameId
-    startGame(): Observable<string> {
-        return this.http.post<string>(this.lobbyUrl + 'start/', {});
+    startGame(): Observable<GameStartDTO> {
+        return this.http.post<GameStartDTO>(this.lobbyUrl + 'start/', {});
     }
 
 }
