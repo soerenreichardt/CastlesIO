@@ -41,7 +41,7 @@ public class GameLogic extends StatefulObject {
     public void restart() {
         gameState = GameState.START;
         activePlayer = chooseRandomStartPlayer();
-        init();
+        initialize();
     }
 
     public void skipPhase() {
