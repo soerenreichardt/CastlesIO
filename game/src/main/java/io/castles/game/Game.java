@@ -34,6 +34,12 @@ public class Game extends StatefulObject {
         gameLogic.initialize();
     }
 
+    @Override
+    public void restart() {
+        gameLogic.restart();
+        board.restart();
+    }
+
     public Tile getStartTile() {
         return this.board.getTile(0, 0);
     }

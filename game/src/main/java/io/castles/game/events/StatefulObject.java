@@ -1,10 +1,11 @@
 package io.castles.game.events;
 
 import io.castles.game.IdentifiableObject;
+import io.castles.game.Lifecycle;
 
 import java.util.UUID;
 
-public abstract class StatefulObject extends IdentifiableObject implements EventProducer<GameEvent> {
+public abstract class StatefulObject extends IdentifiableObject implements EventProducer<GameEvent>, Lifecycle {
 
     protected final EventHandler eventHandler;
     private boolean initialized;
@@ -32,6 +33,7 @@ public abstract class StatefulObject extends IdentifiableObject implements Event
         return this.eventHandler;
     }
 
+    @Override
     public void initialize() {
         this.initialized = true;
         init();

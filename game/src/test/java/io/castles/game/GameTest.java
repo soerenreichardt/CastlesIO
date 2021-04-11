@@ -74,6 +74,18 @@ class GameTest {
         assertThat(game.getActivePlayer()).isNotEqualTo(activePlayer);
     }
 
+    @Test
+    void shouldRestartGame() {
+        var activePlayer = game.getActivePlayer();
+        var tile = game.getNewTile(activePlayer);
+        game.placeTile(activePlayer, tile, 0, 1);
+        assertThat(game.getTile(0, 1)).isEqualTo(tile);
+
+        game.restart();
+        assertThat(game.getTile(0, 0)).isEqualTo(game.getStartTile());
+        assertThatThrownBy(() -> game.getTile(0, 1)).isInstanceOf(IllegalArgumentException.class);
+    }
+
     private void assertPhaseSwitched(GameState from, GameState to) {
         assertThat(eventConsumer.events()).containsKey(GameEvent.PHASE_SWITCHED.name());
         assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(String.join(", ", from.toString(), to.toString()));

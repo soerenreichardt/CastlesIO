@@ -1,5 +1,6 @@
 package io.castles.game;
 
+import io.castles.core.GameMode;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,5 +83,13 @@ class GameLobbyTest {
         assertThatThrownBy(() -> gameLobby.triggerLocalEvent(gameLobby.getId(), GameEvent.PLAYER_ADDED))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("uninitialized class");
+    }
+
+    @Test
+    void shouldResetSettings() {
+        gameLobby.setGameMode(GameMode.DEBUG);
+        assertThat(gameLobby.getLobbySettings().getGameMode()).isEqualTo(GameMode.DEBUG);
+        gameLobby.restart();
+        assertThat(gameLobby.getLobbySettings().getGameMode()).isEqualTo(GameMode.ORIGINAL);
     }
 }

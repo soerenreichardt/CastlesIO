@@ -5,11 +5,12 @@ import io.castles.core.board.statistics.BoardStatistics;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
+import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
-public class Board {
+public class Board implements Lifecycle {
 
     private final Map<Integer, Map<Integer, Tile>> tiles;
     private final TileProducer tileProducer;
@@ -51,8 +52,21 @@ public class Board {
         this.boardListeners = new LinkedList<>();
         this.boardStatistics = new BoardStatistics();
 
+        initialize();
+    }
+
+    @Override
+    public void initialize() {
         addBoardListener(boardStatistics);
         setInitialTile(tileProducer.get());
+    }
+
+    @Override
+    public void restart() {
+        tiles.clear();
+        boardListeners.forEach(BoardListener::restart);
+        boardListeners.remove(boardStatistics);
+        initialize();
     }
 
     public BoardStatistics getBoardStatistics() {
@@ -94,6 +108,7 @@ public class Board {
 
     public void addBoardListener(BoardListener listener) {
         this.boardListeners.add(listener);
+        listener.initialize();
         listener.currentState(tiles);
     }
 

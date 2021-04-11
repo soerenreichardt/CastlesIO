@@ -47,4 +47,9 @@ public class GameController {
     void insertTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
         gameService.placeTile(id, playerId, x, y, tile);
     }
+
+    @PostMapping(value = "/restart")
+    void restartGame(@PathVariable("id") UUID id) {
+        gameService.gameById(id).restart();
+    }
 }
