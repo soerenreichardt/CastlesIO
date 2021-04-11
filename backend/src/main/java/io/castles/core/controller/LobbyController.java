@@ -55,8 +55,7 @@ public class LobbyController {
 
     @DeleteMapping("/leave")
     void removePlayer(@PathVariable("id") UUID id, @RequestParam UUID playerId) {
-        GameLobby gameLobby = server.gameLobbyById(id);
-        gameLobby.removePlayer(playerId); // TODO: exception handling
+        server.removePlayerFromLobby(id, playerId);
     }
 
     @PostMapping("/start")
