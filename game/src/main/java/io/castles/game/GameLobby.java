@@ -131,8 +131,8 @@ public class GameLobby extends StatefulObject implements PlayerContainer {
         return this.players.stream().map(Player::getName).collect(Collectors.toList());
     }
 
-    public UUID getOwnerId() {
-        return this.owner.getId();
+    public Player getOwner() {
+        return this.owner;
     }
 
     public GameLobbySettings getLobbySettings() {

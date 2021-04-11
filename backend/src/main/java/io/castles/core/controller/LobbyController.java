@@ -46,7 +46,7 @@ public class LobbyController {
                                    @RequestParam() UUID playerId,
                                    @RequestBody LobbySettingsDTO settings) {
         GameLobby gameLobby = server.gameLobbyById(id);
-        if (gameLobby.getOwnerId().equals(playerId)) {
+        if (gameLobby.getOwner().getId().equals(playerId)) {
             gameLobby.changeSettings(settings.toGameLobbySettings());
             return HttpStatus.OK;
         }

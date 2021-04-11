@@ -66,7 +66,7 @@ public class LobbyIntegrationTest {
         removePlayer(lobbyId, "Player4");
 
         var gameLobbySettings = GameLobbySettings.builder().gameMode(GameMode.DEBUG).build();
-        changeSettings(lobbyId, server.gameLobbyById(lobbyId).getOwnerId(), gameLobbySettings);
+        changeSettings(lobbyId, server.gameLobbyById(lobbyId).getOwner().getId(), gameLobbySettings);
 
         var gameLobby = server.gameLobbyById(lobbyId);
         assertThat(gameLobby.getNumPlayers()).isEqualTo(3);
