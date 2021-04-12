@@ -3,6 +3,7 @@ package io.castles.game;
 import io.castles.core.GameMode;
 import io.castles.core.Visibility;
 import io.castles.core.tile.Tile;
+import io.castles.exceptions.UnableToStartException;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
@@ -42,9 +43,9 @@ public class GameLobby extends StatefulObject {
         return this.lobbySettings.getVisibility() == Visibility.PUBLIC;
     }
 
-    Game startGame() {
+    Game startGame() throws UnableToStartException {
         if (!canStart()) {
-            throw new IllegalStateException("Unable to start game");
+            throw new UnableToStartException("Game");
         }
         return new Game(getId(), GameSettings.from(lobbySettings), this.players, this.eventHandler);
     }

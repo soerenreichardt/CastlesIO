@@ -1,5 +1,6 @@
 package io.castles.core.serialization;
 
+import io.castles.core.GameMode;
 import io.castles.core.model.dto.*;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
@@ -10,8 +11,10 @@ import io.castles.game.events.EventHandler;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -22,7 +25,7 @@ public class DTOSerializationTest {
 
     static PlayerDTO player = PlayerDTO.from(new Player("P1"));
     static GameLobbySettings lobbySettings = GameLobbySettings.builder().build();
-    static GameSettings gameSettings = GameSettings.from(lobbySettings);
+    static GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
     static Tile tile = Tile.drawStatic(TileContent.GRAS);
     static GameLobby gameLobby = new GameLobby("Test", player.toPlayer(), new EventHandler());
 

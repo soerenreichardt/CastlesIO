@@ -2,11 +2,15 @@ import {ApplicationRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {LobbyService} from '../services/lobby.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocalStorageService} from '../services/local-storage.service';
-import {PlayerInfo} from '../models/player-info.interface';
+import {PlayerAuthentication} from '../models/player-authentication.interface';
 import {Lobby} from '../models/lobby.interface';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {interval} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {MatDialog} from '@angular/material/dialog';
+import {EventService} from '../services/events/event.service';
+import {PlayerDTO} from '../models/dtos/player-dto.interface';
 
 @Component({
     selector: 'app-lobby',
@@ -31,7 +35,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private appRef: ApplicationRef,
                 private snackBar: MatSnackBar,
-                private clipboard: Clipboard) {
+                private matDialog: MatDialog,
+                private clipboard: Clipboard,
+                private eventService: EventService) {
     }
 
     ngOnInit(): void {
@@ -59,16 +65,20 @@ export class LobbyComponent implements OnInit, OnDestroy {
         }, error => console.log(error));
     }
 
-    updateLobbyStatus(lobby: Lobby): void {
-        this.lobby = lobby;
-        this.isLobbyPublic = lobby.lobbySettings.visibility === 'PUBLIC';
-    }
-
     initPostJoinProcess(): void {
-        this.subscribeToLobbyChanges();
         this.savePlayerInfo();
-        this.lobbyService.getLobbyStatus(this.playerId).subscribe(response => {
-            this.updateLobbyStatus(response);
+        this.lobbyService.getLobbyStatus(this.playerId).subscribe(lobby => {
+            console.log(lobby);
+            this.lobby = lobby;
+            this.isLobbyPublic = lobby.lobbySettings.visibility === 'PUBLIC';
+            this.subscribeToLobbyChanges();
+        }, (error: HttpErrorResponse) => {
+            if (error.status === 500) {
+                this.snackBar.open('The lobby does not exist.', '', {duration: 3000});
+                setTimeout(() => {
+                    this.router.navigate(['']);
+                }, 3000);
+            }
         });
     }
 
@@ -89,6 +99,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
         }, 500);
     }
 
+    startGame(): void {
+        this.lobbyService.startGame().subscribe((gameStartDTO) => {
+            this.navigateToGame(gameStartDTO.gameId);
+        });
+    }
+
+    private navigateToGame(gameId: string): void {
+        this.router.navigate(['game', gameId]);
+    }
 
     copyUrlToClipboard(): void {
         this.clipboard.copy(this.inviteLink);
@@ -96,11 +115,12 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToLobbyChanges(): void {
-        this.sseEventSource = this.lobbyService.subscribeToLobbyUpdates(this.lobbyId, this.playerId);
-        this.sseEventSource.onmessage = (message) => {
-            console.log(message.data);
-            this.updateLobbyStatus(JSON.parse(message.data));
-        };
+        this.eventService.subscribeToServerUpdates(this.lobbyId, this.playerId);
+
+        this.eventService.settingsChanged.subscribe( lobbySettings => this.lobby.lobbySettings = lobbySettings);
+        this.eventService.playerAdded.subscribe( player => this.addPlayer(player));
+        this.eventService.playerRemoved.subscribe(this.removePlayer);
+        this.eventService.gameStarted.subscribe(gameStartDTO => this.navigateToGame(gameStartDTO.gameId));
     }
 
     private savePlayerInfo(): void {
@@ -111,7 +131,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     private setPlayerInfoFromStorage(): void {
-        const savedPlayerData: PlayerInfo = this.localStorageService.getObject(this.lobbyId);
+        const savedPlayerData: PlayerAuthentication = this.localStorageService.getObject(this.lobbyId);
         if (savedPlayerData) {
             this.playerId = savedPlayerData.playerId;
             this.playerName = savedPlayerData.playerName;
@@ -123,6 +143,18 @@ export class LobbyComponent implements OnInit, OnDestroy {
     private showLinkCopiedSnackBar(): void {
         this.snackBar.open('Link copied to clipboard', '', {
             duration: 5000
+        });
+    }
+
+    private addPlayer(playerToAdd: PlayerDTO): void {
+        const playerExists = this.lobby.players.some(player => player.id === playerToAdd.id);
+        if (playerExists) { return; }
+        this.lobby.players.push(playerToAdd);
+    }
+
+    private removePlayer(playerToRemove: PlayerDTO): void {
+        this.lobby.players.filter(player => {
+            return player !== playerToRemove;
         });
     }
 }

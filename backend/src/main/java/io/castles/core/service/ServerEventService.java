@@ -46,11 +46,13 @@ public class ServerEventService {
 
     public void triggerEvent(UUID id, ServerEvent serverEvent, Object... objects) {
         var serverEventConsumerList = serverEventConsumers.get(id);
-        switch (serverEvent) {
-            case PLAYER_RECONNECT_ATTEMPT -> serverEventConsumerList.forEach(c -> c.onPlayerReconnectAttempt((Player) objects[0]));
-            case PLAYER_RECONNECTED ->  serverEventConsumerList.forEach(c -> c.onPlayerReconnected((Player) objects[0]));
-            case PLAYER_DISCONNECTED -> serverEventConsumerList.forEach(c -> c.onPlayerDisconnected((Player) objects[0]));
-            case PLAYER_TIMEOUT -> serverEventConsumerList.forEach(c -> c.onPlayerTimeout((Player) objects[0]));
+        if (serverEventConsumerList != null) {
+            switch (serverEvent) {
+                case PLAYER_RECONNECT_ATTEMPT -> serverEventConsumerList.forEach(c -> c.onPlayerReconnectAttempt((Player) objects[0]));
+                case PLAYER_RECONNECTED -> serverEventConsumerList.forEach(c -> c.onPlayerReconnected((Player) objects[0]));
+                case PLAYER_DISCONNECTED -> serverEventConsumerList.forEach(c -> c.onPlayerDisconnected((Player) objects[0]));
+                case PLAYER_TIMEOUT -> serverEventConsumerList.forEach(c -> c.onPlayerTimeout((Player) objects[0]));
+            }
         }
     }
 

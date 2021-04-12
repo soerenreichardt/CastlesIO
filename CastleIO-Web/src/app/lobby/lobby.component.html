@@ -6,8 +6,8 @@
         <h2>{{lobby.lobbyName}}</h2>
         <div class="card-content">
             <mat-list class="player-list">
-                <mat-list-item *ngFor="let playerName of lobby.playerNames">
-                    <h4>{{playerName}}</h4>
+                <mat-list-item *ngFor="let player of lobby.players">
+                    <h4>{{player.name}}</h4>
                     <p class="controls">
                         <span class="material-icons" title="remove player" *ngIf="lobby.lobbySettings.editable">delete</span>
                     </p>
@@ -80,6 +80,12 @@
                     <span>{{lobby.lobbySettings.turnTimeSeconds}} sec</span>
                 </div>
             </form>
+        </div>
+        <div class="card-content">
+            <button mat-flat-button
+                    color="accent"
+                    class="big-button"
+                    (click)="startGame()">Start Game</button>
         </div>
     </div>
 </div>

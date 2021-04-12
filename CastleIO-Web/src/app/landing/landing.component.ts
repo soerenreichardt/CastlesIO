@@ -4,7 +4,7 @@ import {ApiService} from '../services/api.service';
 import {PublicLobby} from '../models/public-lobby.interface';
 import {LobbySettings} from '../models/lobby-settings.interface';
 import {LocalStorageService} from '../services/local-storage.service';
-import {PlayerInfo} from '../models/player-info.interface';
+import {PlayerAuthentication} from '../models/player-authentication.interface';
 
 @Component({
     selector: 'app-landing',

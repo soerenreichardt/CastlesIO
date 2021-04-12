@@ -1,7 +1,7 @@
 package io.castles.game;
 
+import io.castles.exceptions.UnableToStartException;
 import io.castles.game.events.EventHandler;
-import io.castles.game.events.GameEvent;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
@@ -55,7 +55,12 @@ public class Server {
 
     public Game startGame(UUID lobbyId) {
         var gameLobby = gameLobbyById(lobbyId);
-        var game = gameLobby.startGame();
+        Game game;
+        try {
+            game = gameLobby.startGame();
+        } catch (UnableToStartException e) {
+            throw new RuntimeException(e);
+        }
         game.initialize();
         activeGames.put(game.getId(), game);
         activeLobbies.remove(lobbyId);

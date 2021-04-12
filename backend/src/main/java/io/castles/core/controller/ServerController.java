@@ -5,6 +5,7 @@ import io.castles.core.model.dto.LobbySettingsDTO;
 import io.castles.core.model.dto.LobbyStateDTO;
 import io.castles.core.model.dto.PlayerIdentificationDTO;
 import io.castles.core.events.EmittingEventConsumer;
+import io.castles.core.model.dto.PublicLobbyDTO;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
@@ -61,7 +62,7 @@ public class ServerController {
 
     @GetMapping("/lobbies")
     @ResponseBody
-    List<LobbyStateDTO> listPublicLobbies() {
-        return this.server.publicGameLobbies().stream().map(LobbyStateDTO::from).collect(Collectors.toList());
+    List<PublicLobbyDTO> listPublicLobbies() {
+        return this.server.publicGameLobbies().stream().map(PublicLobbyDTO::from).collect(Collectors.toList());
     }
 }
