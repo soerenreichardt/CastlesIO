@@ -68,7 +68,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
     initPostJoinProcess(): void {
         this.savePlayerInfo();
         this.lobbyService.getLobbyStatus(this.playerId).subscribe(lobby => {
-            console.log(lobby);
             this.lobby = lobby;
             this.isLobbyPublic = lobby.lobbySettings.visibility === 'PUBLIC';
             this.subscribeToLobbyChanges();

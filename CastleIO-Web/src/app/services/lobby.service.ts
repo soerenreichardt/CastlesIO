@@ -1,11 +1,10 @@
 import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Observable, pipe, Subject, timer} from 'rxjs';
+import {Observable} from 'rxjs';
 import {PublicLobby} from '../models/public-lobby.interface';
 import {Lobby} from '../models/lobby.interface';
 import {LobbySettings} from '../models/lobby-settings.interface';
-import {debounceTime, map} from 'rxjs/operators';
 import {GameStartDTO} from '../models/dtos/game-start-dto.interface';
 
 @Injectable({

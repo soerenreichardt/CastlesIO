@@ -68,8 +68,10 @@ export class EventService {
 
     subscribeToServerUpdates(lobbyId: string, playerId: string): void {
         const eventSource = new EventSource(this.baseUrl + lobbyId + '/subscribe/' + playerId);
+        console.log('subscribed to lobby updates');
         eventSource.onmessage = (message) => {
             const data: EventType = JSON.parse(message.data);
+            console.log(data);
             if (data.event === 'PLAYER_ADDED') {
                 this.playerAdded.next(data.payload);
             }

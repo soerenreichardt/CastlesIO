@@ -31,8 +31,10 @@ public class PlayerEmitters {
         return playerEmitters.get(playerId);
     }
 
-    public SseEmitter getOrCreate(UUID playerId) {
-        return playerEmitters.computeIfAbsent(playerId, this::createEmitter);
+    public SseEmitter recreate(UUID playerId) {
+        SseEmitter playerEmitter = createEmitter(playerId);
+        playerEmitters.put(playerId, playerEmitter);
+        return playerEmitter;
     }
 
     public void remove(UUID playerId) {
