@@ -28,7 +28,7 @@ public class SseEmitterService {
         if (playerEmitters.get(playerId) == null) {
             throw new UnableToReconnectException(String.format("Player `%s` timed out", lobby.getPlayerById(playerId).getName()));
         }
-        SseEmitter sseEmitter = playerEmitters.getOrCreate(playerId);
+        SseEmitter sseEmitter = playerEmitters.recreate(playerId);
         serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, lobby.getPlayerById(playerId));
         return sseEmitter;
     }
