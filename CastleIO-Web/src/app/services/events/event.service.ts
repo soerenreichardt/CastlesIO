@@ -40,7 +40,13 @@ interface SettingsChanged {
     payload: LobbySettings;
 }
 
-type EventType = PlayerAdded | PlayerReconnected | PlayerDisconnected | PlayerTimeout | PlayerRemoved | GameStarted | SettingsChanged;
+type EventType = PlayerAdded |
+    PlayerReconnected |
+    PlayerDisconnected |
+    PlayerTimeout |
+    PlayerRemoved |
+    GameStarted |
+    SettingsChanged;
 
 @Injectable({
     providedIn: 'root'

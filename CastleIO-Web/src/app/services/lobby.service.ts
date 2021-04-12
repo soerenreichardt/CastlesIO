@@ -22,7 +22,6 @@ export class LobbyService {
         this.lobbyUrl = this.baseUrl + lobbyId + '/';
     }
 
-    // returns playerId
     joinLobby(playerName: string): Observable<string> {
         return this.http.put<string>(this.lobbyUrl + 'join/', {}, {
             params: {
@@ -55,7 +54,6 @@ export class LobbyService {
         });
     }
 
-    // returns gameId
     startGame(): Observable<GameStartDTO> {
         return this.http.post<GameStartDTO>(this.lobbyUrl + 'start/', {});
     }

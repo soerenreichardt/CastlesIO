@@ -4,6 +4,8 @@ import {Tile} from '../../models/tile';
 import {PlacedTiles} from '../../models/placed-tiles';
 import {GameService} from '../../services/game.service';
 import {ActivatedRoute} from '@angular/router';
+import {TileDTO} from '../../models/tile-dto';
+import {DrawnTileService} from '../../services/drawn-tile.service';
 
 @Component({
     selector: 'app-game-board',
@@ -20,12 +22,18 @@ export class GameBoardComponent implements OnInit {
     canvas;
 
     constructor(
-        private gameService: GameService,
+        private drawnTileService: DrawnTileService,
     ) {
     }
 
     ngOnInit(): void {
         this.initCanvas();
+
+        this.drawnTileService.drawnTile.subscribe(drawnTile => {
+            this.drawnTile = drawnTile;
+
+            this.renderGameBoard();
+        });
     }
 
     private initCanvas(): void {
@@ -67,17 +75,13 @@ export class GameBoardComponent implements OnInit {
             .node().appendChild(this.drawnTile.element);
     }
 
-    drawRandomTile(): void {
-        const tileNumber = Math.ceil(Math.random() * 19);
-        const tilePath = `assets/tiles/tile${tileNumber}.svg`;
+    renderDrawnTile(tileDTO: TileDTO): void {
+        const tile = new Tile(tileDTO);
+        const tilePath = `assets/tiles/tile${tile.id}.svg`;
         d3.xml(tilePath).then(tileData => {
-            const tileElement = tileData.documentElement.querySelector<HTMLElement>(`g#tile${tileNumber}`);
-            this.gameService.getNewTile().subscribe((drawnTile: Tile) => {
-                drawnTile.element = tileElement;
-                this.drawnTile = drawnTile;
-                this.renderGameBoard();
-            });
-
+            const tileElement = tileData.documentElement.querySelector<HTMLElement>(`g#tile${tile.id}`);
+            tile.element = tileElement;
+            this.renderGameBoard();
         });
     }
 }

@@ -20,9 +20,11 @@ export class GameService {
         this.gameUrl = this.baseUrl + gameId + '/';
     }
 
-    getNewTile(): Observable<Tile> {
-        return this.http.get<TileDTO>(this.gameUrl + 'new_tile').pipe(
-            map(tileDTO => Object.assign(new Tile(tileDTO)))
-        );
+    getNewTile(playerId: string): Observable<TileDTO> {
+        return this.http.get<TileDTO>(this.gameUrl + 'new_tile', {
+            params: {
+                playerId
+            }
+        });
     }
 }
