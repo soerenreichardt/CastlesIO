@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,6 +100,18 @@ class BoardTest {
         assertEquals(board.getTile(0, 1), testListener.tiles.get(1));
     }
 
+    @Test
+    void shouldResetBoard() {
+        var board = Board.withStaticTile(TileContent.GRAS);
+        var tile = Tile.drawStatic(TileContent.GRAS);
+        board.insertTileToBoard(tile, 0, 1);
+        assertThat(board.getTile(0, 1)).isNotNull();
+
+        board.restart();
+        assertThat(board.getTile(0, 0)).isNotNull();
+        assertThatThrownBy(() -> board.getTile(0, 1)).isInstanceOf(IllegalArgumentException.class);
+    }
+
     static class TestListener implements BoardListener {
         List<Tile> tiles;
 
@@ -114,6 +127,16 @@ class BoardTest {
         @Override
         public void onTileAdded(Tile tile) {
             this.tiles.add(tile);
+        }
+
+        @Override
+        public void initialize() {
+
+        }
+
+        @Override
+        public void restart() {
+
         }
     }
 }

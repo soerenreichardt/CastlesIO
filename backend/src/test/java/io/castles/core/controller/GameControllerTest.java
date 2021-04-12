@@ -104,4 +104,15 @@ class GameControllerTest {
                 .content(tileJson))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldRestartGame() throws Exception {
+        Mockito.when(gameService.gameById(any())).thenReturn(game);
+        mvc.perform(MockMvcRequestBuilders
+                .post(String.format("/game/%s/restart", game.getId().toString()))
+                .param("playerId", game.getActivePlayer().getId().toString())
+                .param("x", "0")
+                .param("y", "1"))
+                .andExpect(status().isOk());
+    }
 }

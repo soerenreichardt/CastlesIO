@@ -6,10 +6,7 @@ import io.castles.core.graph.algorithm.GraphBfs;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BoardStatistics implements BoardListener {
@@ -17,11 +14,7 @@ public class BoardStatistics implements BoardListener {
     private final List<Graph> graphs;
 
     public BoardStatistics() {
-        this.graphs = List.of(
-                new Graph(TileContent.GRAS),
-                new Graph(TileContent.CASTLE),
-                new Graph(TileContent.STREET)
-        );
+        this.graphs = new ArrayList<>();
     }
 
     @Override
@@ -37,6 +30,19 @@ public class BoardStatistics implements BoardListener {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
         graphs.forEach(graph -> graph.fromExistingBoard(tiles));
+    }
+
+    @Override
+    public void initialize() {
+        graphs.add(new Graph(TileContent.GRAS));
+        graphs.add(new Graph(TileContent.CASTLE));
+        graphs.add(new Graph(TileContent.STREET));
+    }
+
+    @Override
+    public void restart() {
+        graphs.clear();
+        initialize();
     }
 
     public int getStreetLength(Tile tile, int row, int column) {

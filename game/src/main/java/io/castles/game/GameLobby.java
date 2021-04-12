@@ -34,6 +34,11 @@ public class GameLobby extends StatefulObject {
         addPlayer(owner);
     }
 
+    @Override
+    public void restart() {
+        changeSettings(GameLobbySettings.builder().build());
+    }
+
     boolean isPublic() {
         return this.lobbySettings.getVisibility() == Visibility.PUBLIC;
     }
