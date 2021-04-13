@@ -1,5 +1,6 @@
 package io.castles.core.service;
 
+import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.core.model.dto.GameStartDTO;
 import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
@@ -9,8 +10,10 @@ import io.castles.game.Player;
 import io.castles.game.Server;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -51,6 +54,14 @@ public class GameService {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);
         game.placeTile(player, tileDTO.toTile(), x, y);
+    }
+
+    public SseEmitter reconnectToGame(UUID id, UUID playerId) throws UnableToReconnectException {
+        var game = gameById(id);
+        if (!game.containsPlayer(playerId)) {
+            throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
+        }
+        return emitterService.reconnectToGame(game, playerId);
     }
 
     private void setDefaultTileList(UUID id) throws IOException {

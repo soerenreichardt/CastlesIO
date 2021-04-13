@@ -9,6 +9,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Game extends StatefulObject {
 
@@ -70,6 +71,11 @@ public class Game extends StatefulObject {
                 .filter(player -> player.getId().equals(playerId))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    public boolean containsPlayer(UUID playerId) {
+        var playerIds = this.getPlayers().stream().map(Player::getId).collect(Collectors.toList());
+        return playerIds.contains(playerId);
     }
 
     @TestOnly

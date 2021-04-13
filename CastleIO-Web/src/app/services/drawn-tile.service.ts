@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ReplaySubject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {GameService} from './game.service';
 import {Tile} from '../models/tile';
 import * as d3 from 'd3';
@@ -8,7 +8,7 @@ import * as d3 from 'd3';
   providedIn: 'root'
 })
 export class DrawnTileService {
-    drawnTile = new ReplaySubject<Tile>();
+    drawnTile = new BehaviorSubject<Tile>(undefined);
 
   constructor(
       private gameService: GameService

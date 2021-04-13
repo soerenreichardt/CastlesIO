@@ -4,6 +4,7 @@ import {ReplaySubject} from 'rxjs';
 import {LobbySettings} from '../../models/lobby-settings.interface';
 import {GameStartDTO} from '../../models/dtos/game-start-dto.interface';
 import {PlayerDTO} from '../../models/dtos/player-dto.interface';
+import {ActivatedRoute, Router} from '@angular/router';
 
 interface PlayerAdded {
     event: 'PLAYER_ADDED';
@@ -61,13 +62,12 @@ export class EventService {
     gameStarted = new ReplaySubject<GameStartDTO>();
     settingsChanged = new ReplaySubject<LobbySettings>();
 
-    constructor() {
+    constructor(private router: Router) {
     }
 
-    baseUrl = environment.backendUrl + 'lobby/';
-
     subscribeToServerUpdates(lobbyId: string, playerId: string): void {
-        const eventSource = new EventSource(this.baseUrl + lobbyId + '/subscribe/' + playerId);
+        const websiteState = this.router.url.split('/')[1];
+        const eventSource = new EventSource(`${environment.backendUrl}${websiteState}/${lobbyId}/subscribe/${playerId}`);
         console.log('subscribed to lobby updates');
         eventSource.onmessage = (message) => {
             const data: EventType = JSON.parse(message.data);
