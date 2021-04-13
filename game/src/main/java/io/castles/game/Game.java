@@ -49,6 +49,10 @@ public class Game extends StatefulObject {
         return this.board.getTile(x, y);
     }
 
+    public Map<Integer, Map<Integer, Tile>> getGameBoardTileMap() {
+        return this.board.getTiles();
+    }
+
     public GameState getCurrentGameState() {
         return this.gameLogic.getGameState();
     }

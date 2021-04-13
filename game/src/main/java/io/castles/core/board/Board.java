@@ -87,6 +87,10 @@ public class Board implements Lifecycle {
         throw new IllegalArgumentException(String.format("No tile was found at position (%d|%d).", x, y));
     }
 
+    public Map<Integer, Map<Integer, Tile>> getTiles() {
+        return this.tiles;
+    }
+
     public void insertTileToBoard(Tile tile, int x, int y) {
         var innerTiles = tiles.computeIfAbsent(x, ignore -> new HashMap<>());
         if (innerTiles.containsKey(y)) {
