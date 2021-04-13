@@ -2,7 +2,9 @@ package io.castles.core.service;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.exceptions.UnableToReconnectException;
+import io.castles.game.Game;
 import io.castles.game.GameLobby;
+import io.castles.game.Player;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -23,13 +25,25 @@ public class SseEmitterService {
 
     public SseEmitter reconnectToLobby(GameLobby lobby, UUID playerId) throws UnableToReconnectException {
         var lobbyId = lobby.getId();
-        serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECT_ATTEMPT, lobby.getPlayerById(playerId));
-        var playerEmitters = getPlayerEmitters(lobbyId);
+        var player = lobby.getPlayerById(playerId);
+        return reconnectPlayer(lobbyId, player);
+    }
+
+    public SseEmitter reconnectToGame(Game game, UUID playerId) throws UnableToReconnectException {
+        var gameId = game.getId();
+        var player = game.getPlayerById(playerId);
+        return reconnectPlayer(gameId, player);
+    }
+
+    private SseEmitter reconnectPlayer(UUID lobbyOrGameId, Player player) throws UnableToReconnectException {
+        var playerId = player.getId();
+        serverEventService.triggerEvent(lobbyOrGameId, ServerEvent.PLAYER_RECONNECT_ATTEMPT, player);
+        var playerEmitters = getPlayerEmitters(lobbyOrGameId);
         if (playerEmitters.get(playerId) == null) {
-            throw new UnableToReconnectException(String.format("Player `%s` timed out", lobby.getPlayerById(playerId).getName()));
+            throw new UnableToReconnectException(String.format("Player `%s` timed out", player.getName()));
         }
         SseEmitter sseEmitter = playerEmitters.recreate(playerId);
-        serverEventService.triggerEvent(lobbyId, ServerEvent.PLAYER_RECONNECTED, lobby.getPlayerById(playerId));
+        serverEventService.triggerEvent(lobbyOrGameId, ServerEvent.PLAYER_RECONNECTED, player);
         return sseEmitter;
     }
 
@@ -42,7 +56,7 @@ public class SseEmitterService {
         return getPlayerEmitters(lobbyId).get(playerId);
     }
 
-    public PlayerEmitters getPlayerEmitters(UUID lobbyId) {
-        return this.sseEmitters.get(lobbyId);
+    public PlayerEmitters getPlayerEmitters(UUID lobbyOrGameId) {
+        return this.sseEmitters.get(lobbyOrGameId);
     }
 }

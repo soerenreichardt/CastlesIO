@@ -2,9 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import * as d3 from 'd3';
 import {Tile} from '../../models/tile';
 import {PlacedTiles} from '../../models/placed-tiles';
-import {GameService} from '../../services/game.service';
-import {ActivatedRoute} from '@angular/router';
-import {TileDTO} from '../../models/tile-dto';
 import {DrawnTileService} from '../../services/drawn-tile.service';
 
 @Component({
@@ -30,9 +27,10 @@ export class GameBoardComponent implements OnInit {
         this.initCanvas();
 
         this.drawnTileService.drawnTile.subscribe(drawnTile => {
-            this.drawnTile = drawnTile;
-
-            this.renderGameBoard();
+            if (drawnTile !== undefined) {
+                this.drawnTile = drawnTile;
+                this.renderGameBoard();
+            }
         });
     }
 
@@ -73,15 +71,5 @@ export class GameBoardComponent implements OnInit {
             .call(dragHandler)
             .on('click', clicked)
             .node().appendChild(this.drawnTile.element);
-    }
-
-    renderDrawnTile(tileDTO: TileDTO): void {
-        const tile = new Tile(tileDTO);
-        const tilePath = `assets/tiles/tile${tile.id}.svg`;
-        d3.xml(tilePath).then(tileData => {
-            const tileElement = tileData.documentElement.querySelector<HTMLElement>(`g#tile${tile.id}`);
-            tile.element = tileElement;
-            this.renderGameBoard();
-        });
     }
 }
