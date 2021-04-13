@@ -33,6 +33,10 @@ export class GameComponent implements OnInit {
             this.redirectUnauthenticatedPlayer();
         } else {
             this.eventService.subscribeToServerUpdates(this.gameId, this.playerId);
+            this.gameService.getGame(this.playerId).subscribe(game => {
+                 console.log('got that game:');
+                 console.log(game);
+            });
         }
     }
 
