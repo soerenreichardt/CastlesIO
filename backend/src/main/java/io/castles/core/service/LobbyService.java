@@ -8,7 +8,6 @@ import io.castles.game.Server;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service

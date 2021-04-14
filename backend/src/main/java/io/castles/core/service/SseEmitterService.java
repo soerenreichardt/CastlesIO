@@ -46,8 +46,8 @@ public class SseEmitterService {
         sseEmitters.put(lobby.getId(), playerEmitters);
     }
 
-    public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
-        return getPlayerEmitters(lobbyId).get(playerId);
+    public SseEmitter getGameObjectEmitterForPlayer(UUID gameObjectId, UUID playerId) {
+        return getPlayerEmitters(gameObjectId).get(playerId);
     }
 
     public PlayerEmitters getPlayerEmitters(UUID lobbyOrGameId) {

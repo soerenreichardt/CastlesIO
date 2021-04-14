@@ -38,7 +38,7 @@ public class GameService {
         GameStartDTO gameStartDTO = GameStartDTO.from(game);
         for (Player player : game.getPlayers()) {
             // TODO: remove when implementing game start event
-            this.emitterService.getLobbyEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
+            this.emitterService.getGameObjectEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
         }
         return game;
     }
