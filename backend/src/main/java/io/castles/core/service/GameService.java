@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -57,11 +56,7 @@ public class GameService {
     }
 
     public SseEmitter reconnectToGame(UUID id, UUID playerId) throws UnableToReconnectException {
-        var game = gameById(id);
-        if (!game.containsPlayer(playerId)) {
-            throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
-        }
-        return emitterService.reconnectToGame(game, playerId);
+        return emitterService.reconnectPlayer(gameById(id), playerId);
     }
 
     private void setDefaultTileList(UUID id) throws IOException {

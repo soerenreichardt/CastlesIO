@@ -28,11 +28,7 @@ public class LobbyService {
     }
 
     public SseEmitter reconnectToLobby(UUID id, UUID playerId) throws UnableToReconnectException {
-        var gameLobby = server.gameLobbyById(id);
-        if (!gameLobby.containsPlayer(playerId)) {
-            throw new NoSuchElementException(String.format("No player with id %s found in lobby %s", playerId, id));
-        }
-        return emitterService.reconnectToLobby(gameLobby, playerId);
+        return emitterService.reconnectPlayer(server.gameLobbyById(id), playerId);
     }
 
     public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
