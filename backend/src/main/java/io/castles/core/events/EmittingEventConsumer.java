@@ -59,7 +59,7 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
         LobbySettingsDTO lobbySettings = LobbySettingsDTO.from(gameLobbySettings);
         sendToAllPlayers(
                 new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), lobbySettings),
-                new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), lobbySettings.editable())
+                new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), lobbySettings.editableCopy())
         );
     }
 

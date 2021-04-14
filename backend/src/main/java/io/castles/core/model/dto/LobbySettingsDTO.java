@@ -30,9 +30,17 @@ public class LobbySettingsDTO {
         return new GameLobbySettings(turnTimeSeconds, maxPlayers, GameMode.valueOf(gameMode), List.of(), Visibility.valueOf(visibility));
     }
 
-    public LobbySettingsDTO editable() {
-        editable = true;
-        return this;
+    public LobbySettingsDTO editableCopy() {
+        return new LobbySettingsDTO(
+                turnTimeSeconds,
+                maxPlayers,
+                tileList,
+                gameMode,
+                gameModes,
+                visibility,
+                visibilities,
+                true
+        );
     }
 
     public static LobbySettingsDTO from(GameLobbySettings lobbySettings) {
