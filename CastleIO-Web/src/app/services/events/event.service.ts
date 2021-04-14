@@ -97,7 +97,6 @@ export class EventService {
             }
 
             if (data.event === 'SETTINGS_CHANGED') {
-                data.payload.editable = true; // TODO: remove when authentication is implemented
                 this.settingsChanged.next(data.payload);
             }
         };
