@@ -51,8 +51,9 @@ public class Game extends StatefulObject {
         return this.board.getTile(x, y);
     }
 
-    public Optional<Tile> getDrawnTile() {
-        return Optional.ofNullable(drawnTile);
+    public Tile getDrawnTile(Player player) {
+        this.validateAction(player, GameState.PLACE_TILE);
+        return this.drawnTile;
     }
 
     public Map<Integer, Map<Integer, Tile>> getGameBoardTileMap() {

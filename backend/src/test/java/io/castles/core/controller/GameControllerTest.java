@@ -48,6 +48,7 @@ class GameControllerTest {
     void setup() {
         GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
         game = new Game(UUID.randomUUID(), gameSettings, Set.of(new Player("P1")), server.eventHandler());
+        game.initialize();
         server.addGame(game);
     }
 
@@ -77,6 +78,22 @@ class GameControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(tileJson)); // do not check for Tile id
+    }
+
+    @Test
+    void shouldReturnDrawnTile() throws Exception {
+        Player activePlayer = game.getActivePlayer();
+
+        Tile drawnTile = game.drawTile(activePlayer);
+        String tileJson = JsonHelper.serializeObject(TileDTO.from(drawnTile));
+
+        Mockito.when(gameService.getDrawnTile(any(), any())).thenReturn(drawnTile);
+        mvc.perform(MockMvcRequestBuilders
+                .get(String.format("/game/%s/drawn_tile", game.getId().toString()))
+                .param("playerId", activePlayer.getId().toString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(tileJson));
     }
 
     @Test

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +21,5 @@ public class TileDTO {
                 tile.getId(),
                 TileLayoutDTO.from(tile.getTileLayout())
         );
-    }
-
-    public static TileDTO from(Optional<Tile> tile) {
-        return tile.map(TileDTO::from).orElse(null);
     }
 }

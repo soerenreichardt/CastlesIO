@@ -34,7 +34,7 @@ class GameTest {
         var activePlayer = game.getActivePlayer();
         var tile = game.drawTile(activePlayer);
         assertThat(tile).isNotNull();
-        assertThat(game.getDrawnTile()).isPresent().contains(tile);
+        assertThat(game.getDrawnTile(activePlayer)).isEqualTo(tile);
         assertPhaseSwitched(GameState.DRAW, GameState.PLACE_TILE);
         assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_TILE);
     }

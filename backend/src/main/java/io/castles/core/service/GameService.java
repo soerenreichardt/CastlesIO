@@ -50,6 +50,12 @@ public class GameService {
         return game.drawTile(player);
     }
 
+    public Tile getDrawnTile(UUID gameId, UUID playerId) {
+        var game = gameById(gameId);
+        var player = game.getPlayerById(playerId);
+        return game.getDrawnTile(player);
+    }
+
     public void placeTile(UUID gameId, UUID playerId, int x, int y, TileDTO tileDTO) {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);

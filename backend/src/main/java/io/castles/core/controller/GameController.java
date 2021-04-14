@@ -31,6 +31,13 @@ public class GameController {
         return TileDTO.from(newTile);
     }
 
+    @GetMapping("/drawn_tile")
+    @ResponseBody
+    TileDTO getDrawnTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {
+        Tile drawnTile = gameService.getDrawnTile(id, playerId);
+        return TileDTO.from(drawnTile);
+    }
+
     @GetMapping(value = "/tile")
     @ResponseBody
     TileDTO getTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y) {

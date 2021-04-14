@@ -13,7 +13,6 @@ public class GameDTO {
     GameStateDTO gameState;
     Map<Integer, Map<Integer, TileDTO>> tiles;
     List<PlayerDTO> players;
-    TileDTO drawnTile;
 
     public static GameDTO from(Game game) {
         var board = game.getGameBoardTileMap().entrySet().stream().collect(Collectors.toMap(
@@ -26,8 +25,7 @@ public class GameDTO {
         return new GameDTO(
                 GameStateDTO.from(game),
                 board,
-                game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList()),
-                TileDTO.from(game.getDrawnTile())
+                game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList())
         );
     }
 }
