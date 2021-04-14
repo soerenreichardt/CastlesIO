@@ -1,2 +1,2 @@
-<button (click)="drawTile()">Draw Tile</button>
+<button (click)="drawTile()" *ngIf="game?.timeToDrawTile()">Draw Tile</button>
 <app-game-board></app-game-board>

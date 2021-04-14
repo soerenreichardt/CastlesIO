@@ -6,7 +6,7 @@ import lombok.Value;
 
 @Value
 public class GameStateDTO {
-    GameState gameState;
+    GameState state;
     PlayerDTO player;
 
     public static GameStateDTO from(Game game) {

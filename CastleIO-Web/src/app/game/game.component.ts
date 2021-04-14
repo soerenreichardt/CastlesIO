@@ -4,6 +4,9 @@ import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DrawnTileService} from '../services/drawn-tile.service';
 import {EventService} from '../services/events/event.service';
+import {GameStates} from '../models/game-states.enum';
+import {Game} from '../models/game';
+import {placeholdersToParams} from '@angular/compiler/src/render3/view/i18n/util';
 
 @Component({
     selector: 'app-game',
@@ -13,6 +16,8 @@ import {EventService} from '../services/events/event.service';
 export class GameComponent implements OnInit {
     gameId: string;
     playerId: string;
+
+    game: Game;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -34,8 +39,11 @@ export class GameComponent implements OnInit {
         } else {
             this.eventService.subscribeToServerUpdates(this.gameId, this.playerId);
             this.gameService.getGame(this.playerId).subscribe(game => {
-                 console.log('got that game:');
-                 console.log(game);
+                this.game = game;
+
+                if (game.timeToPlaceTile()) {
+                    this.drawnTileService.getDrawnTile(this.playerId);
+                }
             });
         }
     }

@@ -27,10 +27,8 @@ export class GameBoardComponent implements OnInit {
         this.initCanvas();
 
         this.drawnTileService.drawnTile.subscribe(drawnTile => {
-            if (drawnTile !== undefined) {
-                this.drawnTile = drawnTile;
-                this.renderGameBoard();
-            }
+            this.drawnTile = drawnTile;
+            this.renderGameBoard();
         });
     }
 

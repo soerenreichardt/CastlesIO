@@ -1,6 +1,7 @@
 import {PlayerDTO} from './player-dto.interface';
+import {GameStates} from '../game-states.enum';
 
 export interface GameStateDTO {
-    gameState: string;
+    state: GameStates;
     player: PlayerDTO;
 }
