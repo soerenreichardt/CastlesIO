@@ -40,4 +40,20 @@ class BoardStatisticsTest {
         int streetLength = board.getBoardStatistics().getStreetLength(board.getTile(0, 0), 1, 1);
         assertThat(streetLength).isEqualTo(3);
     }
+
+    @Test
+    void shouldDetectUnclosedStreet() {
+        Matrix<TileContent> streetEndMatrix = new Matrix<>(3, 3, new TileContent[]{
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.STREET, TileContent.STREET,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS
+        });
+        var leftTile = new Tile(new MatrixTileLayout(streetEndMatrix));
+
+        Board board = Board.withSpecificTile(startLayout);
+        board.insertTileToBoard(leftTile, -1, 0);
+
+        int streetLength = board.getBoardStatistics().getStreetLength(board.getTile(0, 0), 1, 1);
+        assertThat(streetLength).isEqualTo(BoardStatistics.UNCLOSED_STREET);
+    }
 }

@@ -19,6 +19,8 @@ public abstract class AbstractBreadthFirstSearch<T> {
 
             if (!seen.contains(element)) {
                 Collection<T> neighbors = getNeighbors(element);
+                // Our graph implementation is an undirected graph
+                // so we need to filter already seen nodes
                 Collection<T> unseenNeighbors = neighbors.stream()
                         .filter(neighbor -> !seen.contains(neighbor))
                         .collect(Collectors.toList());

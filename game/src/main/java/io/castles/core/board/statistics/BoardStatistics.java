@@ -3,17 +3,23 @@ package io.castles.core.board.statistics;
 import io.castles.core.board.BoardListener;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
+import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class BoardStatistics implements BoardListener {
 
-    private final List<Graph> graphs;
+    public static final int UNCLOSED_STREET = -1;
 
-    public BoardStatistics() {
+    private final List<Graph> graphs;
+    private final TileLookup tileLookup;
+
+    public BoardStatistics(TileLookup tileLookup) {
+        this.tileLookup = tileLookup;
         this.graphs = new ArrayList<>();
     }
 
@@ -46,10 +52,7 @@ public class BoardStatistics implements BoardListener {
     }
 
     public int getStreetLength(Tile tile, int row, int column) {
-        Graph graph = graphs.stream()
-                .filter(g -> g.tileContent() == TileContent.STREET)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("No graph was found for TileContent %s", TileContent.STREET)));
+        Graph graph = filterGraphsForContent(TileContent.STREET);
 
         GraphBfs graphBfs = new GraphBfs(graph);
         Graph.Node startNode = new Graph.Node(tile.getId(), row, column);
@@ -57,10 +60,44 @@ public class BoardStatistics implements BoardListener {
             throw new IllegalArgumentException(String.format("No node %s was found in graph.", startNode));
         }
         Set<Long> distinctTileIds = new HashSet<>();
+        AtomicBoolean closedStreet = new AtomicBoolean(true);
         graphBfs.compute(startNode, (node, neighbors) -> {
-            distinctTileIds.add(node.getTileId());
-            // TODO: detect street ends
+            var tileId = node.getTileId();
+            distinctTileIds.add(tileId);
+
+            // The neighbors of a street end have to be empty,
+            // otherwise the traversal should go on
+            if (neighbors.isEmpty()) {
+                // Street ends are always in the middle of a tile
+                if (!nodeEndsInMiddleOfTile(node, tileId)) {
+                    closedStreet.set(false);
+                }
+            }
         });
-        return distinctTileIds.size();
+
+        return closedStreet.get()
+            ? distinctTileIds.size()
+            : UNCLOSED_STREET;
+    }
+
+    private Graph filterGraphsForContent(TileContent tileContent) {
+        return graphs.stream()
+                .filter(g -> g.tileContent() == tileContent)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("No graph was found for TileContent %s", TileContent.STREET)));
+    }
+
+    private boolean nodeEndsInMiddleOfTile(Graph.Node node, long tileId) {
+        var sinkTile = tileLookup.resolve(tileId);
+        var tileMatrix = sinkTile.<MatrixTileLayout>getTileLayout().getContent();
+        var streetEndsOnEdge = node.getColumn() == 0
+                || node.getRow() == 0
+                || node.getRow() == tileMatrix.getRows() - 1
+                || node.getColumn() == tileMatrix.getColumns() - 1;
+        return !streetEndsOnEdge;
+    }
+
+    public interface TileLookup {
+        Tile resolve(long id);
     }
 }
