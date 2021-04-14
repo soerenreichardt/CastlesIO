@@ -18,6 +18,8 @@ public class Game extends StatefulObject {
     private final Board board;
     private final GameSettings settings;
 
+    private Tile drawnTile;
+
     public Game(UUID lobbyId, GameSettings settings, Set<Player> players, EventHandler eventHandler) {
         super(lobbyId, eventHandler);
         this.settings = settings;
@@ -47,6 +49,15 @@ public class Game extends StatefulObject {
 
     public Tile getTile(int x, int y) {
         return this.board.getTile(x, y);
+    }
+
+    public Tile getDrawnTile(Player player) {
+        this.validateAction(player, GameState.PLACE_TILE);
+        return this.drawnTile;
+    }
+
+    public Map<Integer, Map<Integer, Tile>> getGameBoardTileMap() {
+        return this.board.getTiles();
     }
 
     public GameState getCurrentGameState() {
@@ -87,8 +98,9 @@ public class Game extends StatefulObject {
 
     // ========== ACTIONS =========
 
-    public Tile getNewTile(Player player) {
-        return gameAction(player, GameState.DRAW, board::getNewTile);
+    public Tile drawTile(Player player) {
+        drawnTile = gameAction(player, GameState.DRAW, board::getNewTile);
+        return drawnTile;
     }
 
     public void placeTile(Player player, Tile tile, int x, int y) {
@@ -96,6 +108,7 @@ public class Game extends StatefulObject {
             this.board.insertTileToBoard(tile, x, y);
             triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y);
         });
+        drawnTile = null;
     }
 
     public void skipPhase(Player player) {

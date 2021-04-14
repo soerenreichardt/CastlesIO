@@ -11,10 +11,9 @@ import io.castles.game.events.EventHandler;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -42,7 +41,12 @@ public class DTOSerializationTest {
                     Arguments.of("TileLayoutDTO", TileLayoutDTO.class, TileLayoutDTO.from(tile.getTileLayout())),
                     Arguments.of("PhaseSwitchDTO", PhaseSwitchDTO.class, new PhaseSwitchDTO(GameState.START, GameState.DRAW)),
                     Arguments.of("PlacedTileDTO", PlacedTileDTO.class, new PlacedTileDTO(TileDTO.from(tile), 0, 1)),
-                    Arguments.of("GameSettingsDTO", GameSettingsDTO.class, GameSettingsDTO.from(gameSettings))
+                    Arguments.of("GameSettingsDTO", GameSettingsDTO.class, GameSettingsDTO.from(gameSettings)),
+                    Arguments.of("GameDTO", GameDTO.class, new GameDTO(
+                            new GameStateDTO(GameState.DRAW, player),
+                            Map.of(0, Map.of(1, TileDTO.from(tile))),
+                            List.of(player)
+                    ))
                 ),
                 deserializableDTOs()
         );

@@ -47,7 +47,13 @@ public class GameService {
     public Tile getNewTile(UUID gameId, UUID playerId) {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);
-        return game.getNewTile(player);
+        return game.drawTile(player);
+    }
+
+    public Tile getDrawnTile(UUID gameId, UUID playerId) {
+        var game = gameById(gameId);
+        var player = game.getPlayerById(playerId);
+        return game.getDrawnTile(player);
     }
 
     public void placeTile(UUID gameId, UUID playerId, int x, int y, TileDTO tileDTO) {

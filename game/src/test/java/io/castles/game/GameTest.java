@@ -32,8 +32,9 @@ class GameTest {
     @Test
     void shouldDrawATile() {
         var activePlayer = game.getActivePlayer();
-        var tile = game.getNewTile(activePlayer);
+        var tile = game.drawTile(activePlayer);
         assertThat(tile).isNotNull();
+        assertThat(game.getDrawnTile(activePlayer)).isEqualTo(tile);
         assertPhaseSwitched(GameState.DRAW, GameState.PLACE_TILE);
         assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_TILE);
     }
@@ -41,7 +42,7 @@ class GameTest {
     @Test
     void shouldThrowIfDrawByNotActivePlayer() {
         Player notActivePlayer = new Player("OtherPlayer");
-        assertThatThrownBy(() -> game.getNewTile(notActivePlayer))
+        assertThatThrownBy(() -> game.drawTile(notActivePlayer))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("not the active player");
     }
@@ -49,7 +50,7 @@ class GameTest {
     @Test
     void shouldPlaceATile() {
         var activePlayer = game.getActivePlayer();
-        var tile = game.getNewTile(activePlayer);
+        var tile = game.drawTile(activePlayer);
         game.placeTile(activePlayer, tile, 0, 1);
 
         assertThat(game.getTile(0, 1)).isEqualTo(tile);
@@ -77,7 +78,7 @@ class GameTest {
     @Test
     void shouldRestartGame() {
         var activePlayer = game.getActivePlayer();
-        var tile = game.getNewTile(activePlayer);
+        var tile = game.drawTile(activePlayer);
         game.placeTile(activePlayer, tile, 0, 1);
         assertThat(game.getTile(0, 1)).isEqualTo(tile);
 

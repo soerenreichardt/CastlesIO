@@ -80,6 +80,22 @@ class GameControllerTest {
     }
 
     @Test
+    void shouldReturnDrawnTile() throws Exception {
+        Player activePlayer = game.getActivePlayer();
+
+        Tile drawnTile = Tile.drawStatic(TileContent.GRAS);
+        String tileJson = JsonHelper.serializeObject(TileDTO.from(drawnTile));
+
+        Mockito.when(gameService.getDrawnTile(any(), any())).thenReturn(drawnTile);
+        mvc.perform(MockMvcRequestBuilders
+                .get(String.format("/game/%s/drawn_tile", game.getId().toString()))
+                .param("playerId", activePlayer.getId().toString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(tileJson));
+    }
+
+    @Test
     void shouldGetCurrentGameState() throws Exception {
         String gameStateJson = JsonHelper.serializeObject(new GameStateDTO(game.getCurrentGameState(), PlayerDTO.from(game.getActivePlayer())));
         Mockito.when(gameService.gameById(any())).thenReturn(game);

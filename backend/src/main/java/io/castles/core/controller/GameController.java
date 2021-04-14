@@ -1,6 +1,7 @@
 package io.castles.core.controller;
 
 import io.castles.core.exceptions.UnableToReconnectException;
+import io.castles.core.model.dto.GameDTO;
 import io.castles.core.model.dto.GameStateDTO;
 import io.castles.core.model.dto.PlayerDTO;
 import io.castles.core.model.dto.TileDTO;
@@ -30,6 +31,13 @@ public class GameController {
         return TileDTO.from(newTile);
     }
 
+    @GetMapping("/drawn_tile")
+    @ResponseBody
+    TileDTO getDrawnTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {
+        Tile drawnTile = gameService.getDrawnTile(id, playerId);
+        return TileDTO.from(drawnTile);
+    }
+
     @GetMapping(value = "/tile")
     @ResponseBody
     TileDTO getTile(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y) {
@@ -43,6 +51,15 @@ public class GameController {
     GameStateDTO getGameState(@PathVariable("id") UUID id) {
         Game game = gameService.gameById(id);
         return new GameStateDTO(game.getCurrentGameState(), PlayerDTO.from(game.getActivePlayer()));
+    }
+
+    @GetMapping(value = "/")
+    GameDTO getGameDTO(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {
+        Game game = gameService.gameById(id);
+        if (!game.containsPlayer(playerId)) {
+            throw new RuntimeException("You are no player of this game");
+        }
+        return GameDTO.from(game);
     }
 
     @PostMapping(value = "/tile")

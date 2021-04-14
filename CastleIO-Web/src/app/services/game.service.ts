@@ -3,6 +3,7 @@ import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {TileDTO} from '../models/tile-dto';
 import {Observable} from 'rxjs';
+import {GameDTO} from '../models/dtos/game-dto.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +21,14 @@ export class GameService {
 
     getNewTile(playerId: string): Observable<TileDTO> {
         return this.http.get<TileDTO>(this.gameUrl + 'new_tile', {
+            params: {
+                playerId
+            }
+        });
+    }
+
+    getGame(playerId: string): Observable<GameDTO> {
+        return this.http.get<GameDTO>(this.gameUrl, {
             params: {
                 playerId
             }
