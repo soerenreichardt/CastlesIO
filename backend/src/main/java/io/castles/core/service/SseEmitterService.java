@@ -2,13 +2,14 @@ package io.castles.core.service;
 
 import io.castles.core.events.ServerEvent;
 import io.castles.core.exceptions.UnableToReconnectException;
-import io.castles.game.Game;
 import io.castles.game.GameLobby;
-import io.castles.game.Player;
+import io.castles.game.IdentifiableObject;
+import io.castles.game.PlayerContainer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,27 +24,20 @@ public class SseEmitterService {
         this.sseEmitters = new ConcurrentHashMap<>();
     }
 
-    public SseEmitter reconnectToLobby(GameLobby lobby, UUID playerId) throws UnableToReconnectException {
-        var lobbyId = lobby.getId();
-        var player = lobby.getPlayerById(playerId);
-        return reconnectPlayer(lobbyId, player);
-    }
+    public <T extends IdentifiableObject & PlayerContainer> SseEmitter reconnectPlayer(T gameObject, UUID playerId) throws UnableToReconnectException {
+        if (!gameObject.containsPlayer(playerId)) {
+            throw new NoSuchElementException(String.format("No player with id %s found", playerId));
+        }
 
-    public SseEmitter reconnectToGame(Game game, UUID playerId) throws UnableToReconnectException {
-        var gameId = game.getId();
-        var player = game.getPlayerById(playerId);
-        return reconnectPlayer(gameId, player);
-    }
-
-    private SseEmitter reconnectPlayer(UUID lobbyOrGameId, Player player) throws UnableToReconnectException {
-        var playerId = player.getId();
-        serverEventService.triggerEvent(lobbyOrGameId, ServerEvent.PLAYER_RECONNECT_ATTEMPT, player);
-        var playerEmitters = getPlayerEmitters(lobbyOrGameId);
-        if (playerEmitters.get(playerId) == null) {
+        var id = gameObject.getId();
+        var player = gameObject.getPlayerById(playerId);
+        serverEventService.triggerEvent(id, ServerEvent.PLAYER_RECONNECT_ATTEMPT, player);
+        var playerEmitters = getPlayerEmitters(id);
+        if (!playerEmitters.contains(playerId)) {
             throw new UnableToReconnectException(String.format("Player `%s` timed out", player.getName()));
         }
         SseEmitter sseEmitter = playerEmitters.recreate(playerId);
-        serverEventService.triggerEvent(lobbyOrGameId, ServerEvent.PLAYER_RECONNECTED, player);
+        serverEventService.triggerEvent(id, ServerEvent.PLAYER_RECONNECTED, player);
         return sseEmitter;
     }
 
@@ -52,8 +46,8 @@ public class SseEmitterService {
         sseEmitters.put(lobby.getId(), playerEmitters);
     }
 
-    public SseEmitter getLobbyEmitterForPlayer(UUID lobbyId, UUID playerId) {
-        return getPlayerEmitters(lobbyId).get(playerId);
+    public SseEmitter getGameObjectEmitterForPlayer(UUID gameObjectId, UUID playerId) {
+        return getPlayerEmitters(gameObjectId).get(playerId);
     }
 
     public PlayerEmitters getPlayerEmitters(UUID lobbyOrGameId) {

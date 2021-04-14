@@ -148,11 +148,11 @@ class LobbyControllerTest {
 
     @Test
     void shouldReconnectDisconnectedPlayer() throws Exception {
-        var emitter = emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId());
+        var emitter = emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId());
         emitter.complete();
         emitterService.getPlayerEmitters(gameLobby.getId()).sendToPlayer(owner, "should not send");
 
-        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
+        assertThat(emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
 
         var urlTemplate = String.format("/lobby/%s/subscribe/%s", gameLobby.getId(), owner.getId());
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
@@ -160,16 +160,16 @@ class LobbyControllerTest {
 
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECTED.name())).isTrue();
-        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNotNull();
+        assertThat(emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId())).isNotNull();
     }
 
     @Test
     void shouldNotBeAbleToReconnectAfterTimeout() throws Exception {
-        var emitter = emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId());
+        var emitter = emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId());
         emitter.complete();
         emitterService.getPlayerEmitters(gameLobby.getId()).sendToPlayer(owner, "should not send");
 
-        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
+        assertThat(emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
 
         Mockito.reset(clockService);
         Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT + 1)));
@@ -181,6 +181,6 @@ class LobbyControllerTest {
 
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_DISCONNECTED.name())).isTrue();
-        assertThat(emitterService.getLobbyEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
+        assertThat(emitterService.getGameObjectEmitterForPlayer(gameLobby.getId(), owner.getId())).isNull();
     }
 }

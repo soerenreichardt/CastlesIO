@@ -41,6 +41,10 @@ public class PlayerEmitters {
         playerEmitters.remove(playerId);
     }
 
+    public boolean contains(UUID playerId) {
+        return playerEmitters.containsKey(playerId);
+    }
+
     public void sendToPlayer(Player player, Object message) {
         SseEmitter playerSseEmitter = playerEmitters.get(player.getId());
         try {
