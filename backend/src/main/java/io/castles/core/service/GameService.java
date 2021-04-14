@@ -1,14 +1,11 @@
 package io.castles.core.service;
 
 import io.castles.core.exceptions.UnableToReconnectException;
-import io.castles.core.model.dto.GameStartDTO;
 import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
 import io.castles.core.util.JsonTileLoader;
 import io.castles.game.Game;
-import io.castles.game.Player;
 import io.castles.game.Server;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -32,15 +29,7 @@ public class GameService {
 
     public Game createGame(UUID id) throws IOException {
         setDefaultTileList(id);
-
-        Game game = this.server.startGame(id);
-        UUID gameId = game.getId();
-        GameStartDTO gameStartDTO = GameStartDTO.from(game);
-        for (Player player : game.getPlayers()) {
-            // TODO: remove when implementing game start event
-            this.emitterService.getGameObjectEmitterForPlayer(gameId, player.getId()).send(gameStartDTO, MediaType.APPLICATION_JSON);
-        }
-        return game;
+        return this.server.startGame(id);
     }
 
     public Tile getNewTile(UUID gameId, UUID playerId) {
