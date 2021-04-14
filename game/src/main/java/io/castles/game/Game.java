@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class Game extends StatefulObject {
+public class Game extends StatefulObject implements PlayerContainer {
 
     private final GameLogic gameLogic;
 
@@ -41,6 +41,26 @@ public class Game extends StatefulObject {
         board.restart();
     }
 
+    @Override
+    public List<Player> getPlayers() {
+        return this.gameLogic.getPlayers();
+    }
+
+    @Override
+    public Player getPlayerById(UUID playerId) {
+        var players = this.gameLogic.getPlayers();
+        return players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    @Override
+    public boolean containsPlayer(UUID playerId) {
+        var playerIds = this.getPlayers().stream().map(Player::getId).collect(Collectors.toList());
+        return playerIds.contains(playerId);
+    }
+
     public Tile getStartTile() {
         return this.board.getTile(0, 0);
     }
@@ -57,25 +77,8 @@ public class Game extends StatefulObject {
         return this.gameLogic.getActivePlayer();
     }
 
-    public List<Player> getPlayers() {
-        return this.gameLogic.getPlayers();
-    }
-
     public GameSettings getSettings() {
         return this.settings;
-    }
-
-    public Player getPlayerById(UUID playerId) {
-        var players = this.gameLogic.getPlayers();
-        return players.stream()
-                .filter(player -> player.getId().equals(playerId))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
-    }
-
-    public boolean containsPlayer(UUID playerId) {
-        var playerIds = this.getPlayers().stream().map(Player::getId).collect(Collectors.toList());
-        return playerIds.contains(playerId);
     }
 
     @TestOnly

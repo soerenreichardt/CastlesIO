@@ -11,7 +11,7 @@ import io.castles.game.events.StatefulObject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameLobby extends StatefulObject {
+public class GameLobby extends StatefulObject implements PlayerContainer {
 
     public static final int MIN_PLAYERS = 2;
 
@@ -37,6 +37,25 @@ public class GameLobby extends StatefulObject {
     @Override
     public void restart() {
         changeSettings(GameLobbySettings.builder().build());
+    }
+
+    @Override
+    public Player getPlayerById(UUID playerId) {
+        return this.players.stream()
+                .filter(player -> player.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
+    }
+
+    @Override
+    public boolean containsPlayer(UUID playerId) {
+        var playerIds = this.players.stream().map(Player::getId).collect(Collectors.toList());
+        return playerIds.contains(playerId);
+    }
+
+    @Override
+    public Collection<Player> getPlayers() {
+        return this.players;
     }
 
     boolean isPublic() {
@@ -73,22 +92,10 @@ public class GameLobby extends StatefulObject {
         removePlayer(getPlayerById(playerId));
     }
 
-    public Player getPlayerById(UUID playerId) {
-        return this.players.stream()
-                .filter(player -> player.getId().equals(playerId))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException(String.format("Player with if %s was not found in the list of players %s", playerId, players)));
-    }
-
     private void replaceOwner() {
         if (!this.players.isEmpty()) {
             this.owner = this.players.iterator().next();
         }
-    }
-
-    public boolean containsPlayer(UUID playerId) {
-        var playerIds = this.players.stream().map(Player::getId).collect(Collectors.toList());
-        return playerIds.contains(playerId);
     }
 
     public int getNumPlayers() {
@@ -134,9 +141,5 @@ public class GameLobby extends StatefulObject {
 
     public List<UUID> getPlayerIds() {
         return this.players.stream().map(Player::getId).collect(Collectors.toList());
-    }
-
-    public Collection<Player> getPlayers() {
-        return this.players;
     }
 }
