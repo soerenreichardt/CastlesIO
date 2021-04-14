@@ -48,7 +48,6 @@ class GameControllerTest {
     void setup() {
         GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
         game = new Game(UUID.randomUUID(), gameSettings, Set.of(new Player("P1")), server.eventHandler());
-        game.initialize();
         server.addGame(game);
     }
 
@@ -84,7 +83,7 @@ class GameControllerTest {
     void shouldReturnDrawnTile() throws Exception {
         Player activePlayer = game.getActivePlayer();
 
-        Tile drawnTile = game.drawTile(activePlayer);
+        Tile drawnTile = Tile.drawStatic(TileContent.GRAS);
         String tileJson = JsonHelper.serializeObject(TileDTO.from(drawnTile));
 
         Mockito.when(gameService.getDrawnTile(any(), any())).thenReturn(drawnTile);
