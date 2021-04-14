@@ -13,16 +13,21 @@ public class GameDTO {
     GameStateDTO gameState;
     Map<Integer, Map<Integer, TileDTO>> tiles;
     List<PlayerDTO> players;
+    TileDTO drawnTile;
 
     public static GameDTO from(Game game) {
+        var board = game.getGameBoardTileMap().entrySet().stream().collect(Collectors.toMap(
+                Entry::getKey,
+                xVal -> xVal.getValue().entrySet().stream().collect(Collectors.toMap(
+                        Entry::getKey,
+                        yVal -> TileDTO.from(yVal.getValue()))
+                ))
+        );
         return new GameDTO(
                 GameStateDTO.from(game),
-                game.getGameBoardTileMap().entrySet().stream().collect(
-                        Collectors.toMap(Entry::getKey, xVal -> xVal.getValue().entrySet().stream().collect(
-                                Collectors.toMap(Entry::getKey, yVal -> TileDTO.from(yVal.getValue()))
-                        ))
-                ),
-                game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList())
+                board,
+                game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList()),
+                TileDTO.from(game.getDrawnTile())
         );
     }
 }
