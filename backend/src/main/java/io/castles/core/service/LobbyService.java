@@ -32,7 +32,7 @@ public class LobbyService {
 
     public LobbyStateDTO getLobbyStateDTOFromGameLobbyForPlayer(GameLobby gameLobby, UUID playerId) {
         LobbyStateDTO lobbyStateDTO = LobbyStateDTO.from(gameLobby);
-        if (gameLobby.getOwnerId().equals(playerId)) {
+        if (gameLobby.getOwner().getId().equals(playerId)) {
             lobbyStateDTO.getLobbySettings().setEditable(true);
         }
         return lobbyStateDTO;

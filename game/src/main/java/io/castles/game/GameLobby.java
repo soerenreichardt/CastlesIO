@@ -88,13 +88,16 @@ public class GameLobby extends StatefulObject implements PlayerContainer {
         triggerLocalEvent(getId(), GameEvent.PLAYER_REMOVED, player);
     }
 
-    public void removePlayer(UUID playerId) {
+    void removePlayer(UUID playerId) {
         removePlayer(getPlayerById(playerId));
     }
 
     private void replaceOwner() {
         if (!this.players.isEmpty()) {
-            this.owner = this.players.iterator().next();
+            Iterator<Player> playerIterator = this.players.iterator();
+            if (playerIterator.hasNext()) {
+                this.owner = playerIterator.next();
+            }
         }
     }
 
@@ -131,8 +134,8 @@ public class GameLobby extends StatefulObject implements PlayerContainer {
         return this.players.stream().map(Player::getName).collect(Collectors.toList());
     }
 
-    public UUID getOwnerId() {
-        return this.owner.getId();
+    public Player getOwner() {
+        return this.owner;
     }
 
     public GameLobbySettings getLobbySettings() {

@@ -71,4 +71,16 @@ class ServerTest {
         assertThat(server.getActiveGames()).isEmpty();
         assertThat(server.getActiveGameLobbies()).contains(gameLobby);
     }
+
+    @Test
+    void shouldRemoveEmptyLobbyAfterRemovingPlayer() {
+        var player = new Player("P1");
+        var lobby = server.createGameLobby("Test", player);
+
+        assertThat(server.getActiveGameLobbies().size()).isEqualTo(1);
+
+        server.removePlayerFromLobby(lobby.getId(), player.getId());
+
+        assertThat(server.getActiveGameLobbies().size()).isEqualTo(0);
+    }
 }

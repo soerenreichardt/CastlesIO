@@ -56,7 +56,11 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
-        sendToAllPlayers(new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), LobbySettingsDTO.from(gameLobbySettings)));
+        LobbySettingsDTO lobbySettings = LobbySettingsDTO.from(gameLobbySettings);
+        sendToAllPlayers(
+                new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), lobbySettings),
+                new EventMessageDTO<>(GameEvent.SETTINGS_CHANGED.name(), lobbySettings.editableCopy())
+        );
     }
 
     @Override
@@ -84,6 +88,15 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     private void sendToAllPlayers(Object message) {
-        connectionHandler.forEachConnectedPlayer(gameLobby.getPlayers(), player -> playerEmitters.sendToPlayer(player, message));
+        sendToAllPlayers(message, message);
+    }
+
+    private void sendToAllPlayers(Object message, Object ownerMessage) {
+        connectionHandler.forEachConnectedPlayer(gameLobby.getPlayers(), player -> {
+            var playerMessage = player.equals(gameLobby.getOwner())
+                    ? ownerMessage
+                    : message;
+            playerEmitters.sendToPlayer(player, playerMessage);
+        });
     }
 }

@@ -79,6 +79,21 @@ public class Server {
         return eventHandler;
     }
 
+    public void removePlayerFromLobby(UUID lobbyId, UUID playerId) {
+        if (!activeLobbies.containsKey(lobbyId)) {
+            throw new IllegalArgumentException(String.format("No lobby with id %s was found.", lobbyId));
+        }
+        var gameLobby = this.activeLobbies.get(lobbyId);
+        gameLobby.removePlayer(playerId);
+        if (gameLobby.getNumPlayers() == 0) {
+            removeLobbyFromActiveLobbies(gameLobby);
+        }
+    }
+
+    public void removeLobbyFromActiveLobbies(GameLobby gameLobby) {
+        this.activeLobbies.remove(gameLobby.getId());
+    }
+
     @TestOnly
     public void addGameLobby(GameLobby gameLobby) {
         this.activeLobbies.put(gameLobby.getId(), gameLobby);
