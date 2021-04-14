@@ -50,7 +50,7 @@ public class Board implements Lifecycle {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
         this.boardListeners = new LinkedList<>();
-        this.boardStatistics = new BoardStatistics();
+        this.boardStatistics = new BoardStatistics(this::getTileById);
 
         initialize();
     }
@@ -114,6 +114,16 @@ public class Board implements Lifecycle {
         this.boardListeners.add(listener);
         listener.initialize();
         listener.currentState(tiles);
+    }
+
+    private Tile getTileById(long id) {
+        return tiles
+                .values()
+                .stream()
+                .flatMap(map -> map.values().stream())
+                .filter(tile -> tile.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(String.format("No tile was found with id %d", id)));
     }
 
     private Tile[] getNeighborsOfTile(Tile tile) {
