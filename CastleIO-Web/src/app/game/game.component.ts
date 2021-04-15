@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -13,7 +13,7 @@ import {placeholdersToParams} from '@angular/compiler/src/render3/view/i18n/util
     templateUrl: './game.component.html',
     styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
     gameId: string;
     playerId: string;
 
@@ -40,12 +40,18 @@ export class GameComponent implements OnInit {
             this.eventService.subscribeToServerUpdates(this.gameId, this.playerId);
             this.gameService.getGame(this.playerId).subscribe(game => {
                 this.game = game;
-
+                this.keepGameUpToDate();
                 if (game.timeToPlaceTile()) {
                     this.drawnTileService.getDrawnTile(this.playerId);
                 }
             });
         }
+    }
+
+    keepGameUpToDate(): void {
+        this.eventService.phaseSwitched.subscribe(phase => {
+            this.game.gameState.state = phase;
+        });
     }
 
     drawTile(): void {
@@ -54,5 +60,9 @@ export class GameComponent implements OnInit {
 
     private redirectUnauthenticatedPlayer(): void {
         this.router.navigate(['']);
+    }
+
+    ngOnDestroy(): void {
+        this.eventService.phaseSwitched.unsubscribe();
     }
 }
