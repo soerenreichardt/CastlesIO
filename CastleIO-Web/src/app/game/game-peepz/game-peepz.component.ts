@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {PlayerDTO} from '../../models/dtos/player-dto.interface';
 import {GameStates} from '../../models/game-states.enum';
 import {EventService} from '../../services/events/event.service';
@@ -8,7 +8,7 @@ import {EventService} from '../../services/events/event.service';
     templateUrl: './game-peepz.component.html',
     styleUrls: ['./game-peepz.component.scss']
 })
-export class GamePeepzComponent implements OnInit {
+export class GamePeepzComponent implements OnInit, OnDestroy {
     @Input()
     players: PlayerDTO[];
     activePlayer: PlayerDTO;
@@ -30,4 +30,8 @@ export class GamePeepzComponent implements OnInit {
         this.eventService.phaseSwitched.subscribe(gameState =>  this.turnState = gameState);
     }
 
+    ngOnDestroy(): void {
+        this.eventService.activePlayerSwitched.unsubscribe();
+        this.eventService.phaseSwitched.unsubscribe();
+    }
 }

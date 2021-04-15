@@ -1,12 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {DrawnTileService} from '../services/drawn-tile.service';
 import {EventService} from '../services/events/event.service';
-import {GameStates} from '../models/game-states.enum';
 import {Game} from '../models/game';
-import {placeholdersToParams} from '@angular/compiler/src/render3/view/i18n/util';
+import {GameBoardService} from '../services/game-board.service';
+import {GameBoardComponent} from './game-board/game-board.component';
 
 @Component({
     selector: 'app-game',
@@ -14,6 +14,8 @@ import {placeholdersToParams} from '@angular/compiler/src/render3/view/i18n/util
     styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit, OnDestroy {
+    @ViewChild(GameBoardComponent) gameBoardComponent: GameBoardComponent;
+
     gameId: string;
     playerId: string;
 
@@ -24,6 +26,7 @@ export class GameComponent implements OnInit, OnDestroy {
         private router: Router,
         private localStorageService: LocalStorageService,
         private gameService: GameService,
+        private gameBoardService: GameBoardService,
         private drawnTileService: DrawnTileService,
         private eventService: EventService
     ) {
@@ -40,6 +43,7 @@ export class GameComponent implements OnInit, OnDestroy {
             this.eventService.subscribeToServerUpdates(this.gameId, this.playerId);
             this.gameService.getGame(this.playerId).subscribe(game => {
                 this.game = game;
+                this.gameBoardService.tiles.next(game.tiles);
                 this.keepGameUpToDate();
                 if (game.timeToPlaceTile()) {
                     this.drawnTileService.getDrawnTile(this.playerId);
@@ -56,6 +60,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
     drawTile(): void {
         this.drawnTileService.drawTile(this.playerId);
+    }
+
+    placeTile(): void {
+        this.gameBoardComponent.placeTile();
     }
 
     private redirectUnauthenticatedPlayer(): void {

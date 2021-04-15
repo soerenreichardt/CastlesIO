@@ -7,4 +7,9 @@
             mat-flat-button
             color="accent"
             (click)="drawTile()">Draw Tile</button>
+    <button class="draw-button big-button"
+            *ngIf="game.timeToPlaceTile()"
+            mat-flat-button
+            color="accent"
+            (click)="placeTile()">Place Tile</button>
 </div>

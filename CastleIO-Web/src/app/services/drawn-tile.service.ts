@@ -29,12 +29,7 @@ export class DrawnTileService {
     }
 
     private setDrawnTile(tileDTO: TileDTO): void {
-        const tile = new Tile(tileDTO);
-        const tilePath = `assets/tiles/tile${tile.id}.svg`;
-        d3.xml(tilePath).then(tileData => {
-            tile.element = tileData.documentElement.querySelector<HTMLElement>(`g#tile${tile.id}`);
-            this.drawnTile.next(tile);
-        });
+        this.drawnTile.next(new Tile(tileDTO));
     }
 
 }
