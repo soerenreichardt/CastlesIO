@@ -56,6 +56,9 @@ export class GameComponent implements OnInit, OnDestroy {
         this.eventService.phaseSwitched.subscribe(phase => {
             this.game.gameState.state = phase;
         });
+        this.eventService.activePlayerSwitched.subscribe(player => {
+           this.game.gameState.player = player;
+        });
     }
 
     drawTile(): void {
@@ -66,11 +69,16 @@ export class GameComponent implements OnInit, OnDestroy {
         this.gameBoardComponent.placeTile(this.playerId);
     }
 
+    skipPhase(): void {
+        this.gameService.skipPhase(this.playerId).subscribe();
+    }
+
     private redirectUnauthenticatedPlayer(): void {
         this.router.navigate(['']);
     }
 
     ngOnDestroy(): void {
         this.eventService.phaseSwitched.unsubscribe();
+        this.eventService.activePlayerSwitched.unsubscribe();
     }
 }

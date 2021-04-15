@@ -56,9 +56,16 @@ export class GameService {
     }
 
     placeTile(playerId: string, tileDTO: TileDTO, x: number, y: number): Observable<any> {
-        console.log(tileDTO);
         return this.http.post(this.gameUrl + 'tile', tileDTO, {
             params: {playerId, x: x.toString(), y: y.toString()}
+        });
+    }
+
+    skipPhase(playerId: string): Observable<any> {
+        return this.http.post(this.gameUrl + 'skip', {}, {
+            params: {
+                playerId
+            }
         });
     }
 

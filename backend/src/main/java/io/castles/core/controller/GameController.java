@@ -71,6 +71,11 @@ public class GameController {
         gameService.placeTile(id, playerId, x, y, tile);
     }
 
+    @PostMapping(value = "/skip")
+    void skipPhase(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {
+        this.gameService.skipPhase(id, playerId);
+    }
+
     @PostMapping(value = "/meeple")
     void placeMeeple(
             @PathVariable("id") UUID id,
