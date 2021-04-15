@@ -86,6 +86,7 @@ public class Graph {
         matrixBfs.compute(new Node(tileId, row, column), (node, neighbors) -> {
             addNode(node);
             neighbors.forEach(neighbor -> addRelationship(node, neighbor));
+            return true;
         });
     }
 

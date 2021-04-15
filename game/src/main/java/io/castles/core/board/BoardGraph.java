@@ -3,8 +3,10 @@ package io.castles.core.board;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
 import io.castles.core.tile.MatrixTileLayout;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
+import io.castles.exceptions.GrasRegionOccupiedException;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,6 +79,7 @@ public class BoardGraph implements BoardListener {
                     closedStreet.set(false);
                 }
             }
+            return true;
         });
 
         return closedStreet.get()

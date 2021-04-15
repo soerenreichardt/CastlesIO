@@ -1,15 +1,17 @@
 package io.castles.core.graph.algorithm;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public abstract class AbstractBreadthFirstSearch<T> {
 
     abstract Collection<T> getNeighbors(T element);
 
-    public void compute(T initialElement, BiConsumer<T, Collection<T>> consumer) {
+    public void compute(T initialElement, BfsVisitor<T> consumer) {
         Set<T> seen = new HashSet<>();
         Queue<T> queue = new LinkedBlockingQueue<>();
 
@@ -24,13 +26,17 @@ public abstract class AbstractBreadthFirstSearch<T> {
                 Collection<T> unseenNeighbors = neighbors.stream()
                         .filter(neighbor -> !seen.contains(neighbor))
                         .collect(Collectors.toList());
-                consumer.accept(element, unseenNeighbors);
+                if (!consumer.visit(element, unseenNeighbors)) {
+                    return;
+                }
                 unseenNeighbors.forEach(queue::offer);
-            } else {
-                consumer.accept(element, List.of());
             }
 
             seen.add(element);
         }
+    }
+
+    public interface BfsVisitor<T> {
+        boolean visit(T element, Collection<T> neighbors);
     }
 }
