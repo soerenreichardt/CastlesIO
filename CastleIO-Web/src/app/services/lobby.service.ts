@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs';
 import {PublicLobby} from '../models/public-lobby.interface';
-import {Lobby} from '../models/lobby.interface';
+import {LobbyDTO} from '../models/dtos/lobby-dto.interface';
 import {LobbySettings} from '../models/lobby-settings.interface';
 import {GameStartDTO} from '../models/dtos/game-start-dto.interface';
 
@@ -33,8 +33,8 @@ export class LobbyService {
         return this.http.get<PublicLobby>(this.lobbyUrl + 'info/');
     }
 
-    getLobbyStatus(playerId: string): Observable<Lobby> {
-        return this.http.get<Lobby>(this.lobbyUrl + 'status/' + playerId);
+    getLobbyStatus(playerId: string): Observable<LobbyDTO> {
+        return this.http.get<LobbyDTO>(this.lobbyUrl + 'status/' + playerId);
     }
 
     updateLobbySettings(playerId: string, settings: LobbySettings): Observable<any> {

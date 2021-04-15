@@ -4,41 +4,82 @@ import {ReplaySubject} from 'rxjs';
 import {LobbySettings} from '../../models/lobby-settings.interface';
 import {GameStartDTO} from '../../models/dtos/game-start-dto.interface';
 import {PlayerDTO} from '../../models/dtos/player-dto.interface';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
+import {LobbyDTO} from '../../models/dtos/lobby-dto.interface';
+import {PhaseSwitchDTO} from '../../models/dtos/phase-switch-dto.interface';
+import {TileDTO} from '../../models/tile-dto';
+import {GameStates} from '../../models/game-states.enum';
+
+enum Events {
+    // Server Events
+    PlayerReconnected= 'PLAYER_RECONNECTED',
+    PlayerDisconnected = 'PLAYER_DISCONNECTED',
+    PlayerTimeout = 'PLAYER_TIMEOUT',
+    // Lobby Events
+    PlayerAdded = 'PLAYER_ADDED',
+    PlayerRemoved = 'PLAYER_REMOVED',
+    SettingsChanged = 'SETTINGS_CHANGED',
+    LobbyCreated = 'LOBBY_CREATED',
+    // Game Events
+    GameStarted = 'GAME_STARTED',
+    PhaseSwitched = 'PHASE_SWITCHED',
+    ActivePlayerSwitched = 'ACTIVE_PLAYER_SWITCHED',
+    TilePlaced = 'TILE_PLACED'
+}
 
 interface PlayerAdded {
-    event: 'PLAYER_ADDED';
+    event: Events.PlayerAdded;
     payload: PlayerDTO;
 }
 
 interface PlayerReconnected {
-    event: 'PLAYER_RECONNECTED';
+    event: Events.PlayerReconnected;
     payload: PlayerDTO;
 }
 
 interface PlayerDisconnected {
-    event: 'PLAYER_DISCONNECTED';
+    event: Events.PlayerDisconnected;
     payload: PlayerDTO;
 }
 
 interface PlayerTimeout {
-    event: 'PLAYER_TIMEOUT';
+    event: Events.PlayerTimeout;
     payload: PlayerDTO;
 }
 
 interface PlayerRemoved {
-    event: 'PLAYER_REMOVED';
+    event: Events.PlayerRemoved;
     payload: PlayerDTO;
 }
 
+interface SettingsChanged {
+    event: Events.SettingsChanged;
+    payload: LobbySettings;
+}
+
+interface LobbyCreated {
+    event: Events.LobbyCreated;
+    payload: LobbyDTO;
+}
+
 interface GameStarted {
-    event: 'GAME_STARTED';
+    event: Events.GameStarted;
     payload: GameStartDTO;
 }
 
-interface SettingsChanged {
-    event: 'SETTINGS_CHANGED';
-    payload: LobbySettings;
+interface PhaseSwitched {
+    event: Events.PhaseSwitched;
+    payload: PhaseSwitchDTO;
+}
+
+interface ActivePlayerSwitched {
+    event: Events.ActivePlayerSwitched;
+    payload: PlayerDTO;
+}
+
+interface TilePlaced {
+    event: Events.TilePlaced;
+    payload: TileDTO;
 }
 
 type EventType = PlayerAdded |
@@ -46,8 +87,12 @@ type EventType = PlayerAdded |
     PlayerDisconnected |
     PlayerTimeout |
     PlayerRemoved |
+    SettingsChanged |
+    LobbyCreated |
     GameStarted |
-    SettingsChanged;
+    PhaseSwitched |
+    ActivePlayerSwitched |
+    TilePlaced;
 
 @Injectable({
     providedIn: 'root'
@@ -59,8 +104,13 @@ export class EventService {
     playerDisconnected = new ReplaySubject<PlayerDTO>();
     playerTimeout = new ReplaySubject<PlayerDTO>();
     playerRemoved = new ReplaySubject<PlayerDTO>();
-    gameStarted = new ReplaySubject<GameStartDTO>();
     settingsChanged = new ReplaySubject<LobbySettings>();
+    lobbyCreated = new ReplaySubject<LobbyDTO>();
+    gameStarted = new ReplaySubject<GameStartDTO>();
+    phaseSwitched = new ReplaySubject<GameStates>();
+    activePlayerSwitched = new ReplaySubject<PlayerDTO>();
+    tilePlaced = new ReplaySubject<TileDTO>();
+
 
     constructor(private router: Router) {
     }
@@ -72,32 +122,48 @@ export class EventService {
         eventSource.onmessage = (message) => {
             const data: EventType = JSON.parse(message.data);
             console.log(data);
-            if (data.event === 'PLAYER_ADDED') {
+            if (data.event === Events.PlayerAdded) {
                 this.playerAdded.next(data.payload);
             }
 
-            if (data.event === 'PLAYER_RECONNECTED') {
+            if (data.event === Events.PlayerReconnected) {
                 this.playerReconnected.next(data.payload);
             }
 
-            if (data.event === 'PLAYER_DISCONNECTED') {
+            if (data.event === Events.PlayerDisconnected) {
                 this.playerDisconnected.next(data.payload);
             }
 
-            if (data.event === 'PLAYER_TIMEOUT') {
+            if (data.event === Events.PlayerTimeout) {
                 this.playerTimeout.next(data.payload);
             }
 
-            if (data.event === 'PLAYER_REMOVED') {
+            if (data.event === Events.PlayerRemoved) {
                 this.playerRemoved.next(data.payload);
             }
 
-            if (data.event === 'GAME_STARTED') {
+            if (data.event === Events.SettingsChanged) {
+                this.settingsChanged.next(data.payload);
+            }
+
+            if (data.event === Events.LobbyCreated) {
+                this.lobbyCreated.next(data.payload);
+            }
+
+            if (data.event === Events.GameStarted) {
                 this.gameStarted.next(data.payload);
             }
 
-            if (data.event === 'SETTINGS_CHANGED') {
-                this.settingsChanged.next(data.payload);
+            if (data.event === Events.PhaseSwitched) {
+                this.phaseSwitched.next(data.payload.to);
+            }
+
+            if (data.event === Events.ActivePlayerSwitched) {
+                this.activePlayerSwitched.next(data.payload);
+            }
+
+            if (data.event === Events.TilePlaced) {
+                this.tilePlaced.next(data.payload);
             }
         };
     }
