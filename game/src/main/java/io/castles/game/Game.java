@@ -114,6 +114,13 @@ public class Game extends StatefulObject implements PlayerContainer {
         drawnTile = null;
     }
 
+    public void placeMeeple(Player player, Tile tile, int row, int column) {
+        gameAction(player, GameState.PLACE_FIGURE, () -> {
+            // call board to place meeple
+            // trigger meeple placed
+        });
+    }
+
     public void skipPhase(Player player) {
         var gameState = getCurrentGameState();
         gameAction(player, gameState, gameLogic::skipPhase);

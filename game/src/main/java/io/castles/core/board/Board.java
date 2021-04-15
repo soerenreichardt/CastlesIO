@@ -116,6 +116,14 @@ public class Board implements Lifecycle {
         listener.currentState(tiles);
     }
 
+    public void placeMeepleOnTile(Tile tile, int row, int column) {
+        if (!boardStatistics.nodeExistsOnGraphOfType(TileContent.GRAS, tile, row, column)) {
+            throw new IllegalArgumentException("Tile region needs to be of type GRAS");
+        }
+
+        
+    }
+
     private Tile getTileById(long id) {
         return tiles
                 .values()

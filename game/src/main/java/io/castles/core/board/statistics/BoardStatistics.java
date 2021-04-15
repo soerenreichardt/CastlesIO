@@ -51,6 +51,11 @@ public class BoardStatistics implements BoardListener {
         initialize();
     }
 
+    public boolean nodeExistsOnGraphOfType(TileContent tileContent, Tile tile, int row, int column) {
+        var node = new Graph.Node(tile.getId(), row, column);
+        return filterGraphsForContent(tileContent).nodes().contains(node);
+    }
+
     public int getStreetLength(Tile tile, int row, int column) {
         Graph graph = filterGraphsForContent(TileContent.STREET);
 
