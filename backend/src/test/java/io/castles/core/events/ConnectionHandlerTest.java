@@ -50,7 +50,7 @@ class ConnectionHandlerTest {
         assertThat(availablePlayers).doesNotContain(disconnectedPlayer);
 
         Mockito.reset(clockService);
-        Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT)));
+        Mockito.when(clockService.instance()).thenReturn(Clock.offset(Clock.systemUTC(), Duration.ofMillis(ConnectionHandler.DISCONNECT_TIMEOUT + 1)));
 
         connectionHandler.checkDisconnectionTimeout();
         assertThat(connectionHandler.timeoutPlayers()).contains(disconnectedPlayer);
