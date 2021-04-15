@@ -1,10 +1,15 @@
 .game-component {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
+        "lobby_name board ."
         "peepz board ."
         ". draw_button .";
+
+    h2 {
+        grid-area: lobby_name;
+    }
 
     app-game-peepz {
         grid-area: peepz;

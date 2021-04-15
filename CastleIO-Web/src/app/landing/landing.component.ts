@@ -13,7 +13,7 @@ import {PlayerAuthentication} from '../models/player-authentication.interface';
 })
 export class LandingComponent implements OnInit {
 
-    newLobbyName = '';
+    newGameName = '';
     newPlayerName = '';
     newLobbySettings: LobbySettings;
 
@@ -45,7 +45,7 @@ export class LandingComponent implements OnInit {
     }
 
     createLobby(): void {
-        this.apiService.createLobby(this.newLobbyName, this.newPlayerName, this.newLobbySettings).subscribe(userAuthentication => {
+        this.apiService.createLobby(this.newGameName, this.newPlayerName, this.newLobbySettings).subscribe(userAuthentication => {
             const lobbyId = userAuthentication.lobbyId;
             const playerInfo = {
                 playerName: this.newPlayerName,

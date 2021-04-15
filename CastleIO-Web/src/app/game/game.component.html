@@ -1,4 +1,5 @@
 <div class="game-component" *ngIf="game">
+    <h2>{{game.name}}</h2>
     <app-game-peepz [players]="game.players"></app-game-peepz>
     <app-game-board></app-game-board>
     <button class="draw-button big-button"

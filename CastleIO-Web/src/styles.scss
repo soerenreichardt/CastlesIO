@@ -45,16 +45,19 @@ $CastleIO-Web-theme: mat-light-theme((
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+h2 {
+    font-size: 2.2em;
+    color: mat-color($CastleIO-Web-primary, 800);
+}
+
 .card {
     margin: 0px auto;
     width: 300px;
     padding: 2em 0;
 
     h2 {
-        font-size: 2.2em;
         padding: 0;
         margin: 0;
-        color: mat-color($CastleIO-Web-primary, 800);
     }
     .card-content {
         padding-top: 2em;

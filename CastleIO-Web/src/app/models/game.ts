@@ -5,6 +5,7 @@ import {GameDTO} from './dtos/game-dto.interface';
 import {GameStates} from './game-states.enum';
 
 export class Game {
+    name: string;
     players: PlayerDTO[];
     gameState: GameStateDTO;
     tiles: Map<number, Map<number, TileDTO>>;
@@ -12,6 +13,7 @@ export class Game {
     myId: string;
 
     constructor(gameDTO: GameDTO, playerId: string) {
+        this.name = gameDTO.name;
         this.players = gameDTO.players;
         this.gameState = gameDTO.gameState;
         this.tiles = gameDTO.tiles;
