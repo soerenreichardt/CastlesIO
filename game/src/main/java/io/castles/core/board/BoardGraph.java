@@ -1,6 +1,5 @@
-package io.castles.core.board.statistics;
+package io.castles.core.board;
 
-import io.castles.core.board.BoardListener;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
 import io.castles.core.tile.MatrixTileLayout;
@@ -11,14 +10,14 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class BoardStatistics implements BoardListener {
+public class BoardGraph implements BoardListener {
 
     public static final int UNCLOSED_STREET = -1;
 
     private final List<Graph> graphs;
     private final TileLookup tileLookup;
 
-    public BoardStatistics(TileLookup tileLookup) {
+    public BoardGraph(TileLookup tileLookup) {
         this.tileLookup = tileLookup;
         this.graphs = new ArrayList<>();
     }

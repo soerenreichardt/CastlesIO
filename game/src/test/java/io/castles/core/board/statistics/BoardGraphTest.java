@@ -1,13 +1,14 @@
 package io.castles.core.board.statistics;
 
 import io.castles.core.board.Board;
+import io.castles.core.board.BoardGraph;
 import io.castles.core.tile.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BoardStatisticsTest {
+class BoardGraphTest {
 
     TileLayout startLayout;
 
@@ -54,6 +55,6 @@ class BoardStatisticsTest {
         board.insertTileToBoard(leftTile, -1, 0);
 
         int streetLength = board.getBoardStatistics().getStreetLength(board.getTile(0, 0), 1, 1);
-        assertThat(streetLength).isEqualTo(BoardStatistics.UNCLOSED_STREET);
+        assertThat(streetLength).isEqualTo(BoardGraph.UNCLOSED_STREET);
     }
 }
