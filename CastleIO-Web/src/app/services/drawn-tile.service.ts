@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 import {GameService} from './game.service';
-import {Tile} from '../models/tile';
+import {BoardTile} from '../models/boardTile';
 import * as d3 from 'd3';
 import {TileDTO} from '../models/tile-dto';
 
@@ -9,7 +9,7 @@ import {TileDTO} from '../models/tile-dto';
     providedIn: 'root'
 })
 export class DrawnTileService {
-    drawnTile = new ReplaySubject<Tile>();
+    drawnTile = new ReplaySubject<BoardTile>();
 
     constructor(
         private gameService: GameService
@@ -29,7 +29,7 @@ export class DrawnTileService {
     }
 
     private setDrawnTile(tileDTO: TileDTO): void {
-        this.drawnTile.next(new Tile(tileDTO));
+        this.drawnTile.next(new BoardTile(tileDTO, -1, -1));
     }
 
 }

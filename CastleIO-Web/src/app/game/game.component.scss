@@ -5,7 +5,7 @@
     grid-template-areas:
         "lobby_name board ."
         "peepz board ."
-        ". draw_button .";
+        ". action_button .";
 
     h2 {
         grid-area: lobby_name;
@@ -19,11 +19,18 @@
         grid-area: board;
     }
 
-    .draw-button {
-        grid-area: draw_button;
+    .action-button, .action-area {
+        grid-area: action_button;
 
         width: 250px;
         justify-self: center;
         margin-top: 20px;
+    }
+
+    .action-area {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
     }
 }

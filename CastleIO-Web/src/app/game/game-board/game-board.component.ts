@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as d3 from 'd3';
-import {Tile} from '../../models/tile';
+import {BoardTile} from '../../models/boardTile';
 import {Board} from '../../models/board';
 import {DrawnTileService} from '../../services/drawn-tile.service';
 import {TileDTO} from '../../models/tile-dto';
@@ -13,7 +13,7 @@ import {GameBoardService} from '../../services/game-board.service';
 })
 export class GameBoardComponent implements OnInit {
     scale = 100;
-    drawnTile: Tile;
+    drawnTile: BoardTile;
     board: Board;
     canvas;
 
@@ -36,16 +36,16 @@ export class GameBoardComponent implements OnInit {
         });
     }
 
-    placeTile(): void {
-        console.log(this.drawnTile);
+    placeTile(playerId: string): void {
+        this.gameBoardService.placeTile(playerId, this.drawnTile);
     }
 
     private initCanvas(): void {
         this.canvas = d3.select('#canvas-container')
             .append('svg')
             .attr('id', 'canvas')
-            .attr('width', (this.board.boardWidth + 2) * this.scale)
-            .attr('height', (this.board.boardHeight + 2) * this.scale)
+            .attr('width', this.board.boardWidth + 200)
+            .attr('height', this.board.boardHeight + 200)
             .attr('class', 'canvas')
             .style('border', '2px solid black');
     }
@@ -68,24 +68,23 @@ export class GameBoardComponent implements OnInit {
                     .attr('xmlns', 'http://www.w3.org/2000/svg')
                     .attr('width', this.scale)
                     .attr('height', this.scale)
-                    .attr('x', (d) => (d.x + 1) * this.scale)
-                    .attr('y', (d) => (d.y + 1) * this.scale)
-                    .attr('transform', (d) => `rotate(${d.rotation * 90})`)
+                    .attr('x', (d) => d.x)
+                    .attr('y', (d) => d.y)
                     .node().appendChild(element);
             });
         });
     }
 
-    private renderDrawnTile(tile: Tile): void {
+    private renderDrawnTile(tile: BoardTile): void {
         const dragHandler = d3.drag()
-            .on('drag', function(event, d: Tile): void {
+            .on('drag', function(event, d: BoardTile): void {
                 const scale = 100;
                 d3.select(this)
                     .attr('x',  d.x = Math.floor( (event.x + 50) / scale) * scale)
                     .attr('y',  d.y = Math.floor( (event.y + 50) / scale) * scale);
             });
 
-        function clicked(event: Event, d: Tile): void {
+        function clicked(event: Event, d: BoardTile): void {
             if (event.defaultPrevented) { return; }
             d.rotation = (d.rotation + 1) % 4;
             d3.select(this.firstChild).transition().attr('transform', `rotate(${d.rotation * 90})`);

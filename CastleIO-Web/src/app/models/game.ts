@@ -26,8 +26,13 @@ export class Game {
     }
 
     timeToPlaceTile(): boolean {
-        const placeState = this.gameState.state === GameStates.PlaceTile;
-        return this.myTurn() && placeState;
+        const placeTileState = this.gameState.state === GameStates.PlaceTile;
+        return this.myTurn() && placeTileState;
+    }
+
+    timeToPlaceFigure(): boolean {
+        const placeFigureState = this.gameState.state === GameStates.PlaceFigure;
+        return this.myTurn() && placeFigureState;
     }
 
     myTurn(): boolean {

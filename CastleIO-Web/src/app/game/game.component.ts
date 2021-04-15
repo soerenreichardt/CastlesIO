@@ -63,7 +63,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
     placeTile(): void {
-        this.gameBoardComponent.placeTile();
+        this.gameBoardComponent.placeTile(this.playerId);
     }
 
     private redirectUnauthenticatedPlayer(): void {

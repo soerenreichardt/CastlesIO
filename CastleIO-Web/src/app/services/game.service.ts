@@ -7,6 +7,7 @@ import {GameDTO} from '../models/dtos/game-dto.interface';
 import {Game} from '../models/game';
 import {map} from 'rxjs/operators';
 import {EventService} from './events/event.service';
+import {BoardTile} from '../models/boardTile';
 
 @Injectable({
     providedIn: 'root'
@@ -26,14 +27,6 @@ export class GameService {
         this.gameUrl = this.baseUrl + gameId + '/';
     }
 
-    getNewTile(playerId: string): Observable<TileDTO> {
-        return this.http.get<TileDTO>(this.gameUrl + 'new_tile', {
-            params: {
-                playerId
-            }
-        });
-    }
-
     getGame(playerId: string): Observable<Game> {
         return this.http.get<GameDTO>(this.gameUrl, {
             params: {
@@ -46,9 +39,12 @@ export class GameService {
         }));
     }
 
-    initiateGameReplaySubjects(game: Game): void {
-        this.eventService.activePlayerSwitched.next(game.gameState.player);
-        this.eventService.phaseSwitched.next(game.gameState.state);
+    getNewTile(playerId: string): Observable<TileDTO> {
+        return this.http.get<TileDTO>(this.gameUrl + 'new_tile', {
+            params: {
+                playerId
+            }
+        });
     }
 
     getDrawnTile(playerId: string): Observable<TileDTO> {
@@ -57,5 +53,17 @@ export class GameService {
                 playerId
             }
         });
+    }
+
+    placeTile(playerId: string, tileDTO: TileDTO, x: number, y: number): Observable<any> {
+        console.log(tileDTO);
+        return this.http.post(this.gameUrl + 'tile', tileDTO, {
+            params: {playerId, x: x.toString(), y: y.toString()}
+        });
+    }
+
+    private initiateGameReplaySubjects(game: Game): void {
+        this.eventService.activePlayerSwitched.next(game.gameState.player);
+        this.eventService.phaseSwitched.next(game.gameState.state);
     }
 }

@@ -1,7 +1,7 @@
 interface TileContentMatrixDTO {
     rows: number;
     columns: number;
-    content: string[];
+    values: string[];
 }
 
 interface TileLayoutDTO {

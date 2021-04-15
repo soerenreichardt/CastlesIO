@@ -2,14 +2,26 @@
     <h2>{{game.name}}</h2>
     <app-game-peepz [players]="game.players"></app-game-peepz>
     <app-game-board></app-game-board>
-    <button class="draw-button big-button"
+    <button class="action-button big-button"
             *ngIf="game.timeToDrawTile()"
             mat-flat-button
             color="accent"
             (click)="drawTile()">Draw Tile</button>
-    <button class="draw-button big-button"
+    <button class="action-button big-button"
             *ngIf="game.timeToPlaceTile()"
             mat-flat-button
             color="accent"
             (click)="placeTile()">Place Tile</button>
+    <div class="action-area"
+         *ngIf="game.timeToPlaceFigure()">
+        <button class="button"
+                mat-flat-button
+                color="warn"
+                (click)="placeTile()">End Turn</button>
+
+        <button class="button"
+                mat-flat-button
+                color="accent"
+                (click)="placeTile()">Place Figure</button>
+    </div>
 </div>

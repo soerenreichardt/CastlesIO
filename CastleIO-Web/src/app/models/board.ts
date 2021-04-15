@@ -1,21 +1,21 @@
-import {Tile} from './tile';
+import {BoardTile} from './boardTile';
 import {TileDTO} from './tile-dto';
 
 export class Board {
-    tiles: Tile[] = [];
+    tiles: BoardTile[] = [];
     boardWidth: number;
     boardHeight: number;
 
     constructor(tileMap: Map<number, Map<number, TileDTO>>) {
-        Object.values(tileMap).forEach(value => {
-            Object.values<TileDTO>(value).forEach(tileDTO => {
-                this.tiles.push(new Tile(tileDTO));
+        Object.values(tileMap).forEach((value, x) => {
+            Object.values<TileDTO>(value).forEach((tileDTO, y) => {
+                this.tiles.push(new BoardTile(tileDTO, x, y));
             });
         });
         this.updateBoardDimensions();
     }
 
-    addTile(tile: Tile): void {
+    addTile(tile: BoardTile): void {
         this.tiles.push(tile);
         this.updateBoardDimensions();
     }
