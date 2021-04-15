@@ -4,10 +4,9 @@ import {HttpClient} from '@angular/common/http';
 import {TileDTO} from '../models/tile-dto';
 import {Observable} from 'rxjs';
 import {GameDTO} from '../models/dtos/game-dto.interface';
-import {GamePeepzService} from './game-peepz.service';
-import {GameBoardService} from './game-board.service';
 import {Game} from '../models/game';
 import {map} from 'rxjs/operators';
+import {EventService} from './events/event.service';
 
 @Injectable({
     providedIn: 'root'
@@ -19,8 +18,8 @@ export class GameService {
 
     constructor(
         private http: HttpClient,
-        private gamePeepzService: GamePeepzService,
-        private gameBoardService: GameBoardService) {
+        private eventService: EventService
+    ) {
     }
 
     setGameUrl(gameId: string): void {
@@ -40,7 +39,16 @@ export class GameService {
             params: {
                 playerId
             }
-        }).pipe(map(gameDTO => new Game(gameDTO, playerId)));
+        }).pipe(map(gameDTO => {
+            const game = new Game(gameDTO, playerId);
+            this.initiateGameReplaySubjects(game);
+            return game;
+        }));
+    }
+
+    initiateGameReplaySubjects(game: Game): void {
+        this.eventService.activePlayerSwitched.next(game.gameState.player);
+        this.eventService.phaseSwitched.next(game.gameState.state);
     }
 
     getDrawnTile(playerId: string): Observable<TileDTO> {

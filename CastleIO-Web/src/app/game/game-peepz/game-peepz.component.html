@@ -1,1 +1,8 @@
-<p>game-peepz works!</p>
+<div class="players card">
+    <mat-list class="player-list">
+        <mat-list-item *ngFor="let player of players">
+            <h4>{{player.name}}</h4>
+            <span class="turn-state" *ngIf="player.id === activePlayer.id">[{{activePlayerStateTexts[turnState]}}]</span>
+        </mat-list-item>
+    </mat-list>
+</div>

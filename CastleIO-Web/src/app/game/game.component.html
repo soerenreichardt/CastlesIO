@@ -1,2 +1,9 @@
-<button (click)="drawTile()" *ngIf="game?.timeToDrawTile()">Draw Tile</button>
-<app-game-board></app-game-board>
+<div class="game-component" *ngIf="game">
+    <app-game-peepz [players]="game.players"></app-game-peepz>
+    <app-game-board></app-game-board>
+    <button class="draw-button big-button"
+            *ngIf="game.timeToDrawTile()"
+            mat-flat-button
+            color="accent"
+            (click)="drawTile()">Draw Tile</button>
+</div>

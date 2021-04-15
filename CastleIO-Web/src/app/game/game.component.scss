@@ -1,0 +1,24 @@
+.game-component {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "peepz board ."
+        ". draw_button .";
+
+    app-game-peepz {
+        grid-area: peepz;
+    }
+
+    app-game-board {
+        grid-area: board;
+    }
+
+    .draw-button {
+        grid-area: draw_button;
+
+        width: 250px;
+        justify-self: center;
+        margin-top: 20px;
+    }
+}
