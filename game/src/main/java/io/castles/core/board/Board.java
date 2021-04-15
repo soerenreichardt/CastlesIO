@@ -1,9 +1,11 @@
 package io.castles.core.board;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
+import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
@@ -15,6 +17,7 @@ public class Board implements Lifecycle {
     private final TileProducer tileProducer;
     private final List<BoardListener> boardListeners;
     private final BoardGraph boardGraph;
+    private final List<Meeple> meeples;
 
     public static Board create(GameMode gameMode, List<Tile> tileList) {
         if (gameMode == GameMode.DEBUG) {
@@ -48,8 +51,9 @@ public class Board implements Lifecycle {
     private Board(TileProducer tileProducer) {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
-        this.boardListeners = new LinkedList<>();
+        this.boardListeners = new ArrayList<>();
         this.boardGraph = new BoardGraph(this::getTileById);
+        this.meeples = new ArrayList<>();
 
         initialize();
     }
@@ -115,12 +119,18 @@ public class Board implements Lifecycle {
         listener.currentState(tiles);
     }
 
-    public void placeMeepleOnTile(Tile tile, int row, int column) {
-        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, tile, row, column)) {
+    public void placeMeepleOnTile(Meeple meeple) throws GrasRegionOccupiedException {
+        validateMeeplePlacement(meeple, meeples);
+
+        meeples.add(meeple);
+    }
+
+    private void validateMeeplePlacement(Meeple meeple, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
+        var meeplePosition = meeple.getPosition();
+        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, meeplePosition.getTileId(), meeplePosition.getRow(), meeplePosition.getColumn())) {
             throw new IllegalArgumentException("Tile region needs to be of type GRAS");
         }
-
-        
+        boardGraph.validateUniqueMeeplePositionInWcc(meeple, existingMeeples);
     }
 
     private Tile getTileById(long id) {

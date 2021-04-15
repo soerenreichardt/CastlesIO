@@ -2,6 +2,7 @@ package io.castles.core.graph;
 
 import io.castles.core.graph.algorithm.MatrixBfs;
 import io.castles.core.tile.*;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.*;
@@ -167,6 +168,7 @@ public class Graph {
     }
 
     @Value
+    @EqualsAndHashCode
     public static class Node {
         long tileId;
         int row;

@@ -52,8 +52,8 @@ public class BoardGraph implements BoardListener {
         initialize();
     }
 
-    public boolean nodeExistsOnGraphOfType(TileContent tileContent, Tile tile, int row, int column) {
-        var node = new Graph.Node(tile.getId(), row, column);
+    public boolean nodeExistsOnGraphOfType(TileContent tileContent, long tileId, int row, int column) {
+        var node = new Graph.Node(tileId, row, column);
         return filterGraphsForContent(tileContent).nodes().contains(node);
     }
 
@@ -85,6 +85,24 @@ public class BoardGraph implements BoardListener {
         return closedStreet.get()
             ? distinctTileIds.size()
             : UNCLOSED_STREET;
+    }
+
+    public void validateUniqueMeeplePositionInWcc(Meeple meepleToPlace, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
+        AtomicBoolean validPlacement = new AtomicBoolean(true);
+        new GraphBfs(filterGraphsForContent(TileContent.GRAS)).compute(meepleToPlace.getPosition(), (node, neighbors) -> {
+            for (Meeple meeple : existingMeeples) {
+                var existingMeeplePosition = meeple.getPosition();
+                if (existingMeeplePosition.equals(node)) {
+                    validPlacement.set(false);
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        if (!validPlacement.get()) {
+            throw new GrasRegionOccupiedException("Gras region occupied by other meeple");
+        }
     }
 
     private Graph filterGraphsForContent(TileContent tileContent) {

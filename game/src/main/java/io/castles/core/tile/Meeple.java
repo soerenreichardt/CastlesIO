@@ -2,7 +2,9 @@ package io.castles.core.tile;
 
 import io.castles.core.graph.Graph;
 import io.castles.game.Player;
+import lombok.Getter;
 
+@Getter
 public class Meeple {
 
     private final Graph.Node position;
