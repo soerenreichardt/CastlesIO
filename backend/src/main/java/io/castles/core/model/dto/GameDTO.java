@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 @Value
 public class GameDTO {
+    String name;
     GameStateDTO gameState;
     Map<Integer, Map<Integer, TileDTO>> tiles;
     List<PlayerDTO> players;
@@ -23,6 +24,7 @@ public class GameDTO {
                 ))
         );
         return new GameDTO(
+                game.getName(),
                 GameStateDTO.from(game),
                 board,
                 game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList())

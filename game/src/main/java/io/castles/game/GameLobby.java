@@ -54,7 +54,7 @@ public class GameLobby extends StatefulObject implements PlayerContainer {
     }
 
     @Override
-    public Collection<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return this.players;
     }
 
@@ -66,7 +66,7 @@ public class GameLobby extends StatefulObject implements PlayerContainer {
         if (!canStart()) {
             throw new UnableToStartException("Game");
         }
-        return new Game(getId(), GameSettings.from(lobbySettings), this.players, this.eventHandler);
+        return Game.from(this);
     }
 
     public void addPlayer(Player player) {

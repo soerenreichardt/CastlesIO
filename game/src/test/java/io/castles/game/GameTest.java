@@ -27,7 +27,7 @@ class GameTest {
         var eventHandler = Server.getInstance().eventHandler();
         var gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
         eventConsumer = new CollectingEventConsumer();
-        game = new Game(UUID.randomUUID(), gameSettings, Set.of(new Player("P1"), new Player("P2")), eventHandler);
+        game = new Game(UUID.randomUUID(), "Just some lobby name", gameSettings, Set.of(new Player("P1"), new Player("P2")), eventHandler);
         eventHandler.registerLocalEventConsumer(game.getId(), eventConsumer);
         game.initialize();
         eventConsumer.reset();

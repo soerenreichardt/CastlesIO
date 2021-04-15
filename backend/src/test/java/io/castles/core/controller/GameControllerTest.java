@@ -47,7 +47,7 @@ class GameControllerTest {
     @BeforeEach
     void setup() {
         GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
-        game = new Game(UUID.randomUUID(), gameSettings, Set.of(new Player("P1")), server.eventHandler());
+        game = new Game(UUID.randomUUID(), "Just some lobby name", gameSettings, Set.of(new Player("P1")), server.eventHandler());
         server.addGame(game);
     }
 
