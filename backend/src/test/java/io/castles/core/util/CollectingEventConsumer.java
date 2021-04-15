@@ -79,6 +79,11 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
         collect(GameEvent.LOBBY_CREATED.name(), gameLobby);
     }
 
+    @Override
+    public void onMeeplePlaced(Tile tile, int row, int column) {
+        collect(GameEvent.MEEPLE_PLACED.name(), tile, row, column);
+    }
+
     public void collect(String event, Object... data) {
         var objectsList = Arrays.stream(data).map(Object::toString).collect(Collectors.toList());
         events.computeIfAbsent(event, __ -> new ArrayList<>()).add(String.join(", ", objectsList));

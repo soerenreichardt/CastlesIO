@@ -57,6 +57,11 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
         collect(GameEvent.TILE_PLACED.name(), tile, x, y);
     }
 
+    @Override
+    public void onMeeplePlaced(Tile tile, int row, int column) {
+        collect(GameEvent.MEEPLE_PLACED.name(), tile, row, column);
+    }
+
     public void collect(String event, Object... data) {
         events.computeIfAbsent(event, __ -> new ArrayList<>()).add(stringFrom(data));
     }

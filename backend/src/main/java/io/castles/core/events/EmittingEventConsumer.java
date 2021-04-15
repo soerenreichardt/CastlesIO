@@ -83,6 +83,11 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), new PlacedTileDTO(TileDTO.from(tile), x, y)));
     }
 
+    @Override
+    public void onMeeplePlaced(Tile tile, int row, int column) {
+        // TODO
+    }
+
     private void createPlayerEmitter(Player player) {
         playerEmitters.create(player.getId());
     }

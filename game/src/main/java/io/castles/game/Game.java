@@ -117,7 +117,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     public void placeMeeple(Player player, Tile tile, int row, int column) {
         gameAction(player, GameState.PLACE_FIGURE, () -> {
             // call board to place meeple
-            // trigger meeple placed
+            triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, tile, row, column);
         });
     }
 
