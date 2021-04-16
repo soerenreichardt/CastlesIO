@@ -1,6 +1,7 @@
+<div class="background"></div>
 <div class="content">
         <div class="create-lobby-panel card">
-            <h2>Create new Game</h2>
+            <h2>Create Game</h2>
             <div class="card-content">
                 <form (ngSubmit)="createLobby()" #createLobbyForm="ngForm" autocomplete="off">
                     <div class="form-row">
@@ -22,7 +23,7 @@
         </div>
 
         <div class="join-lobby-panel card">
-            <h2>Join other Games</h2>
+            <h2>Join Games</h2>
             <div class="card-content">
                 <mat-selection-list [multiple]="false">
                     <mat-list-option *ngFor="let lobby of publicLobbies" (click)="joinLobby(lobby.id)" [title]="lobby.name">

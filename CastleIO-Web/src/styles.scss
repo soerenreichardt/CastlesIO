@@ -43,7 +43,11 @@ $CastleIO-Web-theme: mat-light-theme((
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: mat-color($CastleIO-Web-primary, 200);
+}
 
 h2 {
     font-size: 2.2em;
@@ -84,7 +88,7 @@ h2 {
 }
 
 .content {
-    align-self: center;
+    max-width: 100vw;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
