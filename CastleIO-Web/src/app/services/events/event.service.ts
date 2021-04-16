@@ -7,8 +7,9 @@ import {PlayerDTO} from '../../models/dtos/player-dto.interface';
 import {Router} from '@angular/router';
 import {LobbyDTO} from '../../models/dtos/lobby-dto.interface';
 import {PhaseSwitchDTO} from '../../models/dtos/phase-switch-dto.interface';
-import {TileDTO} from '../../models/tile-dto';
+import {TileDTO} from '../../models/dtos/tile-dto';
 import {GameStates} from '../../models/game-states.enum';
+import {PlacedTileDTO} from '../../models/dtos/placed-tile-dto.interface';
 
 enum Events {
     // Server Events
@@ -79,7 +80,7 @@ interface ActivePlayerSwitched {
 
 interface TilePlaced {
     event: Events.TilePlaced;
-    payload: TileDTO;
+    payload: PlacedTileDTO;
 }
 
 type EventType = PlayerAdded |
@@ -109,7 +110,7 @@ export class EventService {
     gameStarted = new ReplaySubject<GameStartDTO>();
     phaseSwitched = new ReplaySubject<GameStates>();
     activePlayerSwitched = new ReplaySubject<PlayerDTO>();
-    tilePlaced = new ReplaySubject<TileDTO>();
+    tilePlaced = new ReplaySubject<PlacedTileDTO>();
 
 
     constructor(private router: Router) {

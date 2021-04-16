@@ -3,7 +3,7 @@ import {ReplaySubject} from 'rxjs';
 import {GameService} from './game.service';
 import {BoardTile} from '../models/boardTile';
 import * as d3 from 'd3';
-import {TileDTO} from '../models/tile-dto';
+import {TileDTO} from '../models/dtos/tile-dto';
 
 @Injectable({
     providedIn: 'root'

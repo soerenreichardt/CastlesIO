@@ -1,6 +1,6 @@
 import {PlayerDTO} from './dtos/player-dto.interface';
 import {GameStateDTO} from './dtos/game-state-dto.interface';
-import {TileDTO} from './tile-dto';
+import {TileDTO} from './dtos/tile-dto';
 import {GameDTO} from './dtos/game-dto.interface';
 import {GameStates} from './game-states.enum';
 

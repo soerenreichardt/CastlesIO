@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, isDevMode, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -18,6 +18,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
     gameId: string;
     playerId: string;
+    resetAllowed = isDevMode();
 
     game: Game;
 
@@ -59,6 +60,9 @@ export class GameComponent implements OnInit, OnDestroy {
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;
         });
+        this.eventService.tilePlaced.subscribe(tile => {
+
+        });
     }
 
     drawTile(): void {
@@ -71,6 +75,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
     skipPhase(): void {
         this.gameService.skipPhase(this.playerId).subscribe();
+    }
+
+    resetGame(): void {
+        this.gameService.resetGame().subscribe();
     }
 
     private redirectUnauthenticatedPlayer(): void {

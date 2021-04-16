@@ -56,6 +56,7 @@
                 <button mat-flat-button
                         color="accent"
                         class="big-button"
+                        [disabled]="lobby.players.length < 2"
                         (click)="startGame()">Start Game</button>
             </div>
         </div>
@@ -89,6 +90,7 @@
         </div>
     </div>
 </div>
+
 <div class="invite-link" *ngIf="lobby">
     <p class="label">
         Invite Link

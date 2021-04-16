@@ -1,5 +1,5 @@
 import {BoardTile} from './boardTile';
-import {TileDTO} from './tile-dto';
+import {TileDTO} from './dtos/tile-dto';
 
 export class Board {
     tiles: BoardTile[] = [];
@@ -7,9 +7,12 @@ export class Board {
     boardHeight: number;
 
     constructor(tileMap: Map<number, Map<number, TileDTO>>) {
-        Object.values(tileMap).forEach((value, x) => {
-            Object.values<TileDTO>(value).forEach((tileDTO, y) => {
-                this.tiles.push(new BoardTile(tileDTO, x, y));
+        Object.keys(tileMap).forEach(x => {
+            const xVal = tileMap[x];
+            Object.keys(xVal).forEach(y => {
+                const tileDTO = xVal[y];
+                const boardTile = new BoardTile(tileDTO, Number(x), Number(y));
+                this.tiles.push(boardTile);
             });
         });
         this.updateBoardDimensions();

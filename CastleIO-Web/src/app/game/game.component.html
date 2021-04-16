@@ -7,11 +7,13 @@
             mat-flat-button
             color="accent"
             (click)="drawTile()">Draw Tile</button>
+
     <button class="action-button big-button"
             *ngIf="game.timeToPlaceTile()"
             mat-flat-button
             color="accent"
             (click)="placeTile()">Place Tile</button>
+
     <div class="action-area"
          *ngIf="game.timeToPlaceFigure()">
         <button class="button"
@@ -26,3 +28,4 @@
                 (click)="null">Place Figure</button>
     </div>
 </div>
+<button class="reset-button" mat-flat-button color="warn" (click)="resetGame()">reset</button>

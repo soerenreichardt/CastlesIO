@@ -1,4 +1,4 @@
-import {TileDTO} from './tile-dto';
+import {TileDTO} from './dtos/tile-dto';
 import * as d3 from 'd3';
 import {Point} from '@angular/cdk/drag-drop';
 

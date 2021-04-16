@@ -3,8 +3,9 @@ import * as d3 from 'd3';
 import {BoardTile} from '../../models/boardTile';
 import {Board} from '../../models/board';
 import {DrawnTileService} from '../../services/drawn-tile.service';
-import {TileDTO} from '../../models/tile-dto';
+import {TileDTO} from '../../models/dtos/tile-dto';
 import {GameBoardService} from '../../services/game-board.service';
+import {EventService} from '../../services/events/event.service';
 
 @Component({
     selector: 'app-game-board',
@@ -19,12 +20,12 @@ export class GameBoardComponent implements OnInit {
 
     constructor(
         private drawnTileService: DrawnTileService,
-        private gameBoardService: GameBoardService
+        private gameBoardService: GameBoardService,
+        private eventService: EventService
     ) {
     }
 
     ngOnInit(): void {
-
         this.drawnTileService.drawnTile.subscribe(drawnTile => {
             this.drawnTile = drawnTile;
             this.renderGameBoard();
@@ -33,6 +34,7 @@ export class GameBoardComponent implements OnInit {
             this.board = new Board(tiles);
             this.initCanvas();
             this.renderGameBoard();
+            this.keepBoardUpToDate();
         });
     }
 
@@ -55,6 +57,13 @@ export class GameBoardComponent implements OnInit {
         if (this.drawnTile) {
             this.renderDrawnTile(this.drawnTile);
         }
+    }
+
+    private keepBoardUpToDate(): void {
+        this.eventService.tilePlaced.subscribe(placedTileDTO => {
+            const boardTile = new BoardTile(placedTileDTO.tile, placedTileDTO.x, placedTileDTO.y);
+            this.board.addTile(boardTile);
+        });
     }
 
     private renderPlacedTiles(): void {

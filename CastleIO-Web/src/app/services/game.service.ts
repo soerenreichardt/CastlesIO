@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
+import {Injectable, isDevMode} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {TileDTO} from '../models/tile-dto';
+import {TileDTO} from '../models/dtos/tile-dto';
 import {Observable} from 'rxjs';
 import {GameDTO} from '../models/dtos/game-dto.interface';
 import {Game} from '../models/game';
@@ -67,6 +67,10 @@ export class GameService {
                 playerId
             }
         });
+    }
+
+    resetGame(): Observable<any> {
+        return this.http.post(this.gameUrl + 'restart', {});
     }
 
     private initiateGameReplaySubjects(game: Game): void {
