@@ -73,10 +73,11 @@ public class TileContentTest {
     }
 
     @Test
-    void disconnectedShouldMatchCastleOnly() {
+    void disconnectedShouldMatchCastleAndDisconnected() {
         assertThat(DISCONNECTED.matches(CASTLE)).isTrue();
+        assertThat(DISCONNECTED.matches(DISCONNECTED)).isTrue();
         Arrays.stream(TileContent.values())
-                .filter(content -> content != CASTLE)
+                .filter(content -> content != CASTLE && content != DISCONNECTED)
                 .forEach(content -> assertThat(DISCONNECTED.matches(content)).isFalse());
     }
 }
