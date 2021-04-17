@@ -6,7 +6,7 @@
     z-index: -5;
     width: 100vw;
     height: 100vh;
-    mask: url("../../assets/images/landing_bg.svg") 0 40px no-repeat;
+    mask: url("../../assets/images/landing_bg.svg") -50px 100px no-repeat;
     mask-size: 130vw;
     background-color: mat-color($CastleIO-Web-accent, 100);
 

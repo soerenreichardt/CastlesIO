@@ -25,6 +25,7 @@ import { GameComponent } from './game/game.component';
 import { GameBoardComponent } from './game/game-board/game-board.component';
 import { GamePeepzComponent } from './game/game-peepz/game-peepz.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { GameBoardCanvasComponent } from './game/game-board/game-board-canvas/game-board-canvas.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import {MatDialogModule} from '@angular/material/dialog';
         ModalDirective,
         GameComponent,
         GameBoardComponent,
-        GamePeepzComponent
+        GamePeepzComponent,
+        GameBoardCanvasComponent
     ],
     imports: [
         BrowserModule,

@@ -1,7 +1,6 @@
 <div class="game-component" *ngIf="game">
-    <h2>{{game.name}}</h2>
     <app-game-peepz [players]="game.players"></app-game-peepz>
-    <app-game-board></app-game-board>
+    <app-game-board-canvas></app-game-board-canvas>
     <button class="action-button big-button"
             *ngIf="game.timeToDrawTile()"
             mat-flat-button
