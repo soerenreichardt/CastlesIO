@@ -12,7 +12,7 @@ public enum TileContent {
     DISCONNECTED(5) {
         @Override
         public boolean matches(TileContent other) {
-            return other == CASTLE;
+            return other == CASTLE || other == DISCONNECTED;
         }
     },
     GRAS_AND_CASTLE(merge(GRAS, CASTLE), false),

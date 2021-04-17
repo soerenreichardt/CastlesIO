@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -168,11 +167,9 @@ class MatrixTileLayoutTest {
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.BOTTOM)).isFalse();
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = { 0, 1, 2, 3 })
-    void shouldComputePositionInMatrix(int rotation) {
+    @Test
+    void shouldComputePositionInMatrix() {
         MatrixTileLayout tileLayout = new MatrixTileLayout(matrix);
-        tileLayout.rotate(0);
 
         assertThat(tileLayout.getResolvedPositionInMatrix(0, TileLayout.TOP)).isEqualTo(0);
         assertThat(tileLayout.getResolvedPositionInMatrix(1, TileLayout.TOP)).isEqualTo(1);
