@@ -1,15 +1,12 @@
+@import "../../styles";
 .game-component {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: auto auto 1fr;
+    height: 100%;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
     grid-template-areas:
-        "lobby_name board ."
-        "peepz board ."
-        ". action_button .";
-
-    h2 {
-        grid-area: lobby_name;
-    }
+        "peepz board"
+        "action_button action_button";
 
     app-game-peepz {
         grid-area: peepz;

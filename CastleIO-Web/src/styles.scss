@@ -42,7 +42,7 @@ $CastleIO-Web-theme: mat-light-theme((
     letter-spacing: .06em;
 }
 
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden;}
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -55,7 +55,7 @@ h2 {
 }
 
 .card {
-    margin: 0px auto;
+    margin: 0 auto;
     width: 300px;
     padding: 2em 0;
 
