@@ -2,6 +2,7 @@ package io.castles.core.board;
 
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
+import io.castles.core.graph.algorithm.Wcc;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
@@ -88,20 +89,13 @@ public class BoardGraph implements BoardListener {
     }
 
     public void validateUniqueMeeplePositionInWcc(Meeple meepleToPlace, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
-        AtomicBoolean validPlacement = new AtomicBoolean(true);
-        new GraphBfs(filterGraphsForContent(TileContent.GRAS)).compute(meepleToPlace.getPosition(), (node, neighbors) -> {
-            for (Meeple meeple : existingMeeples) {
-                var existingMeeplePosition = meeple.getPosition();
-                if (existingMeeplePosition.equals(node)) {
-                    validPlacement.set(false);
-                    return false;
-                }
-            }
-            return true;
-        });
+        var wcc = new Wcc(filterGraphsForContent(TileContent.GRAS));
+        wcc.compute();
 
-        if (!validPlacement.get()) {
-            throw new GrasRegionOccupiedException("Gras region occupied by other meeple");
+        for (var existingMeeple : existingMeeples) {
+            if (wcc.sameComponent(meepleToPlace.getPosition(), existingMeeple.getPosition())) {
+                throw new GrasRegionOccupiedException("Gras region occupied by other meeple");
+            }
         }
     }
 
