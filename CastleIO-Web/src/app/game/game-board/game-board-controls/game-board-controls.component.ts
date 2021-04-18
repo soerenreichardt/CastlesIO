@@ -23,7 +23,7 @@ export class GameBoardControlsComponent implements OnInit {
     }
 
     drawTile(): void {
-
+        this.drawnTileService.drawTile(this.game.myId);
     }
 
     placeTile(): void {
