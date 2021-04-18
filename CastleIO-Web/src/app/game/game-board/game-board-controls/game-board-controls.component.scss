@@ -1,0 +1,10 @@
+.controls-area {
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    button {
+        margin: 0 20px;
+    }
+}

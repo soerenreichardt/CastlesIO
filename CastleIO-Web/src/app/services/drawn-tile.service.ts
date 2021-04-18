@@ -22,6 +22,16 @@ export class DrawnTileService {
         });
     }
 
+    debugDrawTile(): void {
+        this.setDrawnTile({
+            id: 1,
+            tileLayout: {
+                rotation: 0,
+                content: undefined
+            }
+        });
+    }
+
     getDrawnTile(playerId: string): void {
         this.gameService.getDrawnTile(playerId).subscribe(tileDTO => {
             this.setDrawnTile(tileDTO);

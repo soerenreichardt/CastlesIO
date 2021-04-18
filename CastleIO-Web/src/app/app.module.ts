@@ -26,6 +26,7 @@ import { GameBoardComponent } from './game/game-board/game-board.component';
 import { GamePeepzComponent } from './game/game-peepz/game-peepz.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { GameBoardCanvasComponent } from './game/game-board/game-board-canvas/game-board-canvas.component';
+import { GameBoardControlsComponent } from './game/game-board/game-board-controls/game-board-controls.component';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import { GameBoardCanvasComponent } from './game/game-board/game-board-canvas/ga
         GameComponent,
         GameBoardComponent,
         GamePeepzComponent,
-        GameBoardCanvasComponent
+        GameBoardCanvasComponent,
+        GameBoardControlsComponent
     ],
     imports: [
         BrowserModule,

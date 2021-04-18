@@ -1,0 +1,36 @@
+<div class="controls-area">
+    <button class="action-button big-button"
+            *ngIf="game.timeToDrawTile()"
+            mat-flat-button
+            color="accent"
+            (click)="drawTile()">Draw Tile</button>
+
+    <button class="action-button big-button"
+            *ngIf="game.timeToPlaceTile()"
+            mat-flat-button
+            color="accent"
+            (click)="placeTile()">Place Tile</button>
+
+    <button class="button"
+            *ngIf="game.timeToPlaceFigure()"
+            mat-flat-button
+            color="warn"
+            (click)="skipPhase()">End Turn</button>
+
+    <button class="button"
+            *ngIf="game.timeToPlaceFigure()"
+            mat-flat-button
+            color="accent"
+            disabled
+            (click)="null">Place Figure</button>
+
+    <div class="debug-controls" *ngIf="isDevMode">
+        <button class="action-button"
+                mat-flat-button
+                color="warn"
+                (click)="debugDrawTile()">Draw Tile</button>
+        <button class="reset-button"
+                mat-flat-button color="warn"
+                (click)="resetGame()">reset</button>
+    </div>
+</div>
