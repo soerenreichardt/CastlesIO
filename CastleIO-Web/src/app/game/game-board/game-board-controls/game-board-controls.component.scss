@@ -1,8 +1,13 @@
+@import "../../../../styles";
+
 .controls-area {
-    padding: 20px;
+    padding: 50px 40px 40px 40px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    mask: url("../../../../assets/images/controls_bg.svg") right 0 no-repeat;
+    mask-size: auto 100%;
+    background-color: mat-color($CastleIO-Web-accent, 200);
 
     button {
         margin: 0 20px;

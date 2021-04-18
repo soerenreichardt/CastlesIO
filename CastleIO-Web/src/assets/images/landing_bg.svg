@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="297mm"
-   height="210mm"
-   viewBox="0 0 297 210"
+   width="117.87773mm"
+   height="209.26015mm"
+   viewBox="0 0 117.87773 209.26015"
    version="1.1"
    id="svg8"
    sodipodi:docname="landing_bg.svg"
@@ -25,19 +25,29 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.77107143"
-     inkscape:cx="486.3112"
-     inkscape:cy="696.3686"
+     inkscape:zoom="1.5421429"
+     inkscape:cx="214.84836"
+     inkscape:cy="722.50195"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:snap-nodes="true"
-     inkscape:snap-grids="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1416"
-     inkscape:window-x="2560"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:snap-grids="true"
+     inkscape:window-width="1270"
+     inkscape:window-height="1404"
+     inkscape:window-x="3842"
+     inkscape:window-y="4"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1498"
+       originx="0.13530162"
+       originy="0.16526213" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -54,12 +64,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-87)">
+     transform="translate(0.13530162,-87.905117)">
     <path
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.14810017px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M -0.08125031,98.352828 C 12.302259,100.7178 34.564309,99.700369 43.469835,93.997643 60.784732,83.773906 88.466999,85.381955 102.16725,97.20127 c 24.74476,21.34752 15.11498,59.57218 4.3736,89.44828 C 66.387615,298.33182 -0.06123025,297.09065 -0.06123025,297.09065 Z"
+       d="m 0,87.979167 h 58.208333 c 26.458334,0 34.395834,5.291666 46.189307,15.055433 21.47595,17.77985 12.88459,53.73885 2.14321,83.61495 C 66.387615,298.33182 -0.06123025,297.09065 -0.06123025,297.09065 Z"
        id="path1366"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccascc" />
+       sodipodi:nodetypes="ccsscc" />
   </g>
 </svg>

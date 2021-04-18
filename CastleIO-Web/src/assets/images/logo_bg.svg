@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="656.03923"
-     inkscape:cy="-107.15612"
+     inkscape:zoom="16"
+     inkscape:cx="32.610927"
+     inkscape:cy="35.216473"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -45,7 +45,7 @@
        type="xygrid"
        id="grid815"
        empspacing="10"
-       originx="-10.40797"
+       originx="-10.407969"
        originy="-277.4311" />
   </sodipodi:namedview>
   <metadata
@@ -77,5 +77,11 @@
        id="path819"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccsssc" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.3507244px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 333.47193,164.9144 c 0,0 4.08845,-11.57683 0,-13.22917 -20.08585,-8.11766 -36.93558,3.54426 -78.54087,-2.476 -25.09859,-3.63175 -49.4821,2.37801 -75.58378,0.27856 -20.30842,-1.63348 -40.10772,2.45709 -59.88638,1.05807 -24.210899,-1.71251 -37.364197,-1.60922 -54.794644,0.23723 -36.846062,3.90319 -33.776818,1.37306 -50.916388,0.15379 -7.6886805,-0.54696 -5.7154486,13.97751 -5.7154486,13.97751 z"
+       id="path817-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssssscc" />
   </g>
 </svg>

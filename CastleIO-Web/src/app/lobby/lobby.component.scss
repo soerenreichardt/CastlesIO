@@ -1,3 +1,4 @@
+@import "../../styles";
 .players {
     .controls {
         margin-left: 20px;
@@ -28,11 +29,18 @@
 }
 
 .invite-link {
+    position: absolute;
+    padding: 60px 0px 40px 0px;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    mask: url("../../assets/images/controls_bg.svg") center 0 no-repeat;
+    mask-size: auto 100%;
+    background-color: mat-color($CastleIO-Web-accent, 200);
+
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding-top: 40px;
-    max-width: 100%;
     justify-content: center;
 
     .label {
@@ -42,6 +50,7 @@
 
     p {
         overflow: hidden;
+        cursor: copy;
     }
 
     button {

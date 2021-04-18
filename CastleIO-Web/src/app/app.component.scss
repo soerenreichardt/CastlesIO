@@ -1,30 +1,30 @@
 @import "../styles";
 .page-content {
-    padding: 2em;
-    display: grid;
-    min-height: 100vh;
-    grid-auto-flow: row;
-    grid-auto-rows: 6em 1fr;
+    height: 100vh;
 
-    .logo {
-        position: relative;
+    .logo-area {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        padding: 30px 40px;
+        mask: url("../assets/images/logo_bg.svg") -2px 0 no-repeat;
+        mask-size: auto 100%;
+        background-color: mat-color($CastleIO-Web-accent, 400);
 
         img {
             filter: invert(1);
-
+            cursor: pointer;
         }
+    }
 
-        .logo-mask {
-            position: absolute;
-            width: 100vw;
-            height: 100%;
-            z-index: -1;
-            top: -2.1em;
-            left: -2.1em;
-            mask: url("../assets/images/logo_bg.svg") 0 0 no-repeat;
-            mask-size: auto 100%;
-            background-color: mat-color($CastleIO-Web-accent, 400);
-
-        }
+    .main-content {
+        position: absolute;
+        z-index: 5;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
     }
 }

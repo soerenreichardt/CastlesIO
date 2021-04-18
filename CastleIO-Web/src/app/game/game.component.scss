@@ -1,39 +1,16 @@
 @import "../../styles";
 .game-component {
-    display: grid;
-    height: 100%;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: 1fr auto;
-    grid-template-areas:
-        "peepz board"
-        "action_button action_button";
-
     app-game-peepz {
-        grid-area: peepz;
+        position: absolute;
+        z-index: 9;
+        top: 80px;
+        left: 0;
     }
 
-    app-game-board {
-        grid-area: board;
+    app-game-board-controls {
+        position: absolute;
+        z-index: 10;
+        bottom: 0;
+        left: 0;
     }
-
-    .action-button, .action-area {
-        grid-area: action_button;
-
-        width: 250px;
-        justify-self: center;
-        margin-top: 20px;
-    }
-
-    .action-area {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-}
-
-.reset-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
 }
