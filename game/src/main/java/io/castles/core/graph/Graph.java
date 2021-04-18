@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class Graph {
 
@@ -60,6 +61,12 @@ public class Graph {
     public void fromExistingBoard(List<Tile> tiles) {
         tiles.forEach(this::createTileInternalGraph);
         tiles.forEach(this::connectTileToAdjacentGraph);
+    }
+
+    public void forEachRelationship(BiConsumer<Graph.Node, Graph.Node> relationshipVisitor) {
+        this.relationships.forEach((source, targets) -> {
+            targets.forEach(target -> relationshipVisitor.accept(source, target));
+        });
     }
 
     private void createTileInternalGraph(Tile tile) {
