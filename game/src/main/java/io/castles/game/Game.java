@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 public class Game extends StatefulObject implements PlayerContainer {
 
-    private static final int MEEPLES_PER_PLAYER = 7;
+    public static final int MEEPLES_PER_PLAYER = 7;
 
     private final GameLogic gameLogic;
 
     private final Board board;
     private final GameSettings settings;
-    private final Map<Player, Integer> playerMeeples;
+    private final Map<Player, Integer> playerMeeplesLeft;
 
     private Tile drawnTile;
 
@@ -35,9 +35,9 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
-        this.playerMeeples = new HashMap<>();
+        this.playerMeeplesLeft = new HashMap<>();
 
-        players.forEach(player -> playerMeeples.put(player, MEEPLES_PER_PLAYER));
+        players.forEach(player -> playerMeeplesLeft.put(player, MEEPLES_PER_PLAYER));
     }
 
     @Override
@@ -105,11 +105,20 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.board.getMeeples();
     }
 
+    public int getMeeplesLeftForPlayer(Player player) {
+        return this.playerMeeplesLeft.get(player);
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
             gameLogic.nextPhase();
         }
+    }
+
+    @TestOnly
+    void setMeeplesLeftForPlayer(Player player, int meeplesLeft) {
+        this.playerMeeplesLeft.put(player, meeplesLeft);
     }
 
     // ========== ACTIONS =========
@@ -128,7 +137,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     }
 
     public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
-        var meeplesLeft = playerMeeples.get(player);
+        var meeplesLeft = playerMeeplesLeft.get(player);
         if (meeplesLeft == 0) {
             throw new NoMeeplesLeftException(player);
         }
@@ -147,7 +156,7 @@ public class Game extends StatefulObject implements PlayerContainer {
             throw innerException.get();
         }
 
-        playerMeeples.put(player, meeplesLeft - 1);
+        playerMeeplesLeft.put(player, meeplesLeft - 1);
     }
 
     public void skipPhase(Player player) {
