@@ -19,7 +19,7 @@ public class Meeple {
 
     public static Meeple create(Player owner, Tile tile, int row, int column) {
         return new Meeple(
-                new Graph.Node(tile.getId(), row, column),
+                new Graph.Node(tile.getX(), tile.getY(), row, column),
                 owner
         );
     }

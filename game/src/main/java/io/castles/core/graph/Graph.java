@@ -82,16 +82,16 @@ public class Graph {
                 if (!seenPositions.get(matrixIndex)) {
                     if (contentMatrix.get(row, column) == tileContent) {
                         seenPositions.set(matrixIndex);
-                        graphFromMatrixBfs(contentMatrix, seenPositions, row, column, tile.getId());
+                        graphFromMatrixBfs(contentMatrix, seenPositions, row, column, tile.getX(), tile.getY());
                     }
                 }
             }
         }
     }
 
-    private void graphFromMatrixBfs(Matrix<TileContent> contentMatrix, BitSet seenPositions, int row, int column, long tileId) {
-        MatrixBfs matrixBfs = new MatrixBfs(contentMatrix, tileContent, seenPositions, tileId);
-        matrixBfs.compute(new Node(tileId, row, column), (node, neighbors) -> {
+    private void graphFromMatrixBfs(Matrix<TileContent> contentMatrix, BitSet seenPositions, int row, int column, int x, int y) {
+        MatrixBfs matrixBfs = new MatrixBfs(contentMatrix, tileContent, seenPositions, x, y);
+        matrixBfs.compute(new Node(x, y, row, column), (node, neighbors) -> {
             addNode(node);
             neighbors.forEach(neighbor -> addRelationship(node, neighbor));
             return true;
@@ -159,13 +159,13 @@ public class Graph {
             MatrixTileLayout smallLayout = smallTile.getTileLayout();
             Matrix<TileContent> smallMatrix = smallLayout.getContent();
             int resolvedSmallMatrixIndex = smallLayout.getResolvedPositionInMatrix(smallIndex, smallDirection);
-            Node source = new Node(smallTile.getId(), smallMatrix.getRowFromIndex(resolvedSmallMatrixIndex), smallMatrix.getColumnFromIndex(resolvedSmallMatrixIndex));
+            Node source = new Node(smallTile.getX(), smallTile.getY(), smallMatrix.getRowFromIndex(resolvedSmallMatrixIndex), smallMatrix.getColumnFromIndex(resolvedSmallMatrixIndex));
 
             largeIndices.forEach(largeIndex -> {
                 MatrixTileLayout largeLayout = largeTile.getTileLayout();
                 Matrix<TileContent> largeMatrix = largeLayout.getContent();
                 int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
-                Node target = new Node(largeTile.getId(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
+                Node target = new Node(largeTile.getX(), largeTile.getY(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
                 if (!nodes.contains(source) || !nodes.contains(target)) {
                     throw new IllegalStateException("Computed node not found in list of nodes");
                 }
@@ -177,7 +177,8 @@ public class Graph {
     @Value
     @EqualsAndHashCode
     public static class Node {
-        long tileId;
+        int x;
+        int y;
         int row;
         int column;
     }
