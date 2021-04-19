@@ -1,6 +1,8 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Meeple;
+import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.events.GameEvent;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,6 +87,15 @@ class GameTest {
         game.restart();
         assertThat(game.getTile(0, 0)).isEqualTo(game.getStartTile());
         assertThatThrownBy(() -> game.getTile(0, 1)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void shouldBeAbleToPlaceMeeple() throws GrasRegionOccupiedException {
+        game.setGameState(GameState.PLACE_FIGURE);
+        var activePlayer = game.getActivePlayer();
+        game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+        assertThat(game.getMeeples().size()).isEqualTo(1);
+        assertThat(game.getMeeples().get(0)).isEqualTo(Meeple.create(activePlayer, game.getStartTile(), 0, 0));
     }
 
     private void assertPhaseSwitched(GameState from, GameState to) {

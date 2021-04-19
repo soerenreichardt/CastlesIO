@@ -94,6 +94,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.settings;
     }
 
+    public List<Meeple> getMeeples() {
+        return this.board.getMeeples();
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {

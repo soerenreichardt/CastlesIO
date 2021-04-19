@@ -94,6 +94,10 @@ public class Board implements Lifecycle {
         return this.tiles;
     }
 
+    public List<Meeple> getMeeples() {
+        return this.meeples;
+    }
+
     public void insertTileToBoard(Tile tile, int x, int y) {
         var innerTiles = tiles.computeIfAbsent(x, ignore -> new HashMap<>());
         if (innerTiles.containsKey(y)) {
@@ -121,7 +125,6 @@ public class Board implements Lifecycle {
 
     public void placeMeepleOnTile(Meeple meeple) throws GrasRegionOccupiedException {
         validateMeeplePlacement(meeple, meeples);
-
         meeples.add(meeple);
     }
 
