@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-public class LobbyIntegrationTest {
+public class CastlesIOIntegrationTest {
 
     @Autowired
     MockMvc mvc;
@@ -83,8 +83,16 @@ public class LobbyIntegrationTest {
         var activePlayer = game.getActivePlayer();
 
         Tile startTile = getTile(lobbyId, 0, 0);
+        assertThat(startTile).isEqualTo(game.getStartTile());
+
         Tile drawnTile = newTile(lobbyId, activePlayer);
         placeTile(lobbyId, activePlayer, drawnTile, 0, 1);
+        assertThat(game.getTile(0, 1)).isEqualTo(drawnTile);
+
+        placeMeeple(lobbyId, activePlayer, 0, 1, 0, 0);
+        assertThat(game.getMeeples().size()).isEqualTo(1);
+
+        assertThat(game.getActivePlayer()).isNotEqualTo(activePlayer);
     }
 
     private UUID createLobby() throws Exception {
@@ -164,17 +172,25 @@ public class LobbyIntegrationTest {
     }
 
     private void placeTile(UUID lobbyId, Player activePlayer, Tile tile, int x, int y) throws Exception {
-        var newTileUrl = String.format("/game/%s/tile", lobbyId);
+        var placeTileUrl = String.format("/game/%s/tile", lobbyId);
         var tileJson = JsonHelper.serializeObject(TileDTO.from(tile));
-        var result = mvc.perform(MockMvcRequestBuilders.post(newTileUrl)
+        mvc.perform(MockMvcRequestBuilders.post(placeTileUrl)
                 .param("playerId", activePlayer.getId().toString())
                 .param("x", Integer.toString(x))
                 .param("y", Integer.toString(y))
                 .content(tileJson)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
+    }
+
+    private void placeMeeple(UUID lobbyId, Player activePlayer, int x, int y, int row, int column) throws Exception {
+        var placeMeepleUrl = String.format("/game/%s/meeple", lobbyId);
+        mvc.perform(MockMvcRequestBuilders.post(placeMeepleUrl)
+                .param("playerId", activePlayer.getId().toString())
+                .param("x", Integer.toString(x))
+                .param("y", Integer.toString(y))
+                .param("row", Integer.toString(row))
+                .param("column", Integer.toString(column)))
+                .andExpect(status().isOk());
     }
 }
