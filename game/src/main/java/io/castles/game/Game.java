@@ -4,6 +4,7 @@ import io.castles.core.board.Board;
 import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
@@ -15,10 +16,13 @@ import java.util.stream.Collectors;
 
 public class Game extends StatefulObject implements PlayerContainer {
 
+    private static final int MEEPLES_PER_PLAYER = 7;
+
     private final GameLogic gameLogic;
 
     private final Board board;
     private final GameSettings settings;
+    private final Map<Player, Integer> playerMeeples;
 
     private Tile drawnTile;
 
@@ -31,6 +35,9 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
+        this.playerMeeples = new HashMap<>();
+
+        players.forEach(player -> playerMeeples.put(player, MEEPLES_PER_PLAYER));
     }
 
     @Override
@@ -120,9 +127,13 @@ public class Game extends StatefulObject implements PlayerContainer {
         drawnTile = null;
     }
 
-    public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException {
+    public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
+        var meeplesLeft = playerMeeples.get(player);
+        if (meeplesLeft == 0) {
+            throw new NoMeeplesLeftException(player.toString());
+        }
+
         Optional<GrasRegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {
-            // call board to place meeple
             try {
                 board.placeMeepleOnTile(Meeple.create(player, tile, row, column));
                 triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, player, tile, row, column);
@@ -135,6 +146,8 @@ public class Game extends StatefulObject implements PlayerContainer {
         if (innerException.isPresent()) {
             throw innerException.get();
         }
+
+        playerMeeples.put(player, meeplesLeft - 1);
     }
 
     public void skipPhase(Player player) {
