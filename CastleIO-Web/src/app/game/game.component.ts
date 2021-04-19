@@ -6,7 +6,6 @@ import {DrawnTileService} from '../services/drawn-tile.service';
 import {EventService} from '../services/events/event.service';
 import {Game} from '../models/game';
 import {GameBoardService} from '../services/game-board.service';
-import {GameBoardComponent} from './game-board/game-board.component';
 
 @Component({
     selector: 'app-game',
@@ -14,8 +13,6 @@ import {GameBoardComponent} from './game-board/game-board.component';
     styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit, OnDestroy {
-    @ViewChild(GameBoardComponent) gameBoardComponent: GameBoardComponent;
-
     gameId: string;
     playerId: string;
 
