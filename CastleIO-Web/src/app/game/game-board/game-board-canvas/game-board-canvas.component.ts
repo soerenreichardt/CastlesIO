@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import {Board} from '../../../models/board';
 import {Point} from '@angular/cdk/drag-drop';
 import {DrawnTileService} from '../../../services/drawn-tile.service';
+import {SvgService} from '../svg.service';
 
 @Component({
     selector: 'app-game-board-canvas',
@@ -22,7 +23,8 @@ export class GameBoardCanvasComponent implements OnInit {
 
     constructor(
         private gameBoardService: GameBoardService,
-        private drawnTileService: DrawnTileService
+        private drawnTileService: DrawnTileService,
+        private svgService: SvgService
     ) {
     }
 
@@ -85,13 +87,16 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     private renderTile(boardTile: BoardTile): void {
-        const tileImage = new Image();
-        tileImage.src = `assets/tiles/tile1.svg`;
+        this.svgService.getStyledVectorDataBlob(boardTile).then((tileBlob) => {
+            const url = URL.createObjectURL(tileBlob);
 
-        tileImage.onload = (event => {
-            const boardPos = this.board.getBoardPosition(boardTile);
-            this.context.drawImage(tileImage, boardPos.x, boardPos.y, 100, 100);
-            console.log(`drawn image at (${boardPos.x}/${boardPos.y})`);
+            const tileImage = new Image();
+            tileImage.src = url;
+
+            tileImage.onload = (event => {
+                const boardPos = this.board.getBoardPosition(boardTile);
+                this.context.drawImage(tileImage, boardPos.x, boardPos.y, 100, 100);
+            });
         });
     }
 
@@ -108,6 +113,7 @@ export class GameBoardCanvasComponent implements OnInit {
                 this.context.clearRect(25, this.canvasElement.offsetHeight - 245, 110, 110);
                 resolve();
             });
+
         });
     }
 
@@ -123,7 +129,6 @@ export class GameBoardCanvasComponent implements OnInit {
                 100,
                 100);
         });
-        console.log(`drawn drawn image at (${this.drawnTile.gameLocation.x}/${this.drawnTile.gameLocation.y})`);
     }
 
     private updateOffset(): void {
