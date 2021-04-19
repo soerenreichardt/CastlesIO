@@ -55,7 +55,8 @@ public class DTOSerializationTest {
     private static Stream<Arguments> deserializableDTOs() {
         return Stream.of(
                 Arguments.of("LobbySettingsDTO", LobbySettingsDTO.class, LobbySettingsDTO.from(lobbySettings)),
-                Arguments.of("PlayerIdentificationDTO", PlayerIdentificationDTO.class, new PlayerIdentificationDTO(gameLobby.getId(), player.getId()))
+                Arguments.of("PlayerIdentificationDTO", PlayerIdentificationDTO.class, new PlayerIdentificationDTO(gameLobby.getId(), player.getId())),
+                Arguments.of("MeepleDTO", MeepleDTO.class, new MeepleDTO(player.getId(), tile.getId(), 0, 0))
         );
     }
 

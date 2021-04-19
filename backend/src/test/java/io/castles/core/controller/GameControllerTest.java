@@ -131,4 +131,16 @@ class GameControllerTest {
                 .param("y", "1"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldPlaceMeeple() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .post(String.format("/game/%s/meeple", game.getId().toString()))
+                .param("playerId", game.getActivePlayer().getId().toString())
+                .param("x", "0")
+                .param("y", "1")
+                .param("row", "0")
+                .param("column", "0"))
+                .andExpect(status().isOk());
+    }
 }

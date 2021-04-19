@@ -1,7 +1,5 @@
-package io.castles.core.util;
+package io.castles.util;
 
-import io.castles.core.events.ServerEvent;
-import io.castles.core.events.ServerEventConsumer;
 import io.castles.core.tile.Tile;
 import io.castles.game.*;
 import io.castles.game.events.GameEvent;
@@ -11,32 +9,12 @@ import io.castles.game.events.GlobalEventConsumer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CollectingEventConsumer implements ServerEventConsumer, GameEventConsumer, GlobalEventConsumer {
+public class CollectingEventConsumer implements GameEventConsumer, GlobalEventConsumer {
 
-    Map<String, List<String>> events = new HashMap<>();
+    protected Map<String, List<String>> events = new HashMap<>();
 
     public Map<String, List<String>> events() {
         return events;
-    }
-
-    @Override
-    public void onPlayerReconnectAttempt(Player player) {
-        collect(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerTimeout(Player player) {
-        collect(ServerEvent.PLAYER_TIMEOUT.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerReconnected(Player player) {
-        collect(ServerEvent.PLAYER_RECONNECTED.name(), player.getId());
-    }
-
-    @Override
-    public void onPlayerDisconnected(Player player) {
-        collect(ServerEvent.PLAYER_DISCONNECTED.name(), player.getId());
     }
 
     @Override
@@ -52,6 +30,11 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
     @Override
     public void onSettingsChanged(GameLobbySettings gameLobbySettings) {
         collect(GameEvent.SETTINGS_CHANGED.name(), gameLobbySettings);
+    }
+
+    @Override
+    public void onLobbyCreated(GameLobby gameLobby) {
+        collect(GameEvent.LOBBY_CREATED.name(), gameLobby);
     }
 
     @Override
@@ -75,13 +58,17 @@ public class CollectingEventConsumer implements ServerEventConsumer, GameEventCo
     }
 
     @Override
-    public void onLobbyCreated(GameLobby gameLobby) {
-        collect(GameEvent.LOBBY_CREATED.name(), gameLobby);
+    public void onMeeplePlaced(Player owner, Tile tile, int row, int column) {
+        collect(GameEvent.MEEPLE_PLACED.name(), owner, tile, row, column);
     }
 
     public void collect(String event, Object... data) {
-        var objectsList = Arrays.stream(data).map(Object::toString).collect(Collectors.toList());
-        events.computeIfAbsent(event, __ -> new ArrayList<>()).add(String.join(", ", objectsList));
+        events.computeIfAbsent(event, __ -> new ArrayList<>()).add(stringFrom(data));
+    }
+
+    public static String stringFrom(Object... objects) {
+        var objectsList = Arrays.stream(objects).map(Object::toString).collect(Collectors.toList());
+        return String.join(", ", objectsList);
     }
 
     public void reset() {

@@ -1,24 +1,26 @@
-package io.castles.core.board.statistics;
+package io.castles.core.board;
 
-import io.castles.core.board.BoardListener;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
+import io.castles.core.graph.algorithm.Wcc;
 import io.castles.core.tile.MatrixTileLayout;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
+import io.castles.exceptions.GrasRegionOccupiedException;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class BoardStatistics implements BoardListener {
+public class BoardGraph implements BoardListener {
 
     public static final int UNCLOSED_STREET = -1;
 
     private final List<Graph> graphs;
     private final TileLookup tileLookup;
 
-    public BoardStatistics(TileLookup tileLookup) {
+    public BoardGraph(TileLookup tileLookup) {
         this.tileLookup = tileLookup;
         this.graphs = new ArrayList<>();
     }
@@ -51,6 +53,11 @@ public class BoardStatistics implements BoardListener {
         initialize();
     }
 
+    public boolean nodeExistsOnGraphOfType(TileContent tileContent, long tileId, int row, int column) {
+        var node = new Graph.Node(tileId, row, column);
+        return filterGraphsForContent(tileContent).nodes().contains(node);
+    }
+
     public int getStreetLength(Tile tile, int row, int column) {
         Graph graph = filterGraphsForContent(TileContent.STREET);
 
@@ -73,11 +80,23 @@ public class BoardStatistics implements BoardListener {
                     closedStreet.set(false);
                 }
             }
+            return true;
         });
 
         return closedStreet.get()
             ? distinctTileIds.size()
             : UNCLOSED_STREET;
+    }
+
+    public void validateUniqueMeeplePositionInWcc(Meeple meepleToPlace, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
+        var wcc = new Wcc(filterGraphsForContent(TileContent.GRAS));
+        wcc.compute();
+
+        for (var existingMeeple : existingMeeples) {
+            if (wcc.sameComponent(meepleToPlace.getPosition(), existingMeeple.getPosition())) {
+                throw new GrasRegionOccupiedException("Gras region occupied by other meeple");
+            }
+        }
     }
 
     private Graph filterGraphsForContent(TileContent tileContent) {

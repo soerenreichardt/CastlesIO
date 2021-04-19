@@ -2,9 +2,11 @@ package io.castles.core.graph;
 
 import io.castles.core.graph.algorithm.MatrixBfs;
 import io.castles.core.tile.*;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class Graph {
 
@@ -61,6 +63,12 @@ public class Graph {
         tiles.forEach(this::connectTileToAdjacentGraph);
     }
 
+    public void forEachRelationship(BiConsumer<Graph.Node, Graph.Node> relationshipVisitor) {
+        this.relationships.forEach((source, targets) -> {
+            targets.forEach(target -> relationshipVisitor.accept(source, target));
+        });
+    }
+
     private void createTileInternalGraph(Tile tile) {
         MatrixTileLayout tileLayout = tile.getTileLayout();
         Matrix<TileContent> contentMatrix = tileLayout.getContent();
@@ -86,6 +94,7 @@ public class Graph {
         matrixBfs.compute(new Node(tileId, row, column), (node, neighbors) -> {
             addNode(node);
             neighbors.forEach(neighbor -> addRelationship(node, neighbor));
+            return true;
         });
     }
 
@@ -166,6 +175,7 @@ public class Graph {
     }
 
     @Value
+    @EqualsAndHashCode
     public static class Node {
         long tileId;
         int row;

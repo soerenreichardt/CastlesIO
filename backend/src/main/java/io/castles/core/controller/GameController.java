@@ -7,8 +7,12 @@ import io.castles.core.model.dto.PlayerDTO;
 import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
+import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.Game;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.UUID;
@@ -67,6 +71,22 @@ public class GameController {
         gameService.placeTile(id, playerId, x, y, tile);
     }
 
+    @PostMapping(value = "/meeple")
+    void placeMeeple(
+            @PathVariable("id") UUID id,
+            @RequestParam("playerId") UUID playerId,
+            @RequestParam("x") int x,
+            @RequestParam("y") int y,
+            @RequestParam("row") int row,
+            @RequestParam("column") int column
+    ) {
+        try {
+            gameService.placeMeeple(id, playerId, x, y, row, column);
+        } catch (GrasRegionOccupiedException | NoMeeplesLeftException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @PostMapping(value = "/restart")
     void restartGame(@PathVariable("id") UUID id) {
         gameService.gameById(id).restart();
@@ -77,7 +97,7 @@ public class GameController {
         try {
             return gameService.reconnectToGame(id, playerId);
         } catch (UnableToReconnectException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }

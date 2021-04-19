@@ -1,7 +1,10 @@
 package io.castles.game;
 
 import io.castles.core.board.Board;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
+import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
@@ -13,10 +16,13 @@ import java.util.stream.Collectors;
 
 public class Game extends StatefulObject implements PlayerContainer {
 
+    public static final int MEEPLES_PER_PLAYER = 7;
+
     private final GameLogic gameLogic;
 
     private final Board board;
     private final GameSettings settings;
+    private final Map<Player, Integer> playerMeeplesLeft;
 
     private Tile drawnTile;
 
@@ -29,6 +35,9 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
+        this.playerMeeplesLeft = new HashMap<>();
+
+        players.forEach(player -> playerMeeplesLeft.put(player, MEEPLES_PER_PLAYER));
     }
 
     @Override
@@ -92,11 +101,24 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.settings;
     }
 
+    public List<Meeple> getMeeples() {
+        return this.board.getMeeples();
+    }
+
+    public int getMeeplesLeftForPlayer(Player player) {
+        return this.playerMeeplesLeft.get(player);
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
             gameLogic.nextPhase();
         }
+    }
+
+    @TestOnly
+    void setMeeplesLeftForPlayer(Player player, int meeplesLeft) {
+        this.playerMeeplesLeft.put(player, meeplesLeft);
     }
 
     // ========== ACTIONS =========
@@ -112,6 +134,29 @@ public class Game extends StatefulObject implements PlayerContainer {
             triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y);
         });
         drawnTile = null;
+    }
+
+    public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
+        var meeplesLeft = playerMeeplesLeft.get(player);
+        if (meeplesLeft == 0) {
+            throw new NoMeeplesLeftException(player);
+        }
+
+        Optional<GrasRegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {
+            try {
+                board.placeMeepleOnTile(Meeple.create(player, tile, row, column));
+                triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, player, tile, row, column);
+            } catch (GrasRegionOccupiedException e) {
+                return Optional.of(e);
+            }
+            return Optional.empty();
+        });
+
+        if (innerException.isPresent()) {
+            throw innerException.get();
+        }
+
+        playerMeeplesLeft.put(player, meeplesLeft - 1);
     }
 
     public void skipPhase(Player player) {

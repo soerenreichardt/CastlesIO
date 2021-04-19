@@ -1,9 +1,13 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Meeple;
+import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.events.GameEvent;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -85,6 +89,50 @@ class GameTest {
         game.restart();
         assertThat(game.getTile(0, 0)).isEqualTo(game.getStartTile());
         assertThatThrownBy(() -> game.getTile(0, 1)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Nested
+    class Meeples {
+
+        Player activePlayer;
+
+        @BeforeEach
+        void setup() {
+            game.setGameState(GameState.PLACE_FIGURE);
+            activePlayer = game.getActivePlayer();
+        }
+
+        @Test
+        void shouldBeAbleToPlaceMeeple() throws GrasRegionOccupiedException, NoMeeplesLeftException {
+            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+            assertThat(game.getMeeples().size()).isEqualTo(1);
+            assertThat(game.getMeeples().get(0)).isEqualTo(Meeple.create(activePlayer, game.getStartTile(), 0, 0));
+        }
+
+        @Test
+        void shouldThrowWhenPlacingIllegalMeeple() throws GrasRegionOccupiedException, NoMeeplesLeftException {
+            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+            var nextPlayer = game.getActivePlayer();
+            assertThat(nextPlayer).isNotEqualTo(activePlayer);
+
+            game.setGameState(GameState.PLACE_FIGURE);
+            assertThatThrownBy(() -> game.placeMeeple(nextPlayer, game.getStartTile(), 0, 0))
+                    .isInstanceOf(GrasRegionOccupiedException.class);
+        }
+
+        @Test
+        void shouldRemoveAvailableMeepleWhenPlacing() throws GrasRegionOccupiedException, NoMeeplesLeftException {
+            assertThat(game.getMeeplesLeftForPlayer(activePlayer)).isEqualTo(Game.MEEPLES_PER_PLAYER);
+            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+            assertThat(game.getMeeplesLeftForPlayer(activePlayer)).isEqualTo(Game.MEEPLES_PER_PLAYER - 1);
+        }
+
+        @Test
+        void shouldThrowIfPlayerHasNoMeeplesLeft() {
+            game.setMeeplesLeftForPlayer(activePlayer, 0);
+            assertThatThrownBy(() -> game.placeMeeple(activePlayer, game.getStartTile(), 0, 0))
+                .isInstanceOf(NoMeeplesLeftException.class);
+        }
     }
 
     private void assertPhaseSwitched(GameState from, GameState to) {

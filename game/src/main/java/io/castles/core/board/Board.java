@@ -1,10 +1,11 @@
 package io.castles.core.board;
 
 import io.castles.core.GameMode;
-import io.castles.core.board.statistics.BoardStatistics;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
+import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
@@ -15,7 +16,8 @@ public class Board implements Lifecycle {
     private final Map<Integer, Map<Integer, Tile>> tiles;
     private final TileProducer tileProducer;
     private final List<BoardListener> boardListeners;
-    private final BoardStatistics boardStatistics;
+    private final BoardGraph boardGraph;
+    private final List<Meeple> meeples;
 
     public static Board create(GameMode gameMode, List<Tile> tileList) {
         if (gameMode == GameMode.DEBUG) {
@@ -49,15 +51,16 @@ public class Board implements Lifecycle {
     private Board(TileProducer tileProducer) {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
-        this.boardListeners = new LinkedList<>();
-        this.boardStatistics = new BoardStatistics(this::getTileById);
+        this.boardListeners = new ArrayList<>();
+        this.boardGraph = new BoardGraph(this::getTileById);
+        this.meeples = new ArrayList<>();
 
         initialize();
     }
 
     @Override
     public void initialize() {
-        addBoardListener(boardStatistics);
+        addBoardListener(boardGraph);
         setInitialTile(tileProducer.get());
     }
 
@@ -65,12 +68,12 @@ public class Board implements Lifecycle {
     public void restart() {
         tiles.clear();
         boardListeners.forEach(BoardListener::restart);
-        boardListeners.remove(boardStatistics);
+        boardListeners.remove(boardGraph);
         initialize();
     }
 
-    public BoardStatistics getBoardStatistics() {
-        return this.boardStatistics;
+    public BoardGraph getBoardStatistics() {
+        return this.boardGraph;
     }
 
     public Tile getNewTile() {
@@ -89,6 +92,10 @@ public class Board implements Lifecycle {
 
     public Map<Integer, Map<Integer, Tile>> getTiles() {
         return this.tiles;
+    }
+
+    public List<Meeple> getMeeples() {
+        return this.meeples;
     }
 
     public void insertTileToBoard(Tile tile, int x, int y) {
@@ -114,6 +121,19 @@ public class Board implements Lifecycle {
         this.boardListeners.add(listener);
         listener.initialize();
         listener.currentState(tiles);
+    }
+
+    public void placeMeepleOnTile(Meeple meeple) throws GrasRegionOccupiedException {
+        validateMeeplePlacement(meeple, meeples);
+        meeples.add(meeple);
+    }
+
+    private void validateMeeplePlacement(Meeple meeple, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
+        var meeplePosition = meeple.getPosition();
+        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, meeplePosition.getTileId(), meeplePosition.getRow(), meeplePosition.getColumn())) {
+            throw new IllegalArgumentException("Tile region needs to be of type GRAS");
+        }
+        boardGraph.validateUniqueMeeplePositionInWcc(meeple, existingMeeples);
     }
 
     private Tile getTileById(long id) {
