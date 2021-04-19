@@ -125,7 +125,7 @@ public class Game extends StatefulObject implements PlayerContainer {
             // call board to place meeple
             try {
                 board.placeMeepleOnTile(Meeple.create(player, tile, row, column));
-                triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, tile, row, column);
+                triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, player, tile, row, column);
             } catch (GrasRegionOccupiedException e) {
                 return Optional.of(e);
             }

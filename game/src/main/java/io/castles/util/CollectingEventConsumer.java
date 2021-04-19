@@ -58,8 +58,8 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
     }
 
     @Override
-    public void onMeeplePlaced(Tile tile, int row, int column) {
-        collect(GameEvent.MEEPLE_PLACED.name(), tile, row, column);
+    public void onMeeplePlaced(Player owner, Tile tile, int row, int column) {
+        collect(GameEvent.MEEPLE_PLACED.name(), owner, tile, row, column);
     }
 
     public void collect(String event, Object... data) {

@@ -22,7 +22,7 @@ public interface GameEventConsumer {
 
     void onTilePlaced(Tile tile, int x, int y);
 
-    void onMeeplePlaced(Tile tile, int row, int column);
+    void onMeeplePlaced(Player owner, Tile tile, int row, int column);
 
     class Adapter implements GameEventConsumer {
         @Override
@@ -61,7 +61,7 @@ public interface GameEventConsumer {
         }
 
         @Override
-        public void onMeeplePlaced(Tile tile, int row, int column) {
+        public void onMeeplePlaced(Player owner, Tile tile, int row, int column) {
 
         }
     }

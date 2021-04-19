@@ -84,8 +84,8 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     @Override
-    public void onMeeplePlaced(Tile tile, int row, int column) {
-        // TODO
+    public void onMeeplePlaced(Player owner, Tile tile, int row, int column) {
+
     }
 
     private void createPlayerEmitter(Player player) {
