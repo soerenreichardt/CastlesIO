@@ -5,6 +5,7 @@ import io.castles.core.model.dto.TileDTO;
 import io.castles.core.tile.Tile;
 import io.castles.core.util.JsonTileLoader;
 import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.Game;
 import io.castles.game.Server;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class GameService {
         game.placeTile(player, tileDTO.toTile(), x, y);
     }
 
-    public void placeMeeple(UUID gameId, UUID playerId, int x, int y, int row, int column) throws GrasRegionOccupiedException {
+    public void placeMeeple(UUID gameId, UUID playerId, int x, int y, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);
         game.placeMeeple(player, game.getTile(x, y), row, column);

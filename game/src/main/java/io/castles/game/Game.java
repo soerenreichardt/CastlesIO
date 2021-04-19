@@ -130,7 +130,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
         var meeplesLeft = playerMeeples.get(player);
         if (meeplesLeft == 0) {
-            throw new NoMeeplesLeftException(player.toString());
+            throw new NoMeeplesLeftException(player);
         }
 
         Optional<GrasRegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {

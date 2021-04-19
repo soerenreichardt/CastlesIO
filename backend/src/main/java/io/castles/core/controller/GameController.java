@@ -8,6 +8,7 @@ import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
 import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.NoMeeplesLeftException;
 import io.castles.game.Game;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -81,7 +82,7 @@ public class GameController {
     ) {
         try {
             gameService.placeMeeple(id, playerId, x, y, row, column);
-        } catch (GrasRegionOccupiedException e) {
+        } catch (GrasRegionOccupiedException | NoMeeplesLeftException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
