@@ -3,7 +3,6 @@ package io.castles.core.controller;
 import io.castles.core.GameMode;
 import io.castles.core.events.ConnectionHandler;
 import io.castles.core.events.ServerEvent;
-import io.castles.core.exceptions.UnableToReconnectException;
 import io.castles.core.service.ClockService;
 import io.castles.core.service.ServerEventService;
 import io.castles.core.service.SseEmitterService;
@@ -22,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -100,8 +100,8 @@ public class GameControllerReconnectionTest {
         var urlTemplate = String.format("/game/%s/subscribe/%s", game.getId(), player.getId());
         mvc.perform(MockMvcRequestBuilders.get(urlTemplate).contentType(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertThat(result.getResolvedException().getCause() instanceof UnableToReconnectException).isTrue())
-                .andExpect(result -> assertThat(result.getResolvedException().getCause().getMessage()).contains(player.getName()));
+                .andExpect(result -> assertThat(result.getResolvedException() instanceof ResponseStatusException).isTrue())
+                .andExpect(result -> assertThat(result.getResolvedException().getMessage()).contains(player.getName()));
 
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_RECONNECT_ATTEMPT.name())).isTrue();
         assertThat(eventConsumer.events().containsKey(ServerEvent.PLAYER_DISCONNECTED.name())).isTrue();
