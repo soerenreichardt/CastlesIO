@@ -1,7 +1,9 @@
 package io.castles.game;
 
 import io.castles.core.board.Board;
+import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
+import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
@@ -114,11 +116,21 @@ public class Game extends StatefulObject implements PlayerContainer {
         drawnTile = null;
     }
 
-    public void placeMeeple(Player player, Tile tile, int row, int column) {
-        gameAction(player, GameState.PLACE_FIGURE, () -> {
+    public void placeMeeple(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException {
+        Optional<GrasRegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {
             // call board to place meeple
-            triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, tile, row, column);
+            try {
+                board.placeMeepleOnTile(Meeple.create(player, tile, row, column));
+                triggerLocalEvent(getId(), GameEvent.MEEPLE_PLACED, tile, row, column);
+            } catch (GrasRegionOccupiedException e) {
+                return Optional.of(e);
+            }
+            return Optional.empty();
         });
+
+        if (innerException.isPresent()) {
+            throw innerException.get();
+        }
     }
 
     public void skipPhase(Player player) {
