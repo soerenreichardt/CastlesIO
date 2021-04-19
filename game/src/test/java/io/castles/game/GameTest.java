@@ -6,6 +6,7 @@ import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.events.GameEvent;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -89,13 +90,34 @@ class GameTest {
         assertThatThrownBy(() -> game.getTile(0, 1)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void shouldBeAbleToPlaceMeeple() throws GrasRegionOccupiedException {
-        game.setGameState(GameState.PLACE_FIGURE);
-        var activePlayer = game.getActivePlayer();
-        game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
-        assertThat(game.getMeeples().size()).isEqualTo(1);
-        assertThat(game.getMeeples().get(0)).isEqualTo(Meeple.create(activePlayer, game.getStartTile(), 0, 0));
+    @Nested
+    class Meeples {
+
+        Player activePlayer;
+
+        @BeforeEach
+        void setup() throws GrasRegionOccupiedException {
+            game.setGameState(GameState.PLACE_FIGURE);
+            activePlayer = game.getActivePlayer();
+            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+        }
+
+        @Test
+        void shouldBeAbleToPlaceMeeple() {
+            assertThat(game.getMeeples().size()).isEqualTo(1);
+            assertThat(game.getMeeples().get(0)).isEqualTo(Meeple.create(activePlayer, game.getStartTile(), 0, 0));
+        }
+
+        @Test
+        void shouldThrowWhenPlacingIllegalMeeple() {
+            var nextPlayer = game.getActivePlayer();
+            assertThat(nextPlayer).isNotEqualTo(activePlayer);
+
+            game.setGameState(GameState.PLACE_FIGURE);
+            assertThatThrownBy(() -> game.placeMeeple(nextPlayer, game.getStartTile(), 0, 0))
+                    .isInstanceOf(GrasRegionOccupiedException.class);
+        }
+
     }
 
     private void assertPhaseSwitched(GameState from, GameState to) {
