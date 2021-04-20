@@ -32,11 +32,11 @@ class WccTest {
         void setup() {
             graph = new Graph(TileContent.GRAS);
 
-            n1 = new Graph.Node(0, 0, 0);
-            n2 = new Graph.Node(1, 1, 1);
-            n3 = new Graph.Node(2, 2, 2);
-            n4 = new Graph.Node(3, 3, 3);
-            n5 = new Graph.Node(4, 4, 4);
+            n1 = new Graph.Node(0, 0, 0, 0);
+            n2 = new Graph.Node(1, 0, 1, 1);
+            n3 = new Graph.Node(2, 0, 2, 2);
+            n4 = new Graph.Node(3, 0, 3, 3);
+            n5 = new Graph.Node(4, 0, 4, 4);
 
             graph.addRelationship(n1, n3);
             graph.addRelationship(n2, n3);
@@ -75,11 +75,11 @@ class WccTest {
         void setup() {
             graph = new Graph(TileContent.GRAS);
 
-            n1 = new Graph.Node(0, 0, 0);
-            n2 = new Graph.Node(1, 1, 1);
-            n3 = new Graph.Node(2, 2, 2);
-            n4 = new Graph.Node(3, 3, 3);
-            n5 = new Graph.Node(4, 4, 4);
+            n1 = new Graph.Node(0, 0, 0, 0);
+            n2 = new Graph.Node(1, 0, 1, 1);
+            n3 = new Graph.Node(2, 0, 2, 2);
+            n4 = new Graph.Node(3, 0, 3, 3);
+            n5 = new Graph.Node(4, 0, 4, 4);
 
             graph.addNode(n3);
             graph.addRelationship(n1, n2);

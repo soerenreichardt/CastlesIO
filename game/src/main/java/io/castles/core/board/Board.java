@@ -52,7 +52,7 @@ public class Board implements Lifecycle {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
         this.boardListeners = new ArrayList<>();
-        this.boardGraph = new BoardGraph(this::getTileById);
+        this.boardGraph = new BoardGraph(this::getTile);
         this.meeples = new ArrayList<>();
 
         initialize();
@@ -130,20 +130,10 @@ public class Board implements Lifecycle {
 
     private void validateMeeplePlacement(Meeple meeple, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
         var meeplePosition = meeple.getPosition();
-        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, meeplePosition.getTileId(), meeplePosition.getRow(), meeplePosition.getColumn())) {
+        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, meeplePosition.getX(), meeplePosition.getY(), meeplePosition.getRow(), meeplePosition.getColumn())) {
             throw new IllegalArgumentException("Tile region needs to be of type GRAS");
         }
         boardGraph.validateUniqueMeeplePositionInWcc(meeple, existingMeeples);
-    }
-
-    private Tile getTileById(long id) {
-        return tiles
-                .values()
-                .stream()
-                .flatMap(map -> map.values().stream())
-                .filter(tile -> tile.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(String.format("No tile was found with id %d", id)));
     }
 
     private Tile[] getNeighborsOfTile(Tile tile) {

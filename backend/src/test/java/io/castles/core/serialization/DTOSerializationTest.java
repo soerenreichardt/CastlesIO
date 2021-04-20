@@ -26,6 +26,10 @@ public class DTOSerializationTest {
     static GameLobbySettings lobbySettings = GameLobbySettings.builder().build();
     static GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
     static Tile tile = Tile.drawStatic(TileContent.GRAS);
+    static Tile insertedTile = Tile.drawStatic(TileContent.GRAS);
+    static {
+        insertedTile.insertToBoard(0, 0);
+    }
     static GameLobby gameLobby = new GameLobby("Test", player.toPlayer(), new EventHandler());
 
     private static Stream<Arguments> serializableDTOs() {
@@ -57,7 +61,7 @@ public class DTOSerializationTest {
         return Stream.of(
                 Arguments.of("LobbySettingsDTO", LobbySettingsDTO.class, LobbySettingsDTO.from(lobbySettings)),
                 Arguments.of("PlayerIdentificationDTO", PlayerIdentificationDTO.class, new PlayerIdentificationDTO(gameLobby.getId(), player.getId())),
-                Arguments.of("MeepleDTO", MeepleDTO.class, new MeepleDTO(player.getId(), tile.getId(), 0, 0))
+                Arguments.of("MeepleDTO", MeepleDTO.class, new MeepleDTO(player.getId(), insertedTile.getX(), insertedTile.getY(), 0, 0))
         );
     }
 

@@ -105,9 +105,9 @@ class BoardGraphTest {
             board.insertTileToBoard(rightTile, 1, 0);
 
             board.getBoardStatistics().validateUniqueMeeplePositionInWcc(
-                    new Meeple(new Graph.Node(board.getTile(1, 0).getId(), 0, 2), p2),
+                    new Meeple(new Graph.Node(1, 0, 0, 2), p2),
                     List.of(
-                            new Meeple(new Graph.Node(board.getTile(0, 0).getId(), 0, 2), p1)
+                            new Meeple(new Graph.Node(0, 0, 0, 2), p1)
                     )
             );
         }
@@ -121,9 +121,9 @@ class BoardGraphTest {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
             assertThatThrownBy(() -> board.getBoardStatistics().validateUniqueMeeplePositionInWcc(
-                    new Meeple(new Graph.Node(board.getTile(tileX, tileY).getId(), tileRow, tileColumn), p2),
+                    new Meeple(new Graph.Node(tileX, tileY, tileRow, tileColumn), p2),
                     List.of(
-                            new Meeple(new Graph.Node(board.getTile(0, 0).getId(), 0, 2), p1)
+                            new Meeple(new Graph.Node(0, 0, 0, 2), p1)
                     )
             )).isInstanceOf(GrasRegionOccupiedException.class);
         }

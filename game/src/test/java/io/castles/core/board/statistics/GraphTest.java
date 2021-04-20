@@ -27,21 +27,21 @@ class GraphTest {
         grasGraph.fromTile(tile);
         assertThat(grasGraph.nodeCount()).isEqualTo(3);
         assertThat(grasGraph.nodes()).contains(
-                new Graph.Node(tile.getId(), 0, 1),
-                new Graph.Node(tile.getId(), 1, 1),
-                new Graph.Node(tile.getId(), 2, 1)
+                new Graph.Node(tile.getX(), tile.getY(), 0, 1),
+                new Graph.Node(tile.getX(), tile.getY(), 1, 1),
+                new Graph.Node(tile.getX(), tile.getY(), 2, 1)
         );
 
         var castleGraph = new Graph(TileContent.CASTLE);
         castleGraph.fromTile(tile);
         assertThat(castleGraph.nodes().size()).isEqualTo(6);
         assertThat(castleGraph.nodes()).contains(
-                new Graph.Node(tile.getId(), 0, 0),
-                new Graph.Node(tile.getId(), 1, 0),
-                new Graph.Node(tile.getId(), 2, 0),
-                new Graph.Node(tile.getId(), 0, 2),
-                new Graph.Node(tile.getId(), 1, 2),
-                new Graph.Node(tile.getId(), 2, 2)
+                new Graph.Node(tile.getX(), tile.getY(), 0, 0),
+                new Graph.Node(tile.getX(), tile.getY(), 1, 0),
+                new Graph.Node(tile.getX(), tile.getY(), 2, 0),
+                new Graph.Node(tile.getX(), tile.getY(), 0, 2),
+                new Graph.Node(tile.getX(), tile.getY(), 1, 2),
+                new Graph.Node(tile.getX(), tile.getY(), 2, 2)
         );
     }
 
@@ -59,15 +59,15 @@ class GraphTest {
         var grasGraph = new Graph(TileContent.GRAS);
         grasGraph.fromTile(tile);
         assertThat(grasGraph.relationshipCount()).isEqualTo(4);
-        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 0, 1)))
-                .containsExactly(new Graph.Node(tile.getId(), 1, 1));
-        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 1, 1)))
-                .containsExactly(
-                        new Graph.Node(tile.getId(), 0, 1),
-                        new Graph.Node(tile.getId(), 2, 1)
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getX(), tile.getY(), 0, 1)))
+                .containsExactly(new Graph.Node(tile.getX(), tile.getY(), 1, 1));
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getX(), tile.getY(), 1, 1)))
+                .containsExactlyInAnyOrder(
+                        new Graph.Node(tile.getX(), tile.getY(), 0, 1),
+                        new Graph.Node(tile.getX(), tile.getY(), 2, 1)
                 );
-        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getId(), 2, 1)))
-                .containsExactly(new Graph.Node(tile.getId(), 1, 1));
+        assertThat(grasGraph.relationships().get(new Graph.Node(tile.getX(), tile.getY(), 2, 1)))
+                .containsExactly(new Graph.Node(tile.getX(), tile.getY(), 1, 1));
     }
 
     @Test
@@ -89,10 +89,10 @@ class GraphTest {
         grasGraph.fromTile(board.getTile(0, 1));
 
         assertThat(grasGraph.relationshipCount()).isEqualTo(14);
-        assertThat(grasGraph.relationships().get(new Graph.Node(startTile.getId(), 0, 1)))
+        assertThat(grasGraph.relationships().get(new Graph.Node(startTile.getX(), startTile.getY(), 0, 1)))
                 .containsExactlyInAnyOrder(
-                        new Graph.Node(startTile.getId(), 1, 1),
-                        new Graph.Node(tile.getId(), 2, 1)
+                        new Graph.Node(startTile.getX(), startTile.getY(), 1, 1),
+                        new Graph.Node(tile.getX(), tile.getY(), 2, 1)
                 );
     }
 
@@ -122,7 +122,7 @@ class GraphTest {
         graph.fromTile(nextTile);
 
         assertThat(graph.relationshipCount()).isEqualTo(2);
-        assertThat(graph.relationships().get(new Graph.Node(startTile.getId(), 1, 2)))
-                .containsExactly(new Graph.Node(nextTile.getId(), 0, 1));
+        assertThat(graph.relationships().get(new Graph.Node(startTile.getX(), startTile.getY(), 1, 2)))
+                .containsExactly(new Graph.Node(nextTile.getX(), nextTile.getY(), 0, 1));
     }
 }

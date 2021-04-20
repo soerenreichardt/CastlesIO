@@ -12,14 +12,16 @@ import java.util.UUID;
 @NoArgsConstructor
 public class MeepleDTO {
     UUID ownerId;
-    long tileId;
+    int x;
+    int y;
     int row;
     int column;
 
     public static MeepleDTO from(Meeple meeple) {
         return new MeepleDTO(
                 meeple.getOwner().getId(),
-                meeple.getPosition().getTileId(),
+                meeple.getPosition().getX(),
+                meeple.getPosition().getY(),
                 meeple.getPosition().getRow(),
                 meeple.getPosition().getColumn()
         );
