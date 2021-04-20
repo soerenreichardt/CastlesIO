@@ -32,7 +32,9 @@ export class GameBoardCanvasComponent implements OnInit {
 
     ngOnInit(): void {
         this.initCanvas().then(() => {
-            addEventListener('resize', () => this.updateOffset());
+            addEventListener('resize', () => {
+                this.updateOffset();
+            });
 
             this.gameBoardService.tiles.subscribe(tiles => {
                 this.board = new Board(tiles);
@@ -55,11 +57,11 @@ export class GameBoardCanvasComponent implements OnInit {
             this.canvas.call(
                 d3.drag()
                     .container( this.canvasElement)
-                    .subject((event) => this.isDragTargetDrawnTile(event))
+                    .subject((event) => this.isEventTargetDrawnTile(event))
                     .on('start', (event) => this.dragStarted(event))
                     .on('drag', (event) => this.dragging(event))
                     .on('end', (event) => this.dragEnded(event))
-            );
+            ).on('click', (event) => this.handleClick(event));
 
             this.svgService.getDrawAreaBackground().then(drawAreaBg => {
                 this.drawAreaBg = drawAreaBg;
@@ -68,7 +70,19 @@ export class GameBoardCanvasComponent implements OnInit {
         });
     }
 
-    private isDragTargetDrawnTile(event): boolean {
+    private updateOffset(): void {
+        this.board.offset = {
+            x: this.canvasElement.offsetWidth / 2,
+            y: this.canvasElement.offsetHeight / 2
+        };
+        this.canvasElement.width = this.canvasElement.offsetWidth;
+        this.canvasElement.height = this.canvasElement.offsetHeight;
+        this.render();
+    }
+
+    // ============================ Dragging ===============================
+
+    private isEventTargetDrawnTile(event): boolean {
         if (!this.drawnTile) {
             return false;
         }
@@ -78,15 +92,13 @@ export class GameBoardCanvasComponent implements OnInit {
             drawnTilePosition = this.board.getBoardPosition(this.drawnTile);
         }
 
-        const xOnBoardTile = drawnTilePosition.x <= event.x && drawnTilePosition.x + 100 >= event.x;
-        const yOnBoardTile = drawnTilePosition.y <= event.y && drawnTilePosition.y + 100 >= event.y;
+        const xOnBoardTile = drawnTilePosition.x - 50 <= event.x && drawnTilePosition.x + 50 >= event.x;
+        const yOnBoardTile = drawnTilePosition.y - 50 <= event.y && drawnTilePosition.y + 50 >= event.y;
 
         return (xOnBoardTile && yOnBoardTile);
     }
 
     private dragStarted(event): void {
-        console.log('drag started event:');
-        console.log(event);
     }
 
     private dragging(event): void {
@@ -102,15 +114,39 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     private dragEnded(event): void {
-        console.log('drag ended event:');
-        console.log(event);
     }
 
-    renderPlacedTiles(): void {
-        this.board.tiles.forEach(tile => {
-            this.renderTile(tile);
+    // ============================ Rotation ===============================
+
+    private handleClick(event): void {
+        if (event.defaultPrevented) {
+            return;
+        }
+        if (this.isEventTargetDrawnTile(event)) {
+            this.animateTileRotation();
+        }
+    }
+
+    private animateTileRotation(): void {
+        const duration = 200;
+        const ease = d3.easeCubic;
+
+        const oldRotation = this.drawnTile.rotation;
+        this.drawnTile.rotation = (oldRotation + 90) % 360;
+
+        const timer = d3.timer(elapsed => {
+            const rotation = Math.min(90, (ease(elapsed / duration)) * 90);
+            this.drawnTile.animatingRotation = oldRotation + rotation;
+            this.render();
+
+            if (rotation === 90) {
+                timer.stop();
+                console.log(this.drawnTile);
+            }
         });
     }
+
+    // ============================ Rendering ===============================
 
     private render(): void {
         this.context.clearRect(0, 0, this.canvasElement.offsetWidth, this.canvasElement.offsetHeight);
@@ -125,11 +161,6 @@ export class GameBoardCanvasComponent implements OnInit {
         }
     }
 
-    private renderTile(boardTile: BoardTile): void {
-        const boardPos = this.board.getBoardPosition(boardTile);
-        this.context.drawImage(boardTile.image, boardPos.x, boardPos.y, 100, 100);
-    }
-
     private renderDrawArea(): void {
         const drawAreaPosition: Point = {
             x: 0,
@@ -139,35 +170,55 @@ export class GameBoardCanvasComponent implements OnInit {
         this.context.clearRect(25, this.canvasElement.offsetHeight - 245, 110, 110);
     }
 
-    renderDrawnTile(): void {
+    private renderDrawnTile(): void {
+        const rotation = this.drawnTile.animatingRotation || this.drawnTile.rotation;
         let drawTilePosition = this.getDrawnTileInitialPosition();
         let scale = 100;
         if (this.drawnTile.wasMovedToGameBoard) {
             drawTilePosition = this.board.getBoardPosition(this.drawnTile);
             scale = this.board.scale;
         }
-        this.context.drawImage(
+        this.renderWithRotation(
             this.drawnTile.image,
-            drawTilePosition.x,
-            drawTilePosition.y,
-            scale,
+            rotation,
+            drawTilePosition,
             scale);
     }
 
-    private updateOffset(): void {
-        this.board.offset = {
-            x: this.canvasElement.offsetWidth / 2,
-            y: this.canvasElement.offsetHeight / 2
-        };
-        this.canvasElement.width = this.canvasElement.offsetWidth;
-        this.canvasElement.height = this.canvasElement.offsetHeight;
-        this.render();
+    private renderPlacedTiles(): void {
+        this.board.tiles.forEach(tile => {
+            this.renderPlacedTile(tile);
+        });
     }
+
+    private renderPlacedTile(boardTile: BoardTile): void {
+        this.renderWithRotation(
+            boardTile.image,
+            boardTile.rotation,
+            this.board.getBoardPosition(boardTile),
+            this.board.scale
+        );
+    }
+
+    private renderWithRotation(image: HTMLImageElement, rotation: number, position: Point, scale: number): void {
+        const radRotation = rotation * Math.PI / 180;
+
+        this.context.translate(position.x, position.y);
+        this.context.rotate(radRotation);
+        // draw image with image center at context center
+        this.context.drawImage(image, -scale / 2, -scale / 2, scale, scale);
+
+        // reset context (dont use context.save() as this is slower <storing all context fields>)
+        this.context.rotate(-radRotation);
+        this.context.translate(-position.x, -position.y);
+    }
+
+    // ============================ Rendering ===============================
 
     private getDrawnTileInitialPosition(): Point {
         return {
-            x: 30,
-            y: this.canvasElement.offsetHeight - 240
+            x: 80,
+            y: this.canvasElement.offsetHeight - 190
         };
     }
 }

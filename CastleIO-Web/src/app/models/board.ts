@@ -21,8 +21,8 @@ export class Board {
 
     getGameFromBoardPosition(boardPosition: Point): Point {
         return {
-            x: Math.floor((boardPosition.x - this.offset.x) / this.scale),
-            y: Math.floor((boardPosition.y - this.offset.y) / this.scale)
+            x: Math.floor((boardPosition.x - this.offset.x + this.scale / 2) / this.scale),
+            y: Math.floor((boardPosition.y - this.offset.y + this.scale / 2) / this.scale)
         };
     }
 

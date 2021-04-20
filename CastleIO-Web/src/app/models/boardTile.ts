@@ -12,14 +12,14 @@ export class BoardTile {
     constructor(tileDTO: TileDTO, x: number, y: number, image: HTMLImageElement) {
         this.id = tileDTO.id;
         this.gameLocation = {x, y};
-        this.rotation = tileDTO.tileLayout.rotation;
+        this.rotation = tileDTO.tileLayout.rotation * 90;
         this.tileDTO = tileDTO;
         this.image = image;
     }
 
     toTileDTO(): TileDTO {
         const originalTileDTO = this.tileDTO;
-        originalTileDTO.tileLayout.rotation = this.rotation;
+        originalTileDTO.tileLayout.rotation = this.rotation / 90;
         return originalTileDTO;
     }
 }

@@ -5,6 +5,7 @@ import {Point} from '@angular/cdk/drag-drop';
 export class DrawnBoardTile extends BoardTile{
     wasMovedToGameBoard: boolean;
     validPosition: boolean;
+    animatingRotation: number;
 
     constructor(tileDTO: TileDTO, image: HTMLImageElement) {
         super(tileDTO, 0, 0, image);
