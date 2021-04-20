@@ -29,18 +29,21 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
     updateLobbySettingsDebounceTimer: number;
 
-    constructor(private lobbyService: LobbyService,
-                private localStorageService: LocalStorageService,
-                private activatedRoute: ActivatedRoute,
-                private router: Router,
-                private appRef: ApplicationRef,
-                private snackBar: MatSnackBar,
-                private matDialog: MatDialog,
-                private clipboard: Clipboard,
-                private eventService: EventService) {
-    }
+    constructor(
+        private lobbyService: LobbyService,
+        private localStorageService: LocalStorageService,
+        private eventService: EventService,
 
-    ngOnInit(): void {
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private appRef: ApplicationRef,
+        private snackBar: MatSnackBar,
+        private matDialog: MatDialog,
+        private clipboard: Clipboard,
+) {
+}
+
+ngOnInit(): void {
         this.inviteLink = window.location.href;
         this.lobbyId = this.activatedRoute.snapshot.params.id;
         this.lobbyService.setLobbyUrl(this.lobbyId);

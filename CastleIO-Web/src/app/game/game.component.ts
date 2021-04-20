@@ -6,6 +6,7 @@ import {DrawnTileService} from '../services/drawn-tile.service';
 import {EventService} from '../services/events/event.service';
 import {Game} from '../models/game';
 import {GameBoardService} from '../services/game-board.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-game',
@@ -19,13 +20,15 @@ export class GameComponent implements OnInit, OnDestroy {
     game: Game;
 
     constructor(
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
         private localStorageService: LocalStorageService,
         private gameService: GameService,
         private gameBoardService: GameBoardService,
         private drawnTileService: DrawnTileService,
-        private eventService: EventService
+        private eventService: EventService,
+
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private snackBar: MatSnackBar
     ) {
     }
 
@@ -65,7 +68,10 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
     private redirectUnauthenticatedPlayer(): void {
-        this.router.navigate(['']);
+        this.snackBar.open('The lobby does not exist.', '', {duration: 3000});
+        setTimeout(() => {
+            this.router.navigate(['']);
+        }, 3000);
     }
 
     ngOnDestroy(): void {
