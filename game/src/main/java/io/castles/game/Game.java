@@ -51,16 +51,6 @@ public class Game extends StatefulObject implements PlayerContainer {
         );
     }
 
-    public static Game from(GameLobby lobby) {
-        return new Game(
-                lobby.getId(),
-                lobby.getName(),
-                GameSettings.from(lobby.getLobbySettings()),
-                lobby.getPlayers(),
-                lobby.eventHandler()
-        );
-    }
-
     @Override
     protected void init() {
         triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
