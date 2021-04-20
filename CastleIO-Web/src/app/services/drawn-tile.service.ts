@@ -21,8 +21,9 @@ export class DrawnTileService {
     }
 
     debugDrawTile(): void {
+        const tileId = Math.ceil(Math.random() * 19);
         this.drawnTile.next({
-            id: 1,
+            id: tileId,
             tileLayout: {
                 rotation: 0,
                 content: undefined

@@ -87,16 +87,9 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     private renderTile(boardTile: BoardTile): void {
-        this.svgService.getStyledVectorDataBlob(boardTile).then((tileBlob) => {
-            const url = URL.createObjectURL(tileBlob);
-
-            const tileImage = new Image();
-            tileImage.src = url;
-
-            tileImage.onload = (event => {
-                const boardPos = this.board.getBoardPosition(boardTile);
-                this.context.drawImage(tileImage, boardPos.x, boardPos.y, 100, 100);
-            });
+        this.svgService.getTileImage(boardTile).then((tileImage) => {
+            const boardPos = this.board.getBoardPosition(boardTile);
+            this.context.drawImage(tileImage, boardPos.x, boardPos.y, 100, 100);
         });
     }
 
@@ -118,14 +111,11 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     renderDrawnTile(): void {
-        const drawnTileImage = new Image();
-        drawnTileImage.src = `assets/tiles/tile1.svg`;
-
-        drawnTileImage.onload = (event => {
+        this.svgService.getTileImage(this.drawnTile).then(tileImage => {
             this.context.drawImage(
-                drawnTileImage,
-                this.drawnTile.gameLocation.x,
-                this.drawnTile.gameLocation.y,
+                tileImage,
+                30,
+                this.canvasElement.offsetHeight - 240,
                 100,
                 100);
         });

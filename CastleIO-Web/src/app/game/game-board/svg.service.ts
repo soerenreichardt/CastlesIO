@@ -1,22 +1,37 @@
 import {Injectable} from '@angular/core';
 import {BoardTile} from '../../models/boardTile';
 import * as d3 from 'd3';
+import {TileDTO} from '../../models/dtos/tile-dto';
+import {GameBoardService} from '../../services/game-board.service';
+import {TileGraphics} from '../../models/tile-graphics.type';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SvgService {
 
-    constructor() {
+    tileGraphics: TileGraphics;
+
+    constructor(
+        private gameBoardService: GameBoardService
+    ) {
+        this.gameBoardService.tileGraphics.subscribe(tileGraphics => this.tileGraphics = tileGraphics);
     }
 
-    getStyledVectorDataBlob(boardTile: BoardTile): Promise<Blob> {
+    getTileImage(tile: BoardTile | TileDTO): Promise<HTMLImageElement> {
         return new Promise((resolve) => {
-            d3.xml(`assets/tiles/tile1.svg`).then(xmlDom => {
+            d3.xml(`assets/tiles/${this.tileGraphics}/tile${tile.id}.svg`).then(xmlDom => {
                 const svgElement = xmlDom.querySelector('svg');
                 this.addPlayerStyles(svgElement);
                 const svgBlob = new Blob([svgElement.outerHTML], {type: 'image/svg+xml;charset=utf-8'});
-                resolve(svgBlob);
+                const url = URL.createObjectURL(svgBlob);
+
+                const tileImage = new Image();
+                tileImage.src = url;
+
+                tileImage.onload = (() => {
+                    resolve(tileImage);
+                });
             });
         });
     }

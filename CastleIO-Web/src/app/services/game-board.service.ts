@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
-import {ReplaySubject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {TileDTO} from '../models/dtos/tile-dto';
 import {BoardTile} from '../models/boardTile';
 import {GameService} from './game.service';
+import {TileGraphics} from '../models/tile-graphics.type';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameBoardService {
     tiles = new ReplaySubject<BoardTile[]>();
+    tileGraphics = new BehaviorSubject<TileGraphics>('curvy');
 
     constructor(
         private gameService: GameService
