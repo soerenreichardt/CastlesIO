@@ -62,7 +62,7 @@ class GraphTest {
         assertThat(grasGraph.relationships().get(new Graph.Node(tile.getX(), tile.getY(), 0, 1)))
                 .containsExactly(new Graph.Node(tile.getX(), tile.getY(), 1, 1));
         assertThat(grasGraph.relationships().get(new Graph.Node(tile.getX(), tile.getY(), 1, 1)))
-                .containsExactly(
+                .containsExactlyInAnyOrder(
                         new Graph.Node(tile.getX(), tile.getY(), 0, 1),
                         new Graph.Node(tile.getX(), tile.getY(), 2, 1)
                 );

@@ -8,7 +8,7 @@ import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.exceptions.GrasRegionOccupiedException;
-import io.castles.util.LongUtil;
+import lombok.Value;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,16 +67,16 @@ public class BoardGraph implements BoardListener {
         if (!graph.nodes().contains(startNode)) {
             throw new IllegalArgumentException(String.format("No node %s was found in graph.", startNode));
         }
-        Set<Long> distinctTileIds = new HashSet<>();
+        Set<Position> distinctTileIds = new HashSet<>();
         AtomicBoolean closedStreet = new AtomicBoolean(true);
         graphBfs.compute(startNode, (node, neighbors) -> {
-            distinctTileIds.add(LongUtil.combineInts(tile.getX(), tile.getY()));
+            distinctTileIds.add(new Position(node.getX(), node.getY()));
 
             // The neighbors of a street end have to be empty,
             // otherwise the traversal should go on
             if (neighbors.isEmpty()) {
                 // Street ends are always in the middle of a tile
-                if (!nodeEndsInMiddleOfTile(node, tile.getX(), tile.getY())) {
+                if (!nodeEndsInMiddleOfTile(node, node.getX(), node.getY())) {
                     closedStreet.set(false);
                 }
             }
@@ -118,5 +118,11 @@ public class BoardGraph implements BoardListener {
 
     public interface TileLookup {
         Tile resolve(int x, int y);
+    }
+
+    @Value
+    static class Position {
+        int x;
+        int y;
     }
 }
