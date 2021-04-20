@@ -52,6 +52,13 @@
                                 (change)="updateLobbySettings()"></mat-slider>
                 </div>
             </form>
+            <div class="card-content">
+                <button mat-flat-button
+                        color="accent"
+                        class="big-button"
+                        [disabled]="lobby.players.length < 2"
+                        (click)="startGame()">Start Game</button>
+            </div>
         </div>
 
         <div class="card-content" *ngIf="!lobby.lobbySettings.editable">
@@ -81,15 +88,10 @@
                 </div>
             </form>
         </div>
-        <div class="card-content">
-            <button mat-flat-button
-                    color="accent"
-                    class="big-button"
-                    (click)="startGame()">Start Game</button>
-        </div>
     </div>
 </div>
-<div class="invite-link">
+
+<div class="invite-link" *ngIf="lobby">
     <p class="label">
         Invite Link
     </p>

@@ -18,16 +18,17 @@ public class Game extends StatefulObject implements PlayerContainer {
 
     public static final int MEEPLES_PER_PLAYER = 7;
 
+    private final String name;
     private final GameLogic gameLogic;
-
     private final Board board;
     private final GameSettings settings;
     private final Map<Player, Integer> playerMeeplesLeft;
 
     private Tile drawnTile;
 
-    public Game(UUID lobbyId, GameSettings settings, Set<Player> players, EventHandler eventHandler) {
+    public Game(UUID lobbyId, String lobbyName, GameSettings settings, Set<Player> players, EventHandler eventHandler) {
         super(lobbyId, eventHandler);
+        this.name = lobbyName;
         this.settings = settings;
         // Transforming the players set into a list might be
         // necessary if a player leaves the game while the
@@ -38,6 +39,16 @@ public class Game extends StatefulObject implements PlayerContainer {
         this.playerMeeplesLeft = new HashMap<>();
 
         players.forEach(player -> playerMeeplesLeft.put(player, MEEPLES_PER_PLAYER));
+    }
+
+    public static Game from(GameLobby lobby) {
+        return new Game(
+                lobby.getId(),
+                lobby.getName(),
+                GameSettings.from(lobby.getLobbySettings()),
+                lobby.getPlayers(),
+                lobby.eventHandler()
+        );
     }
 
     @Override
@@ -184,5 +195,9 @@ public class Game extends StatefulObject implements PlayerContainer {
         if (expectedState != getCurrentGameState()) {
             throw new IllegalStateException(String.format("Expected GameState to be %s, but was %s", expectedState, getCurrentGameState()));
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

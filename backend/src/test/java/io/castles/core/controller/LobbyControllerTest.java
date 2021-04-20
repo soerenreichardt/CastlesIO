@@ -113,7 +113,7 @@ class LobbyControllerTest {
 
         var lobbySettings = gameLobby.getLobbySettings();
         lobbySettings.setGameMode(GameMode.DEBUG);
-        var game = new Game(gameLobby.getId(), GameSettings.from(lobbySettings), Set.copyOf(gameLobby.getPlayers()), gameLobby.eventHandler());
+        var game = new Game(gameLobby.getId(), "Just some lobby name", GameSettings.from(lobbySettings), Set.copyOf(gameLobby.getPlayers()), gameLobby.eventHandler());
 
         var urlTemplate = String.format("/lobby/%s/start", gameLobby.getId());
 

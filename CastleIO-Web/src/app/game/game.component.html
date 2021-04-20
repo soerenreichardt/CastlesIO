@@ -1,2 +1,31 @@
-<button (click)="drawTile()">Draw Tile</button>
-<app-game-board></app-game-board>
+<div class="game-component" *ngIf="game">
+    <h2>{{game.name}}</h2>
+    <app-game-peepz [players]="game.players"></app-game-peepz>
+    <app-game-board></app-game-board>
+    <button class="action-button big-button"
+            *ngIf="game.timeToDrawTile()"
+            mat-flat-button
+            color="accent"
+            (click)="drawTile()">Draw Tile</button>
+
+    <button class="action-button big-button"
+            *ngIf="game.timeToPlaceTile()"
+            mat-flat-button
+            color="accent"
+            (click)="placeTile()">Place Tile</button>
+
+    <div class="action-area"
+         *ngIf="game.timeToPlaceFigure()">
+        <button class="button"
+                mat-flat-button
+                color="warn"
+                (click)="skipPhase()">End Turn</button>
+
+        <button class="button"
+                mat-flat-button
+                color="accent"
+                disabled
+                (click)="null">Place Figure</button>
+    </div>
+</div>
+<button class="reset-button" mat-flat-button color="warn" (click)="resetGame()">reset</button>

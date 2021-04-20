@@ -3,7 +3,7 @@ import {LobbyService} from '../services/lobby.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocalStorageService} from '../services/local-storage.service';
 import {PlayerAuthentication} from '../models/player-authentication.interface';
-import {Lobby} from '../models/lobby.interface';
+import {LobbyDTO} from '../models/dtos/lobby-dto.interface';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {interval} from 'rxjs';
@@ -18,7 +18,7 @@ import {PlayerDTO} from '../models/dtos/player-dto.interface';
     styleUrls: ['./lobby.component.scss']
 })
 export class LobbyComponent implements OnInit, OnDestroy {
-    lobby: Lobby;
+    lobby: LobbyDTO;
     isLobbyPublic: boolean;
     lobbyId: string;
     playerId: string;

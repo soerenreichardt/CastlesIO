@@ -52,6 +52,12 @@ public class GameService {
         game.placeTile(player, tileDTO.toTile(), x, y);
     }
 
+    public void skipPhase(UUID gameId, UUID playerId) {
+        var game = gameById(gameId);
+        var player = game.getPlayerById(playerId);
+        game.skipPhase(player);
+    }
+
     public void placeMeeple(UUID gameId, UUID playerId, int x, int y, int row, int column) throws GrasRegionOccupiedException, NoMeeplesLeftException {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);

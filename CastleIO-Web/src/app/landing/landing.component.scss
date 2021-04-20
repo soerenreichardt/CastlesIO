@@ -1,24 +1,23 @@
-.content {
-    height: 100%;
+@import "../../styles";
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -5;
+    width: 100vw;
+    height: 100vh;
+    mask: url("../../assets/images/landing_bg.svg") 0 40px no-repeat;
+    mask-size: 130vw;
+    background-color: mat-color($CastleIO-Web-accent, 100);
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 10em;
-    grid-template-areas:
-        "content content"
-        ". ."
-        "footer footer";
-
-    .logo {
-        grid-area: header;
+    @media (max-width: 1000px) {
+        visibility: hidden;
     }
+}
 
-    .content {
-        .join-lobby-panel, .create-lobby-panel{
+.join-lobby-panel, .create-lobby-panel{
 
-            mat-checkbox {
-                align-self: center;
-            }
-        }
+    mat-checkbox {
+        align-self: center;
     }
 }

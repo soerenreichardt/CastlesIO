@@ -43,6 +43,7 @@ public class DTOSerializationTest {
                     Arguments.of("PlacedTileDTO", PlacedTileDTO.class, new PlacedTileDTO(TileDTO.from(tile), 0, 1)),
                     Arguments.of("GameSettingsDTO", GameSettingsDTO.class, GameSettingsDTO.from(gameSettings)),
                     Arguments.of("GameDTO", GameDTO.class, new GameDTO(
+                            "Some pretty game name",
                             new GameStateDTO(GameState.DRAW, player),
                             Map.of(0, Map.of(1, TileDTO.from(tile))),
                             List.of(player)

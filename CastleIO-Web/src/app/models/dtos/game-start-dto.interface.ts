@@ -1,6 +1,6 @@
 import {PlayerAuthentication} from '../player-authentication.interface';
 import {LobbySettings} from '../lobby-settings.interface';
-import {TileDTO} from '../tile-dto';
+import {TileDTO} from './tile-dto';
 
 export interface GameStartDTO {
     gameId: string;

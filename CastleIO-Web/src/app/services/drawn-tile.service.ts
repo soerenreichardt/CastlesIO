@@ -1,27 +1,35 @@
-import { Injectable } from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ReplaySubject} from 'rxjs';
 import {GameService} from './game.service';
-import {Tile} from '../models/tile';
+import {BoardTile} from '../models/boardTile';
 import * as d3 from 'd3';
+import {TileDTO} from '../models/dtos/tile-dto';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DrawnTileService {
-    drawnTile = new BehaviorSubject<Tile>(undefined);
+    drawnTile = new ReplaySubject<BoardTile>();
 
-  constructor(
-      private gameService: GameService
-  ) { }
+    constructor(
+        private gameService: GameService
+    ) {
+    }
 
-  drawTile(playerId: string): void {
-      this.gameService.getNewTile(playerId).subscribe(tileDTO => {
-          const tile = new Tile(tileDTO);
-          const tilePath = `assets/tiles/tile${tile.id}.svg`;
-          d3.xml(tilePath).then(tileData => {
-              tile.element = tileData.documentElement.querySelector<HTMLElement>(`g#tile${tile.id}`);
-              this.drawnTile.next(tile);
-          });
-      });
-  }
+    drawTile(playerId: string): void {
+        this.gameService.getNewTile(playerId).subscribe(tileDTO => {
+            this.setDrawnTile(tileDTO);
+        });
+    }
+
+    getDrawnTile(playerId: string): void {
+        this.gameService.getDrawnTile(playerId).subscribe(tileDTO => {
+            this.setDrawnTile(tileDTO);
+        });
+    }
+
+    private setDrawnTile(tileDTO: TileDTO): void {
+        this.drawnTile.next(new BoardTile(tileDTO, -1, -1));
+    }
+
 }
