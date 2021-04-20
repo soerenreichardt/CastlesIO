@@ -33,12 +33,13 @@ export class GameBoardCanvasComponent implements OnInit {
     ngOnInit(): void {
         this.initCanvas().then(() => {
             addEventListener('resize', () => {
-                this.updateOffset();
+                this.correctCanvasSize();
+                this.resetOffset();
             });
 
             this.gameBoardService.tiles.subscribe(tiles => {
                 this.board = new Board(tiles);
-                this.updateOffset();
+                this.resetOffset();
             });
 
             this.drawnTileService.drawnTile.subscribe(drawnTile => {
@@ -52,15 +53,15 @@ export class GameBoardCanvasComponent implements OnInit {
         return new Promise(resolve => {
             this.canvas = d3.select<HTMLCanvasElement, any>('#game-board-canvas');
             this.canvasElement = this.canvas.node();
+            this.correctCanvasSize();
+
             this.context = this.canvasElement.getContext('2d');
 
             this.canvas.call(
                 d3.drag()
                     .container( this.canvasElement)
                     .subject((event) => this.isEventTargetDrawnTile(event))
-                    .on('start', (event) => this.dragStarted(event))
                     .on('drag', (event) => this.dragging(event))
-                    .on('end', (event) => this.dragEnded(event))
             ).on('click', (event) => this.handleClick(event));
 
             this.svgService.getDrawAreaBackground().then(drawAreaBg => {
@@ -70,13 +71,19 @@ export class GameBoardCanvasComponent implements OnInit {
         });
     }
 
-    private updateOffset(): void {
+    private correctCanvasSize(): void {
+        this.canvasElement.width = this.canvasElement.offsetWidth;
+        this.canvasElement.height = this.canvasElement.offsetHeight;
+    }
+
+
+    private resetOffset(): void {
+        // default offset:
+        // start tile with 0/0 position is rendered in the middle
         this.board.offset = {
             x: this.canvasElement.offsetWidth / 2,
             y: this.canvasElement.offsetHeight / 2
         };
-        this.canvasElement.width = this.canvasElement.offsetWidth;
-        this.canvasElement.height = this.canvasElement.offsetHeight;
         this.render();
     }
 
@@ -98,22 +105,28 @@ export class GameBoardCanvasComponent implements OnInit {
         return (xOnBoardTile && yOnBoardTile);
     }
 
-    private dragStarted(event): void {
-    }
-
-    private dragging(event): void {
+    private dragging(event: any): void {
         if (event.subject) {
-            const pointerPosition = {
-                x: event.x,
-                y: event.y
-            };
-            this.drawnTile.gameLocation = this.board.getGameFromBoardPosition(pointerPosition);
-            this.drawnTile.wasMovedToGameBoard = true;
-            this.render();
+            this.dragDrawnTile(event);
+        } else {
+            this.dragGameBoard(event);
         }
     }
 
-    private dragEnded(event): void {
+    private dragDrawnTile(event: any): void {
+        const pointerPosition = {
+            x: event.x,
+            y: event.y
+        };
+        this.drawnTile.gameLocation = this.board.getGameFromBoardPosition(pointerPosition);
+        this.drawnTile.wasMovedToGameBoard = true;
+        this.render();
+    }
+
+    private dragGameBoard(event: any): void {
+        this.board.offset.x += event.dx;
+        this.board.offset.y += event.dy;
+        this.render();
     }
 
     // ============================ Rotation ===============================
