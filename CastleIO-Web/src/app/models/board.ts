@@ -19,6 +19,13 @@ export class Board {
         };
     }
 
+    getGameFromBoardPosition(boardPosition: Point): Point {
+        return {
+            x: Math.floor((boardPosition.x - this.offset.x) / this.scale),
+            y: Math.floor((boardPosition.y - this.offset.y) / this.scale)
+        };
+    }
+
     addTile(tile: BoardTile): void {
         this.tiles.push(tile);
     }

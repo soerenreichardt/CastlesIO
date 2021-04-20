@@ -4,6 +4,7 @@ import {TileDTO} from '../models/dtos/tile-dto';
 import {BoardTile} from '../models/boardTile';
 import {GameService} from './game.service';
 import {TileGraphics} from '../models/tile-graphics.type';
+import {SvgService} from '../game/game-board/svg.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class GameBoardService {
     tileGraphics = new BehaviorSubject<TileGraphics>('curvy');
 
     constructor(
-        private gameService: GameService
+        private gameService: GameService,
+        private svgService: SvgService
     ) { }
 
     placeTile(playerId: string, tile: BoardTile): void {
@@ -24,15 +26,24 @@ export class GameBoardService {
     }
 
     addTilesFromMap(mapTiles: Map<number, Map<number, TileDTO>>): void {
+        const startTime = Date.now();
+
         const boardTiles = [];
+        const imageLoadPromises = [];
         Object.keys(mapTiles).forEach(x => {
             const xVal = mapTiles[x];
             Object.keys(xVal).forEach(y => {
                 const tileDTO = xVal[y];
-                const boardTile = new BoardTile(tileDTO, Number(x), Number(y));
-                boardTiles.push(boardTile);
+                imageLoadPromises.push(this.svgService.getTileImage(tileDTO).then( tileImage => {
+                    const boardTile = new BoardTile(tileDTO, Number(x), Number(y), tileImage);
+                    boardTiles.push(boardTile);
+                }));
             });
         });
-        this.tiles.next(boardTiles);
+        Promise.all(imageLoadPromises).then(() => {
+            this.tiles.next(boardTiles);
+            const elapsedTime = Date.now() - startTime;
+            console.log(`Converted tiles map and loaded tile images in ${elapsedTime}ms.`);
+        });
     }
 }

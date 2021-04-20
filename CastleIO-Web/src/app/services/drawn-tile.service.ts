@@ -3,6 +3,7 @@ import {ReplaySubject} from 'rxjs';
 import {GameService} from './game.service';
 import {TileDTO} from '../models/dtos/tile-dto';
 import {DrawnBoardTile} from '../models/drawnBoardTile';
+import {SvgService} from '../game/game-board/svg.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,14 +12,14 @@ export class DrawnTileService {
     drawnTile = new ReplaySubject<DrawnBoardTile>();
 
     constructor(
-        private gameService: GameService
+        private gameService: GameService,
+        private svgService: SvgService
     ) {
     }
 
     drawTile(playerId: string): void {
         this.gameService.getNewTile(playerId).subscribe(tileDTO => {
-            const drawnTile = new DrawnBoardTile(tileDTO);
-            this.drawnTile.next(drawnTile);
+            this.setDrawnTileFromDTO(tileDTO);
         });
     }
 
@@ -32,13 +33,18 @@ export class DrawnTileService {
             }
         };
 
-        const drawnTile = new DrawnBoardTile(debugTileDTO);
-        this.drawnTile.next(drawnTile);
+        this.setDrawnTileFromDTO(debugTileDTO);
     }
 
     getDrawnTile(playerId: string): void {
         this.gameService.getDrawnTile(playerId).subscribe(tileDTO => {
-            const drawnTile = new DrawnBoardTile(tileDTO);
+            this.setDrawnTileFromDTO(tileDTO);
+        });
+    }
+
+    private setDrawnTileFromDTO(tileDTO: TileDTO): void {
+        this.svgService.getTileImage(tileDTO).then(tileImage => {
+            const drawnTile = new DrawnBoardTile(tileDTO, tileImage);
             this.drawnTile.next(drawnTile);
         });
     }

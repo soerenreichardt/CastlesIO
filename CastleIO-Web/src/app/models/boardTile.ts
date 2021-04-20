@@ -7,12 +7,14 @@ export class BoardTile {
     gameLocation: Point;
     rotation: number;
     tileDTO: TileDTO;
+    image: HTMLImageElement;
 
-    constructor(tileDTO: TileDTO, x: number, y: number) {
+    constructor(tileDTO: TileDTO, x: number, y: number, image: HTMLImageElement) {
         this.id = tileDTO.id;
         this.gameLocation = {x, y};
         this.rotation = tileDTO.tileLayout.rotation;
         this.tileDTO = tileDTO;
+        this.image = image;
     }
 
     toTileDTO(): TileDTO {
