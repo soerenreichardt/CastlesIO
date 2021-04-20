@@ -111,9 +111,9 @@ class GraphTest {
         graph.fromTile(startTile);
 
         Matrix<TileContent> nextMatrix = new Matrix<>(3, 3, new TileContent[]{
-                TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE,
                 TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
-                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE
+                TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.CASTLE
         });
         var nextTileLayout = new MatrixTileLayout(nextMatrix);
         var nextTile = new Tile(nextTileLayout);
@@ -123,6 +123,6 @@ class GraphTest {
 
         assertThat(graph.relationshipCount()).isEqualTo(2);
         assertThat(graph.relationships().get(new Graph.Node(startTile.getX(), startTile.getY(), 1, 2)))
-                .containsExactly(new Graph.Node(nextTile.getX(), nextTile.getY(), 0, 1));
+                .containsExactly(new Graph.Node(nextTile.getX(), nextTile.getY(), 2, 1));
     }
 }

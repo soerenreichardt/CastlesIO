@@ -16,8 +16,12 @@ public abstract class AbstractTileLayout implements TileLayout {
 
     public void rotate() {
         this.rotation = (this.rotation + 1) % NUM_EDGES;
+
+        int last = activeRotation[activeRotation.length - 1];
         for (int i = 0; i < this.activeRotation.length; i++) {
-            this.activeRotation[i] = (this.activeRotation[i] + 1) % NUM_EDGES;
+            var temp = activeRotation[i];
+            this.activeRotation[i] = last;
+            last = temp;
         }
     }
 
