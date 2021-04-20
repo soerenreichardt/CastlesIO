@@ -62,7 +62,9 @@ export class GameBoardCanvasComponent implements OnInit {
                     .container( this.canvasElement)
                     .subject((event) => this.isEventTargetDrawnTile(event))
                     .on('drag', (event) => this.dragging(event))
-            ).on('click', (event) => this.handleClick(event));
+                );
+            this.canvas.on('click', (event) => this.handleClick(event));
+            this.canvas.call(d3.zoom().on('zoom', (event) => this.zoomCanvas(event)));
 
             this.svgService.getDrawAreaBackground().then(drawAreaBg => {
                 this.drawAreaBg = drawAreaBg;
@@ -157,6 +159,13 @@ export class GameBoardCanvasComponent implements OnInit {
                 console.log(this.drawnTile);
             }
         });
+    }
+
+    // ============================ Zooming ===============================
+
+    private zoomCanvas(event: any): void {
+        this.board.scale = 100 * event.transform.k;
+        this.render();
     }
 
     // ============================ Rendering ===============================
