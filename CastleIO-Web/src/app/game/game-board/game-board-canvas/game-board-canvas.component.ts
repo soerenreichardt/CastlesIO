@@ -7,6 +7,7 @@ import {Board} from '../../../models/board';
 import {Point} from '@angular/cdk/drag-drop';
 import {DrawnTileService} from '../../../services/drawn-tile.service';
 import {SvgService} from '../svg.service';
+import {DrawnBoardTile} from '../../../models/drawnBoardTile';
 
 @Component({
     selector: 'app-game-board-canvas',
@@ -15,7 +16,7 @@ import {SvgService} from '../svg.service';
 })
 export class GameBoardCanvasComponent implements OnInit {
     board: Board;
-    drawnTile: BoardTile;
+    drawnTile: DrawnBoardTile;
 
     canvas: d3.Selection<HTMLCanvasElement, any, HTMLElement, any>;
     canvasElement: HTMLCanvasElement;
@@ -29,26 +30,35 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.canvas = d3.select<HTMLCanvasElement, any>('#game-board-canvas');
-        this.canvasElement = this.canvas.node();
-        this.context = this.canvasElement.getContext('2d');
+        this.initCanvas().then(() => {
+            addEventListener('resize', () => this.updateOffset());
 
-        addEventListener('resize', () => this.updateOffset());
+            this.gameBoardService.tiles.subscribe(tiles => {
+                this.board = new Board(tiles);
+                this.updateOffset();
+            });
 
-        this.gameBoardService.tiles.subscribe(tiles => {
-            this.board = new Board(tiles);
-            this.updateOffset();
+            this.drawnTileService.drawnTile.subscribe(drawnTile => {
+                this.drawnTile = drawnTile;
+                this.render();
+            });
+
+            this.canvas
+                .call( d3.drag()
+                    .container( this.canvasElement)
+                    .subject((event) => this.getHoveredTile(event))
+                );
         });
+    }
 
-        this.drawnTileService.drawnTile.subscribe(drawnTile => {
-            this.setDrawnTile(drawnTile);
+    private initCanvas(): Promise<void> {
+        return new Promise(resolve => {
+            this.canvas = d3.select<HTMLCanvasElement, any>('#game-board-canvas');
+            this.canvasElement = this.canvas.node();
+            this.context = this.canvasElement.getContext('2d');
+
+            resolve();
         });
-
-        this.canvas
-            .call( d3.drag()
-                .container( this.canvasElement)
-                .subject((event) => this.getHoveredTile(event))
-            );
     }
 
     private getHoveredTile(event): BoardTile {
@@ -62,17 +72,6 @@ export class GameBoardCanvasComponent implements OnInit {
             this.renderTile(tile);
         });
     }
-
-    setDrawnTile(drawnTile: TileDTO): void {
-        this.drawnTile = new BoardTile(
-            drawnTile,
-            30,
-            this.canvasElement.offsetHeight - 240
-        );
-        this.render();
-    }
-
-
 
     private render(): void {
         if (this.board) {

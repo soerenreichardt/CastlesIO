@@ -18,7 +18,7 @@ export class SvgService {
         this.gameBoardService.tileGraphics.subscribe(tileGraphics => this.tileGraphics = tileGraphics);
     }
 
-    getTileImage(tile: BoardTile | TileDTO): Promise<HTMLImageElement> {
+    getTileImage(tile: BoardTile): Promise<HTMLImageElement> {
         return new Promise((resolve) => {
             d3.xml(`assets/tiles/${this.tileGraphics}/tile${tile.id}.svg`).then(xmlDom => {
                 const svgElement = xmlDom.querySelector('svg');
