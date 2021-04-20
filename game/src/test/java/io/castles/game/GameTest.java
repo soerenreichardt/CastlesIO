@@ -1,9 +1,9 @@
 package io.castles.game;
 
 import io.castles.core.GameMode;
-import io.castles.core.tile.Meeple;
+import io.castles.core.tile.Figure;
 import io.castles.exceptions.GrasRegionOccupiedException;
-import io.castles.exceptions.NoMeeplesLeftException;
+import io.castles.exceptions.NoFiguresLeftException;
 import io.castles.game.events.GameEvent;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +92,7 @@ class GameTest {
     }
 
     @Nested
-    class Meeples {
+    class Figures {
 
         Player activePlayer;
 
@@ -103,35 +103,35 @@ class GameTest {
         }
 
         @Test
-        void shouldBeAbleToPlaceMeeple() throws GrasRegionOccupiedException, NoMeeplesLeftException {
-            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
-            assertThat(game.getMeeples().size()).isEqualTo(1);
-            assertThat(game.getMeeples().get(0)).isEqualTo(Meeple.create(activePlayer, game.getStartTile(), 0, 0));
+        void shouldBeAbleToPlaceFigure() throws GrasRegionOccupiedException, NoFiguresLeftException {
+            game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
+            assertThat(game.getFigures().size()).isEqualTo(1);
+            assertThat(game.getFigures().get(0)).isEqualTo(Figure.create(activePlayer, game.getStartTile(), 0, 0));
         }
 
         @Test
-        void shouldThrowWhenPlacingIllegalMeeple() throws GrasRegionOccupiedException, NoMeeplesLeftException {
-            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
+        void shouldThrowWhenPlacingIllegalFigure() throws GrasRegionOccupiedException, NoFiguresLeftException {
+            game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
             var nextPlayer = game.getActivePlayer();
             assertThat(nextPlayer).isNotEqualTo(activePlayer);
 
             game.setGameState(GameState.PLACE_FIGURE);
-            assertThatThrownBy(() -> game.placeMeeple(nextPlayer, game.getStartTile(), 0, 0))
+            assertThatThrownBy(() -> game.placeFigure(nextPlayer, game.getStartTile(), 0, 0))
                     .isInstanceOf(GrasRegionOccupiedException.class);
         }
 
         @Test
-        void shouldRemoveAvailableMeepleWhenPlacing() throws GrasRegionOccupiedException, NoMeeplesLeftException {
-            assertThat(game.getMeeplesLeftForPlayer(activePlayer)).isEqualTo(Game.MEEPLES_PER_PLAYER);
-            game.placeMeeple(activePlayer, game.getStartTile(), 0, 0);
-            assertThat(game.getMeeplesLeftForPlayer(activePlayer)).isEqualTo(Game.MEEPLES_PER_PLAYER - 1);
+        void shouldRemoveAvailableFigureWhenPlacing() throws GrasRegionOccupiedException, NoFiguresLeftException {
+            assertThat(game.getFiguresLeftForPlayer(activePlayer)).isEqualTo(Game.FIGURES_PER_PLAYER);
+            game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
+            assertThat(game.getFiguresLeftForPlayer(activePlayer)).isEqualTo(Game.FIGURES_PER_PLAYER - 1);
         }
 
         @Test
-        void shouldThrowIfPlayerHasNoMeeplesLeft() {
-            game.setMeeplesLeftForPlayer(activePlayer, 0);
-            assertThatThrownBy(() -> game.placeMeeple(activePlayer, game.getStartTile(), 0, 0))
-                .isInstanceOf(NoMeeplesLeftException.class);
+        void shouldThrowIfPlayerHasNoFiguresLeft() {
+            game.setFiguresLeftForPlayer(activePlayer, 0);
+            assertThatThrownBy(() -> game.placeFigure(activePlayer, game.getStartTile(), 0, 0))
+                .isInstanceOf(NoFiguresLeftException.class);
         }
     }
 

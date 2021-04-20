@@ -46,7 +46,7 @@ public class EventHandler implements EventProducer<GameEvent> {
                 case PHASE_SWITCHED -> eventConsumers.forEach(consumer -> consumer.onPhaseSwitched((GameState) objects[0], (GameState) objects[1]));
                 case ACTIVE_PLAYER_SWITCHED -> eventConsumers.forEach(consumer -> consumer.onActivePlayerSwitched((Player) objects[0]));
                 case TILE_PLACED -> eventConsumers.forEach(consumer -> consumer.onTilePlaced((Tile) objects[0], (int) objects[1], (int) objects[2]));
-                case MEEPLE_PLACED -> eventConsumers.forEach(consumer -> consumer.onMeeplePlaced((Player) objects[0], (Tile) objects[1], (int) objects[2], (int) objects[3]));
+                case FIGURE_PLACED -> eventConsumers.forEach(consumer -> consumer.onFigurePlaced((Player) objects[0], (Tile) objects[1], (int) objects[2], (int) objects[3]));
             }
         }
     }

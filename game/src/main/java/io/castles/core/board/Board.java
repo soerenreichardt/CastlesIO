@@ -1,7 +1,7 @@
 package io.castles.core.board;
 
 import io.castles.core.GameMode;
-import io.castles.core.tile.Meeple;
+import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
@@ -17,7 +17,7 @@ public class Board implements Lifecycle {
     private final TileProducer tileProducer;
     private final List<BoardListener> boardListeners;
     private final BoardGraph boardGraph;
-    private final List<Meeple> meeples;
+    private final List<Figure> figures;
 
     public static Board create(GameMode gameMode, List<Tile> tileList) {
         if (gameMode == GameMode.DEBUG) {
@@ -53,7 +53,7 @@ public class Board implements Lifecycle {
         this.tileProducer = tileProducer;
         this.boardListeners = new ArrayList<>();
         this.boardGraph = new BoardGraph(this::getTile);
-        this.meeples = new ArrayList<>();
+        this.figures = new ArrayList<>();
 
         initialize();
     }
@@ -94,8 +94,8 @@ public class Board implements Lifecycle {
         return this.tiles;
     }
 
-    public List<Meeple> getMeeples() {
-        return this.meeples;
+    public List<Figure> getFigures() {
+        return this.figures;
     }
 
     public void insertTileToBoard(Tile tile, int x, int y) {
@@ -123,17 +123,17 @@ public class Board implements Lifecycle {
         listener.currentState(tiles);
     }
 
-    public void placeMeepleOnTile(Meeple meeple) throws GrasRegionOccupiedException {
-        validateMeeplePlacement(meeple, meeples);
-        meeples.add(meeple);
+    public void placeFigureOnTile(Figure figure) throws GrasRegionOccupiedException {
+        validateFigurePlacement(figure, figures);
+        figures.add(figure);
     }
 
-    private void validateMeeplePlacement(Meeple meeple, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
-        var meeplePosition = meeple.getPosition();
-        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, meeplePosition.getX(), meeplePosition.getY(), meeplePosition.getRow(), meeplePosition.getColumn())) {
+    private void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws GrasRegionOccupiedException {
+        var figurePosition = figure.getPosition();
+        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, figurePosition.getX(), figurePosition.getY(), figurePosition.getRow(), figurePosition.getColumn())) {
             throw new IllegalArgumentException("Tile region needs to be of type GRAS");
         }
-        boardGraph.validateUniqueMeeplePositionInWcc(meeple, existingMeeples);
+        boardGraph.validateUniqueFigurePositionInWcc(figure, existingFigures);
     }
 
     private Tile[] getNeighborsOfTile(Tile tile) {

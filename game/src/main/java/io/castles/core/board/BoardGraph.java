@@ -3,8 +3,8 @@ package io.castles.core.board;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
 import io.castles.core.graph.algorithm.Wcc;
+import io.castles.core.tile.Figure;
 import io.castles.core.tile.MatrixTileLayout;
-import io.castles.core.tile.Meeple;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.exceptions.GrasRegionOccupiedException;
@@ -88,13 +88,13 @@ public class BoardGraph implements BoardListener {
             : UNCLOSED_STREET;
     }
 
-    public void validateUniqueMeeplePositionInWcc(Meeple meepleToPlace, Collection<Meeple> existingMeeples) throws GrasRegionOccupiedException {
+    public void validateUniqueFigurePositionInWcc(Figure figureToPlace, Collection<Figure> existingFigures) throws GrasRegionOccupiedException {
         var wcc = new Wcc(filterGraphsForContent(TileContent.GRAS));
         wcc.compute();
 
-        for (var existingMeeple : existingMeeples) {
-            if (wcc.sameComponent(meepleToPlace.getPosition(), existingMeeple.getPosition())) {
-                throw new GrasRegionOccupiedException("Gras region occupied by other meeple");
+        for (var existingFigure : existingFigures) {
+            if (wcc.sameComponent(figureToPlace.getPosition(), existingFigure.getPosition())) {
+                throw new GrasRegionOccupiedException("Gras region occupied by other figure");
             }
         }
     }

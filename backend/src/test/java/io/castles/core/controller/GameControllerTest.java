@@ -133,9 +133,9 @@ class GameControllerTest {
     }
 
     @Test
-    void shouldPlaceMeeple() throws Exception {
+    void shouldPlaceFigure() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .post(String.format("/game/%s/meeple", game.getId().toString()))
+                .post(String.format("/game/%s/figure", game.getId().toString()))
                 .param("playerId", game.getActivePlayer().getId().toString())
                 .param("x", "0")
                 .param("y", "1")

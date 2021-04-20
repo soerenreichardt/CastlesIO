@@ -84,8 +84,8 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     @Override
-    public void onMeeplePlaced(Player owner, Tile tile, int row, int column) {
-        sendToAllPlayers(new EventMessageDTO<>(GameEvent.MEEPLE_PLACED.name(), new MeepleDTO(owner.getId(), tile.getX(), tile.getY(), row, column)));
+    public void onFigurePlaced(Player owner, Tile tile, int row, int column) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.FIGURE_PLACED.name(), new FigureDTO(owner.getId(), tile.getX(), tile.getY(), row, column)));
     }
 
     private void createPlayerEmitter(Player player) {

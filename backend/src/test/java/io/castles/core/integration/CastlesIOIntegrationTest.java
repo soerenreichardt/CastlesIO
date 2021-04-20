@@ -89,8 +89,8 @@ public class CastlesIOIntegrationTest {
         placeTile(lobbyId, activePlayer, drawnTile, 0, 1);
         assertThat(game.getTile(0, 1)).isEqualTo(drawnTile);
 
-        placeMeeple(lobbyId, activePlayer, 0, 1, 0, 0);
-        assertThat(game.getMeeples().size()).isEqualTo(1);
+        placeFigure(lobbyId, activePlayer, 0, 1, 0, 0);
+        assertThat(game.getFigures().size()).isEqualTo(1);
 
         assertThat(game.getActivePlayer()).isNotEqualTo(activePlayer);
     }
@@ -183,9 +183,9 @@ public class CastlesIOIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    private void placeMeeple(UUID lobbyId, Player activePlayer, int x, int y, int row, int column) throws Exception {
-        var placeMeepleUrl = String.format("/game/%s/meeple", lobbyId);
-        mvc.perform(MockMvcRequestBuilders.post(placeMeepleUrl)
+    private void placeFigure(UUID lobbyId, Player activePlayer, int x, int y, int row, int column) throws Exception {
+        var placeFigureUrl = String.format("/game/%s/figure", lobbyId);
+        mvc.perform(MockMvcRequestBuilders.post(placeFigureUrl)
                 .param("playerId", activePlayer.getId().toString())
                 .param("x", Integer.toString(x))
                 .param("y", Integer.toString(y))
