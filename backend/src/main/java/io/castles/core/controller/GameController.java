@@ -8,7 +8,7 @@ import io.castles.core.model.dto.TileDTO;
 import io.castles.core.service.GameService;
 import io.castles.core.tile.Tile;
 import io.castles.exceptions.GrasRegionOccupiedException;
-import io.castles.exceptions.NoMeeplesLeftException;
+import io.castles.exceptions.NoFiguresLeftException;
 import io.castles.game.Game;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -76,8 +76,8 @@ public class GameController {
         this.gameService.skipPhase(id, playerId);
     }
 
-    @PostMapping(value = "/meeple")
-    void placeMeeple(
+    @PostMapping(value = "/figure")
+    void placeFigure(
             @PathVariable("id") UUID id,
             @RequestParam("playerId") UUID playerId,
             @RequestParam("x") int x,
@@ -86,8 +86,8 @@ public class GameController {
             @RequestParam("column") int column
     ) {
         try {
-            gameService.placeMeeple(id, playerId, x, y, row, column);
-        } catch (GrasRegionOccupiedException | NoMeeplesLeftException e) {
+            gameService.placeFigure(id, playerId, x, y, row, column);
+        } catch (GrasRegionOccupiedException | NoFiguresLeftException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }

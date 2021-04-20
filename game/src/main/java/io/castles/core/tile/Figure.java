@@ -7,18 +7,18 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
-public class Meeple {
+public class Figure {
 
     private final Graph.Node position;
     private final Player owner;
 
-    public Meeple(Graph.Node position, Player owner) {
+    public Figure(Graph.Node position, Player owner) {
         this.position = position;
         this.owner = owner;
     }
 
-    public static Meeple create(Player owner, Tile tile, int row, int column) {
-        return new Meeple(
+    public static Figure create(Player owner, Tile tile, int row, int column) {
+        return new Figure(
                 new Graph.Node(tile.getX(), tile.getY(), row, column),
                 owner
         );

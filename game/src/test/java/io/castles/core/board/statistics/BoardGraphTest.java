@@ -69,7 +69,7 @@ class BoardGraphTest {
     }
 
     @Nested
-    class Meeples {
+    class Figures {
 
         Board board;
 
@@ -92,7 +92,7 @@ class BoardGraphTest {
         }
 
         @Test
-        void shouldBeAbleToPlaceValidMeeple() throws GrasRegionOccupiedException {
+        void shouldBeAbleToPlaceValidFigure() throws GrasRegionOccupiedException {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
             Matrix<TileContent> streetEndMatrix = new Matrix<>(3, 3, new TileContent[]{
@@ -104,10 +104,10 @@ class BoardGraphTest {
 
             board.insertTileToBoard(rightTile, 1, 0);
 
-            board.getBoardStatistics().validateUniqueMeeplePositionInWcc(
-                    new Meeple(new Graph.Node(1, 0, 0, 2), p2),
+            board.getBoardStatistics().validateUniqueFigurePositionInWcc(
+                    new Figure(new Graph.Node(1, 0, 0, 2), p2),
                     List.of(
-                            new Meeple(new Graph.Node(0, 0, 0, 2), p1)
+                            new Figure(new Graph.Node(0, 0, 0, 2), p1)
                     )
             );
         }
@@ -117,13 +117,13 @@ class BoardGraphTest {
                 "-1, 0, 0, 0",
                 "0, 0, 2, 0"
         })
-        void shouldDetectOtherMeeplesInWcc(int tileX, int tileY, int tileRow, int tileColumn) {
+        void shouldDetectOtherFiguresInWcc(int tileX, int tileY, int tileRow, int tileColumn) {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
-            assertThatThrownBy(() -> board.getBoardStatistics().validateUniqueMeeplePositionInWcc(
-                    new Meeple(new Graph.Node(tileX, tileY, tileRow, tileColumn), p2),
+            assertThatThrownBy(() -> board.getBoardStatistics().validateUniqueFigurePositionInWcc(
+                    new Figure(new Graph.Node(tileX, tileY, tileRow, tileColumn), p2),
                     List.of(
-                            new Meeple(new Graph.Node(0, 0, 0, 2), p1)
+                            new Figure(new Graph.Node(0, 0, 0, 2), p1)
                     )
             )).isInstanceOf(GrasRegionOccupiedException.class);
         }
