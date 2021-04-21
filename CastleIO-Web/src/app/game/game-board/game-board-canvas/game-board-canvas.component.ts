@@ -7,6 +7,7 @@ import {Point} from '@angular/cdk/drag-drop';
 import {DrawnTileService} from '../../../services/drawn-tile.service';
 import {SvgService} from '../svg.service';
 import {DrawnBoardTile} from '../../../models/drawnBoardTile';
+import {FiguresService} from '../figures.service';
 
 @Component({
     selector: 'app-game-board-canvas',
@@ -16,6 +17,7 @@ import {DrawnBoardTile} from '../../../models/drawnBoardTile';
 export class GameBoardCanvasComponent implements OnInit {
     board: Board;
     drawnTile: DrawnBoardTile;
+    figuresLeft: number;
 
     drawAreaBg: HTMLImageElement;
 
@@ -26,7 +28,8 @@ export class GameBoardCanvasComponent implements OnInit {
     constructor(
         private gameBoardService: GameBoardService,
         private drawnTileService: DrawnTileService,
-        private svgService: SvgService
+        private svgService: SvgService,
+        private figuresService: FiguresService
     ) {
     }
 
@@ -44,6 +47,11 @@ export class GameBoardCanvasComponent implements OnInit {
 
             this.drawnTileService.drawnTile.subscribe(drawnTile => {
                 this.drawnTile = drawnTile;
+                this.render();
+            });
+
+            this.gameBoardService.figuresLeft.subscribe( figuresLeft => {
+                this.figuresLeft = figuresLeft;
                 this.render();
             });
         });
@@ -190,6 +198,39 @@ export class GameBoardCanvasComponent implements OnInit {
         };
         this.context.drawImage(this.drawAreaBg, drawAreaPosition.x, drawAreaPosition.y, 400, 300);
         this.context.clearRect(25, this.canvasElement.offsetHeight - 245, 110, 110);
+        this.renderFigures();
+    }
+
+    private renderFigures(): void {
+        const numberOfFigures = this.figuresService.NUMBER_OF_FIGURES;
+        const figureMask = this.figuresService.figureMask;
+
+        this.figuresService.getFigures().forEach((figure, index) => {
+            let xPos = 150 + (index * 50);
+            let yPos = this.canvasElement.offsetHeight - 235;
+            if (index > 2) {
+                yPos = this.canvasElement.offsetHeight - 185;
+                xPos = 150 + (index - 3) * 50;
+            }
+
+            this.context.drawImage(
+                figureMask,
+                xPos,
+                yPos,
+                35,
+                40
+            );
+
+            if (this.figuresLeft >= index + 1) {
+                this.context.drawImage(
+                    figure,
+                    xPos,
+                    yPos,
+                    35,
+                    40
+                );
+            }
+        });
     }
 
     private renderDrawnTile(): void {
@@ -224,18 +265,16 @@ export class GameBoardCanvasComponent implements OnInit {
 
     private renderWithRotation(image: HTMLImageElement, rotation: number, position: Point, scale: number): void {
         const radRotation = rotation * Math.PI / 180;
-
         this.context.translate(position.x, position.y);
         this.context.rotate(radRotation);
         // draw image with image center at context center
         this.context.drawImage(image, -scale / 2, -scale / 2, scale, scale);
-
         // reset context (dont use context.save() as this is slower <storing all context fields>)
         this.context.rotate(-radRotation);
         this.context.translate(-position.x, -position.y);
     }
 
-    // ============================ Rendering ===============================
+    // ============================ Helper ===============================
 
     private getDrawnTileInitialPosition(): Point {
         return {

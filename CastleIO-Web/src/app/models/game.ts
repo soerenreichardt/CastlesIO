@@ -9,6 +9,7 @@ export class Game {
     players: PlayerDTO[];
     gameState: GameStateDTO;
     tiles: Map<number, Map<number, TileDTO>>;
+    playerFiguresLeft: Map<string, number>;
 
     myId: string;
 
@@ -17,6 +18,7 @@ export class Game {
         this.players = gameDTO.players;
         this.gameState = gameDTO.gameState;
         this.tiles = gameDTO.tiles;
+        this.playerFiguresLeft = gameDTO.playerMeeplesLeft;
         this.myId = playerId;
     }
 
@@ -37,5 +39,9 @@ export class Game {
 
     myTurn(): boolean {
         return this.gameState.player.id === this.myId;
+    }
+
+    getOwnFiguresLeft(): number {
+        return this.playerFiguresLeft[this.myId];
     }
 }

@@ -7,6 +7,7 @@ import {EventService} from '../services/events/event.service';
 import {Game} from '../models/game';
 import {GameBoardService} from '../services/game-board.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
     selector: 'app-game',
@@ -48,6 +49,10 @@ export class GameComponent implements OnInit, OnDestroy {
                 if (game.timeToPlaceTile()) {
                     this.drawnTileService.getDrawnTile(this.playerId);
                 }
+            }, (error: HttpErrorResponse) => {
+                if (error.status === 500) {
+                    this.redirectIfGameDoesNotExist();
+                }
             });
         }
     }
@@ -65,10 +70,18 @@ export class GameComponent implements OnInit, OnDestroy {
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;
         });
+        this.gameBoardService.figuresLeft.next(this.game.getOwnFiguresLeft());
     }
 
     private redirectUnauthenticatedPlayer(): void {
-        this.snackBar.open('The lobby does not exist.', '', {duration: 3000});
+        this.snackBar.open('You are not part of this game.', '', {duration: 3000});
+        setTimeout(() => {
+            this.router.navigate(['']);
+        }, 3000);
+    }
+
+    private redirectIfGameDoesNotExist(): void {
+        this.snackBar.open('This game does not exist.', '', {duration: 3000});
         setTimeout(() => {
             this.router.navigate(['']);
         }, 3000);
