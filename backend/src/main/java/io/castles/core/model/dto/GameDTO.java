@@ -17,7 +17,7 @@ public class GameDTO {
     GameStateDTO gameState;
     Map<Integer, Map<Integer, TileDTO>> tiles;
     List<PlayerDTO> players;
-    Map<UUID, Integer> playerMeeplesLeft;
+    Map<UUID, Integer> playerFiguresLeft;
 
     public static GameDTO from(Game game) {
         var board = game.getGameBoardTileMap().entrySet().stream().collect(Collectors.toMap(
@@ -28,7 +28,7 @@ public class GameDTO {
                 ))
         );
 
-        var playerMeeplesLeft = game.getMeeplesLeft().entrySet().stream().collect(Collectors.toMap(
+        var playerFiguresLeft = game.getFiguresLeft().entrySet().stream().collect(Collectors.toMap(
                 entry -> entry.getKey().getId(),
                 Entry::getValue
         ));
@@ -38,7 +38,7 @@ public class GameDTO {
                 GameStateDTO.from(game),
                 board,
                 game.getPlayers().stream().map(PlayerDTO::from).collect(Collectors.toList()),
-                playerMeeplesLeft
+                playerFiguresLeft
         );
     }
 }

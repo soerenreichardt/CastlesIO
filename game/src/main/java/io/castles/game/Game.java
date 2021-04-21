@@ -120,8 +120,8 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.playerFiguresLeft.get(player);
     }
 
-    public Map<Player, Integer> getMeeplesLeft() {
-        return this.playerMeeplesLeft;
+    public Map<Player, Integer> getFiguresLeft() {
+        return this.playerFiguresLeft;
     }
 
     @TestOnly

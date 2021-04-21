@@ -18,7 +18,7 @@ export class Game {
         this.players = gameDTO.players;
         this.gameState = gameDTO.gameState;
         this.tiles = gameDTO.tiles;
-        this.playerFiguresLeft = gameDTO.playerMeeplesLeft;
+        this.playerFiguresLeft = gameDTO.playerFiguresLeft;
         this.myId = playerId;
     }
 
