@@ -11,7 +11,6 @@ import {SvgService} from '../game/game-board/svg.service';
 })
 export class GameBoardService {
     tiles = new ReplaySubject<BoardTile[]>();
-    tileGraphics = new BehaviorSubject<TileGraphics>('curvy');
     figuresLeft = new ReplaySubject<number>();
 
     constructor(
