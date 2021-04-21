@@ -62,8 +62,8 @@ class MatrixTileLayoutTest {
     void shouldRotateCorrectly() {
         tileLayout.rotate();
 
-        assertThat(tileLayout.getTileContentEdge(TileLayout.LEFT)).containsExactlyElementsOf(List.of(TileContent.GRAS, TileContent.GRAS, TileContent.GRAS));
-        assertThat(tileLayout.getTileContentEdge(TileLayout.RIGHT)).containsExactlyElementsOf(List.of(TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE));
+        assertThat(tileLayout.getTileContentEdge(TileLayout.LEFT)).containsExactlyElementsOf(List.of(TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE));
+        assertThat(tileLayout.getTileContentEdge(TileLayout.RIGHT)).containsExactlyElementsOf(List.of(TileContent.GRAS, TileContent.GRAS, TileContent.GRAS));
         assertThat(tileLayout.getTileContentEdge(TileLayout.TOP)).containsExactlyElementsOf(List.of(TileContent.GRAS, TileContent.STREET, TileContent.CASTLE));
         assertThat(tileLayout.getTileContentEdge(TileLayout.BOTTOM)).containsExactlyElementsOf(List.of(TileContent.GRAS, TileContent.STREET, TileContent.CASTLE));
 

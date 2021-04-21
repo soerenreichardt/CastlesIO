@@ -64,7 +64,7 @@ class TileTest {
     @Test
     void shouldRotateTile() {
         var tile = Tile.drawSpecific(TileContent.GRAS, TileContent.GRAS, TileContent.STREET, TileContent.CASTLE);
-        Tile expectedRotation = Tile.drawSpecific(TileContent.STREET, TileContent.CASTLE, TileContent.GRAS, TileContent.GRAS);
+        Tile expectedRotation = Tile.drawSpecific(TileContent.CASTLE, TileContent.STREET, TileContent.GRAS, TileContent.GRAS);
         tile.rotate();
         for (int i = 0; i < tile.getTileEdges().length; i++) {
             assertEquals(expectedRotation.getTileEdges()[i], tile.getTileEdges()[i]);
