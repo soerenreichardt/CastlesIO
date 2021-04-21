@@ -48,7 +48,7 @@ class BoardGraphTest {
         board.insertTileToBoard(leftTile, -1, 0);
         board.insertTileToBoard(rightTile, 1, 0);
 
-        int streetLength = board.getBoardStatistics().getStreetLength(board.getTile(0, 0), 1, 1);
+        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0), 1, 1);
         assertThat(streetLength).isEqualTo(3);
     }
 
@@ -64,7 +64,7 @@ class BoardGraphTest {
         Board board = Board.withSpecificTile(startLayout);
         board.insertTileToBoard(leftTile, -1, 0);
 
-        int streetLength = board.getBoardStatistics().getStreetLength(board.getTile(0, 0), 1, 1);
+        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0), 1, 1);
         assertThat(streetLength).isEqualTo(BoardGraph.UNCLOSED_STREET);
     }
 
@@ -104,7 +104,7 @@ class BoardGraphTest {
 
             board.insertTileToBoard(rightTile, 1, 0);
 
-            board.getBoardStatistics().validateUniqueFigurePositionInWcc(
+            board.getBoardGraph().validateUniqueFigurePositionInWcc(
                     new Figure(new Graph.Node(1, 0, 0, 2), p2),
                     List.of(
                             new Figure(new Graph.Node(0, 0, 0, 2), p1)
@@ -120,7 +120,7 @@ class BoardGraphTest {
         void shouldDetectOtherFiguresInWcc(int tileX, int tileY, int tileRow, int tileColumn) {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
-            assertThatThrownBy(() -> board.getBoardStatistics().validateUniqueFigurePositionInWcc(
+            assertThatThrownBy(() -> board.getBoardGraph().validateUniqueFigurePositionInWcc(
                     new Figure(new Graph.Node(tileX, tileY, tileRow, tileColumn), p2),
                     List.of(
                             new Figure(new Graph.Node(0, 0, 0, 2), p1)

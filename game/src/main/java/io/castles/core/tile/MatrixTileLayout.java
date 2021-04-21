@@ -141,7 +141,7 @@ public class MatrixTileLayout extends AbstractTileLayout {
             // match center
             int largeHalf = largeEdge.length / 2;
             int smallHalf = smallEdge.length / 2;
-            if (!consumer.accept(largeEdge[largeHalf], largeHalf, smallEdge[smallHalf], smallHalf)) {
+            if (!consumer.accept(smallEdge[smallHalf], smallHalf, largeEdge[largeHalf], largeHalf)) {
                 return false;
             }
 

@@ -72,7 +72,7 @@ public class Board implements Lifecycle {
         initialize();
     }
 
-    public BoardGraph getBoardStatistics() {
+    public BoardGraph getBoardGraph() {
         return this.boardGraph;
     }
 
