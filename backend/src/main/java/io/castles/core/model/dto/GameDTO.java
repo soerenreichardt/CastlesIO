@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Value
@@ -27,9 +28,9 @@ public class GameDTO {
                 ))
         );
 
-        var playerMeeplesLeft = game.getPlayers().stream().collect(Collectors.toMap(
-                Player::getId,
-                game::getMeeplesLeftForPlayer
+        var playerMeeplesLeft = game.getMeeplesLeft().entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey().getId(),
+                Entry::getValue
         ));
 
         return new GameDTO(

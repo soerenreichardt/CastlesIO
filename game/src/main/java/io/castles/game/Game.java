@@ -120,6 +120,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.playerFiguresLeft.get(player);
     }
 
+    public Map<Player, Integer> getMeeplesLeft() {
+        return this.playerMeeplesLeft;
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
