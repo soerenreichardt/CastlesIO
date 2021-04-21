@@ -26,6 +26,12 @@ export class Board {
         };
     }
 
+    isTaken(gamePosition: Point): boolean {
+        return this.tiles.some(tile => {
+            return tile.gameLocation.x === gamePosition.x && tile.gameLocation.y === gamePosition.y;
+        });
+    }
+
     addTile(tile: BoardTile): void {
         this.tiles.push(tile);
     }

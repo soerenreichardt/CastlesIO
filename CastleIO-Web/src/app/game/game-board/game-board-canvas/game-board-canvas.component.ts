@@ -72,7 +72,7 @@ export class GameBoardCanvasComponent implements OnInit {
                     .on('drag', (event) => this.dragging(event))
                 );
             this.canvas.on('click', (event) => this.handleClick(event));
-            this.canvas.call(d3.zoom().on('zoom', (event) => this.zoomCanvas(event)));
+            this.canvas.call(d3.zoom().scaleExtent([0.1, 3]).on('zoom', (event) => this.zoomCanvas(event)));
 
             this.svgService.getDrawAreaBackground().then(drawAreaBg => {
                 this.drawAreaBg = drawAreaBg;
@@ -128,7 +128,11 @@ export class GameBoardCanvasComponent implements OnInit {
             x: event.x,
             y: event.y
         };
-        this.drawnTile.gameLocation = this.board.getGameFromBoardPosition(pointerPosition);
+        const gamePosition = this.board.getGameFromBoardPosition(pointerPosition);
+        if (this.board.isTaken(gamePosition)) {
+            return;
+        }
+        this.drawnTile.gameLocation = gamePosition;
         this.drawnTile.wasMovedToGameBoard = true;
         this.render();
     }
@@ -202,35 +206,36 @@ export class GameBoardCanvasComponent implements OnInit {
     }
 
     private renderFigures(): void {
-        const numberOfFigures = this.figuresService.NUMBER_OF_FIGURES;
         const figureMask = this.figuresService.figureMask;
 
-        this.figuresService.getFigures().forEach((figure, index) => {
-            let xPos = 150 + (index * 50);
-            let yPos = this.canvasElement.offsetHeight - 235;
-            if (index > 2) {
-                yPos = this.canvasElement.offsetHeight - 185;
-                xPos = 150 + (index - 3) * 50;
-            }
+        if (figureMask) {
+            this.figuresService.getFigures().forEach((figure, index) => {
+                let xPos = 150 + (index * 50);
+                let yPos = this.canvasElement.offsetHeight - 235;
+                if (index > 2) {
+                    yPos = this.canvasElement.offsetHeight - 185;
+                    xPos = 150 + (index - 3) * 50;
+                }
 
-            this.context.drawImage(
-                figureMask,
-                xPos,
-                yPos,
-                35,
-                40
-            );
-
-            if (this.figuresLeft >= index + 1) {
                 this.context.drawImage(
-                    figure,
+                    figureMask,
                     xPos,
                     yPos,
                     35,
                     40
                 );
-            }
-        });
+
+                if (this.figuresLeft >= index + 1) {
+                    this.context.drawImage(
+                        figure,
+                        xPos,
+                        yPos,
+                        35,
+                        40
+                    );
+                }
+            });
+        }
     }
 
     private renderDrawnTile(): void {
