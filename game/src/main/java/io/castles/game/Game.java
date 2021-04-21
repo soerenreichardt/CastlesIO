@@ -151,6 +151,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         drawnTile = null;
     }
 
+    public List<Integer> getMatchingTileRotations(Tile tile, int x, int y) {
+        return this.board.getMatchingRotations(tile, x, y);
+    }
+
     public void placeFigure(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoFiguresLeftException {
         var figuresLeft = playerFiguresLeft.get(player);
         if (figuresLeft == 0) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -50,6 +51,12 @@ public class GameService {
         var game = gameById(gameId);
         var player = game.getPlayerById(playerId);
         game.placeTile(player, tileDTO.toTile(), x, y);
+    }
+
+    public List<Integer> getMatchingTileRotations(UUID gameId, TileDTO tileDTO, int x, int y) {
+        var game = gameById(gameId);
+
+        return game.getMatchingTileRotations(tileDTO.toTile(), x, y);
     }
 
     public void skipPhase(UUID gameId, UUID playerId) {

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {TileDTO} from '../models/dtos/tile-dto';
 import {BoardTile} from '../models/boardTile';
 import {GameService} from './game.service';
@@ -18,6 +18,14 @@ export class GameBoardService {
         private gameService: GameService,
         private svgService: SvgService
     ) { }
+
+    getMatchingTileRotations(tile: BoardTile): Observable<number[]> {
+        const tileDTO = tile.toTileDTO();
+        const {x, y} = tile.gameLocation;
+        tileDTO.tileLayout.rotation = 0;
+
+        return this.gameService.getMatchingTileRotations(tileDTO, x, y);
+    }
 
     placeTile(playerId: string, tile: BoardTile): void {
         const tileDTO = tile.toTileDTO();

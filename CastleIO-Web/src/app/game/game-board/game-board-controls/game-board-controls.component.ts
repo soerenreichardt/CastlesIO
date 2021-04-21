@@ -43,6 +43,6 @@ export class GameBoardControlsComponent implements OnInit {
     }
 
     resetGame(): void {
-        this.gameService.resetGame();
+        this.gameService.resetGame().subscribe();
     }
 }

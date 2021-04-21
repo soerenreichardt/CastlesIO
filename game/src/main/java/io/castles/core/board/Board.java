@@ -9,6 +9,7 @@ import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board implements Lifecycle {
@@ -106,16 +107,46 @@ public class Board implements Lifecycle {
 
         tile.insertToBoard(x, y);
 
-        Tile[] neighbors = getNeighborsOfTile(tile);
+        Tile[] neighbors = getNeighborsOfPosition(tile.getX(), tile.getY());
 
-        checkTileHasNeighbor(tile, neighbors);
-        checkMatchingBorders(tile, neighbors);
+        if (!doesTileHaveNeighbors(tile, neighbors)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        };
+        if (!doesTileMatch(tile, neighbors)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Tile at position (%d|%d) has incompatible borders to its surrounding.",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        }
 
         setNeighborsFromAndToTile(tile, neighbors);
 
         innerTiles.put(y, tile);
         notifyListeners(tile);
     }
+
+    public List<Integer> getMatchingRotations(Tile tile, int x, int y) {
+        List<Integer> matchingRotations = new ArrayList<>();
+
+        for(var i = 0; i <= 3; i++) {
+            Tile[] neighbors = getNeighborsOfPosition(x, y);
+            if (doesTileMatch(tile, neighbors)) {
+                matchingRotations.add(i);
+            }
+            tile.rotate();
+        }
+
+        return matchingRotations;
+    };
 
     public void addBoardListener(BoardListener listener) {
         this.boardListeners.add(listener);
@@ -136,10 +167,7 @@ public class Board implements Lifecycle {
         boardGraph.validateUniqueFigurePositionInWcc(figure, existingFigures);
     }
 
-    private Tile[] getNeighborsOfTile(Tile tile) {
-        int x = tile.getX();
-        int y = tile.getY();
-
+    private Tile[] getNeighborsOfPosition(int x, int y) {
         Tile[] neighbors = new Tile[4];
 
         neighbors[TileLayout.LEFT] = getLeftNeighbor(x, y).orElse(null);
@@ -150,38 +178,22 @@ public class Board implements Lifecycle {
         return neighbors;
     }
 
-    private void checkTileHasNeighbor(Tile tile, Tile[] neighbors) {
+    private boolean doesTileHaveNeighbors(Tile tile, Tile[] neighbors) {
         boolean hasNoNeighbor = neighbors[TileLayout.LEFT] == null
                 && neighbors[TileLayout.RIGHT] == null
                 && neighbors[TileLayout.TOP] == null
                 && neighbors[TileLayout.BOTTOM] == null;
 
-        if (hasNoNeighbor) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
-                            tile.getX(),
-                            tile.getY()
-                    )
-            );
-        }
+        return !hasNoNeighbor;
     }
 
-    private void checkMatchingBorders(Tile tile, Tile[] neighbors) {
+    private boolean doesTileMatch(Tile tile, Tile[] neighbors) {
         boolean leftMatching = tile.matches(neighbors[TileLayout.LEFT], TileLayout.LEFT);
         boolean rightMatching = tile.matches(neighbors[TileLayout.RIGHT], TileLayout.RIGHT);
         boolean topMatching = tile.matches(neighbors[TileLayout.TOP], TileLayout.TOP);
         boolean bottomMatching = tile.matches(neighbors[TileLayout.BOTTOM], TileLayout.BOTTOM);
 
-        if (!(leftMatching && rightMatching && topMatching && bottomMatching)) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Tile at position (%d|%d) has incompatible borders to its surrounding.",
-                            tile.getX(),
-                            tile.getY()
-                    )
-            );
-        }
+        return (leftMatching && rightMatching && topMatching && bottomMatching);
     }
 
     private void setNeighborsFromAndToTile(Tile tile, Tile[] neighbors) {

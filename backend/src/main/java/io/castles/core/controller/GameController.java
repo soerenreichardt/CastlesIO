@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -70,6 +71,12 @@ public class GameController {
     void insertTile(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
         gameService.placeTile(id, playerId, x, y, tile);
     }
+
+    @PostMapping(value = "/tile/rotations")
+    List<Integer> getMatchingTileRotations(@PathVariable("id") UUID id, @RequestParam("x") int x, @RequestParam("y") int y, @RequestBody TileDTO tile) {
+        return gameService.getMatchingTileRotations(id, tile, x, y);
+    }
+
 
     @PostMapping(value = "/skip")
     void skipPhase(@PathVariable("id") UUID id, @RequestParam("playerId") UUID playerId) {

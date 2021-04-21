@@ -47,6 +47,13 @@ export class GameBoardCanvasComponent implements OnInit {
 
             this.drawnTileService.drawnTile.subscribe(drawnTile => {
                 this.drawnTile = drawnTile;
+                this.drawnTile.validRotationsChanged.subscribe( () => {
+                    if (this.drawnTile.validRotations.length === 0) {
+                        this.render();
+                    } else {
+                        this.rotateDrawnTileIfRotationInvalid();
+                    }
+                });
                 this.render();
             });
 
@@ -64,15 +71,21 @@ export class GameBoardCanvasComponent implements OnInit {
             this.correctCanvasSize();
 
             this.context = this.canvasElement.getContext('2d');
+            this.context.strokeStyle = '#e91e63';
+            this.context.lineWidth = 4;
 
             this.canvas.call(
                 d3.drag()
                     .container( this.canvasElement)
                     .subject((event) => this.isEventTargetDrawnTile(event))
                     .on('drag', (event) => this.dragging(event))
+                    .on('end', (event) => this.dragend(event))
                 );
-            this.canvas.on('click', (event) => this.handleClick(event));
-            this.canvas.call(d3.zoom().scaleExtent([0.1, 3]).on('zoom', (event) => this.zoomCanvas(event)));
+            this.canvas.call(
+                d3.zoom()
+                    .scaleExtent([0.1, 3])
+                    .on('zoom', (event) => this.zoomCanvas(event)));
+            this.canvas.on('dblclick.zoom', null);
 
             this.svgService.getDrawAreaBackground().then(drawAreaBg => {
                 this.drawAreaBg = drawAreaBg;
@@ -123,17 +136,37 @@ export class GameBoardCanvasComponent implements OnInit {
         }
     }
 
+    private dragend(event: any): void {
+        if (!this.drawnTile) {
+            return;
+        }
+        if (this.drawnTile.dragging) {
+            this.gameBoardService.getMatchingTileRotations(this.drawnTile).subscribe(validRotations => {
+                this.drawnTile.setValidRotation(validRotations);
+            });
+        } else {
+            this.handleClick(event);
+        }
+        this.drawnTile.dragging = false;
+    }
+
     private dragDrawnTile(event: any): void {
         const pointerPosition = {
             x: event.x,
             y: event.y
         };
-        const gamePosition = this.board.getGameFromBoardPosition(pointerPosition);
-        if (this.board.isTaken(gamePosition)) {
+        const pointerGamePosition = this.board.getGameFromBoardPosition(pointerPosition);
+        if (this.board.isTaken(pointerGamePosition)) {
             return;
         }
-        this.drawnTile.gameLocation = gamePosition;
+
+        if (this.drawnTile.gameLocation.x === pointerGamePosition.x && this.drawnTile.gameLocation.y === pointerGamePosition.y) {
+            return;
+        }
+
+        this.drawnTile.gameLocation = pointerGamePosition;
         this.drawnTile.wasMovedToGameBoard = true;
+        this.drawnTile.dragging = true;
         this.render();
     }
 
@@ -150,25 +183,47 @@ export class GameBoardCanvasComponent implements OnInit {
             return;
         }
         if (this.isEventTargetDrawnTile(event)) {
-            this.animateTileRotation();
+            this.rotateDrawnTileToNextValidRotation();
         }
     }
 
-    private animateTileRotation(): void {
+    private rotateDrawnTileIfRotationInvalid(): void {
+        const validRotations = this.drawnTile.validRotations;
+        const drawnTileRotation = this.drawnTile.rotation / 90;
+
+        if (validRotations.some(validRotation => validRotation === drawnTileRotation)) {
+            return;
+        }
+        this.rotateDrawnTileToNextValidRotation();
+    }
+
+    private rotateDrawnTileToNextValidRotation(): void {
+        const validRotations = this.drawnTile.validRotations;
+        const drawnTileRotation = this.drawnTile.rotation / 90;
+
+        const numberOfRotationsToBeValid = [1, 2, 3].find(numRotations => {
+            return validRotations.includes((drawnTileRotation + numRotations) % 4);
+        });
+
+        if (numberOfRotationsToBeValid) {
+            this.animateDrawnTileRotation(numberOfRotationsToBeValid * 90);
+        }
+    }
+
+    private animateDrawnTileRotation(degree = 90): void {
         const duration = 200;
         const ease = d3.easeCubic;
 
         const oldRotation = this.drawnTile.rotation;
-        this.drawnTile.rotation = (oldRotation + 90) % 360;
+        this.drawnTile.rotation = (oldRotation + degree) % 360;
 
         const timer = d3.timer(elapsed => {
-            const rotation = Math.min(90, (ease(elapsed / duration)) * 90);
+            const rotation = Math.min(degree, (ease(elapsed / duration)) * degree);
             this.drawnTile.animatingRotation = oldRotation + rotation;
             this.render();
 
-            if (rotation === 90) {
+            if (rotation === degree) {
                 timer.stop();
-                console.log(this.drawnTile);
             }
         });
     }
@@ -184,11 +239,12 @@ export class GameBoardCanvasComponent implements OnInit {
 
     private render(): void {
         this.context.clearRect(0, 0, this.canvasElement.offsetWidth, this.canvasElement.offsetHeight);
-        this.renderDrawArea();
 
         if (this.board) {
             this.renderPlacedTiles();
         }
+
+        this.renderDrawArea();
 
         if (this.drawnTile) {
             this.renderDrawnTile();
@@ -251,6 +307,15 @@ export class GameBoardCanvasComponent implements OnInit {
             rotation,
             drawTilePosition,
             scale);
+
+        if (!this.drawnTile.dragging && this.drawnTile.validRotations.length === 0) {
+            this.context.strokeRect(
+                drawTilePosition.x - scale / 2,
+                drawTilePosition.y - scale / 2,
+                scale,
+                scale
+            );
+        }
     }
 
     private renderPlacedTiles(): void {
