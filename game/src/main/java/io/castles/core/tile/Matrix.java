@@ -28,4 +28,8 @@ public class Matrix<T> {
     public int getColumnFromIndex(int index) {
         return index % columns;
     }
+
+    public int positionInArray(int row, int column) {
+        return column + columns * row;
+    }
 }

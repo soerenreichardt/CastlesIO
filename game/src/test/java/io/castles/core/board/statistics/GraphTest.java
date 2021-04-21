@@ -158,6 +158,12 @@ class GraphTest {
         assertThat(streetGraph.relationships().get(new Graph.Node(0, 0, 2, 1)))
                 .contains(new Graph.Node(0, -1, 0, 2));
 
+        assertThat(grasGraph.relationships().get(new Graph.Node(0, 0, 2, 0)))
+                .contains(
+                        new Graph.Node(0, -1, 0, 0),
+                        new Graph.Node(0, -1, 0, 1)
+                );
+
         assertThat(grasGraph.relationships().get(new Graph.Node(0, 0, 2, 2)))
                 .contains(
                         new Graph.Node(0, -1, 0, 3),
