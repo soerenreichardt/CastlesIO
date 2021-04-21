@@ -120,6 +120,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.playerFiguresLeft.get(player);
     }
 
+    public Map<Player, Integer> getFiguresLeft() {
+        return this.playerFiguresLeft;
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
@@ -145,6 +149,10 @@ public class Game extends StatefulObject implements PlayerContainer {
             triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y);
         });
         drawnTile = null;
+    }
+
+    public List<Integer> getMatchingTileRotations(Tile tile, int x, int y) {
+        return this.board.getMatchingRotations(tile, x, y);
     }
 
     public void placeFigure(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoFiguresLeftException {

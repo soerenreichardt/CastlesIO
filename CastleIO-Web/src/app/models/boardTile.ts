@@ -4,39 +4,22 @@ import {Point} from '@angular/cdk/drag-drop';
 
 export class BoardTile {
     id: number;
-    x: number;
-    y: number;
+    gameLocation: Point;
     rotation: number;
     tileDTO: TileDTO;
+    image: HTMLImageElement;
 
-    constructor(tileDTO: TileDTO, x: number, y: number) {
+    constructor(tileDTO: TileDTO, x: number, y: number, image: HTMLImageElement) {
         this.id = tileDTO.id;
-        this.x = (x + 1) * 100;
-        this.y = (y + 1) * 100;
-        this.rotation = tileDTO.tileLayout.rotation;
+        this.gameLocation = {x, y};
+        this.rotation = tileDTO.tileLayout.rotation * 90;
         this.tileDTO = tileDTO;
-    }
-
-    getTileElement(): Promise<HTMLElement> {
-        const tilePath = `assets/tiles/tile${this.id}.svg`;
-        return d3.xml(tilePath).then(tileData => {
-            const element = tileData.documentElement.querySelector<HTMLElement>(`g#tile${this.id}`);
-            element.setAttribute('transform', `rotate(${this.rotation * 90})`)
-            return element;
-        });
-    }
-
-    getOriginalPosition(): Point {
-        return {
-            x: this.x / 100 - 1,
-            y: this.y / 100 - 1
-        };
+        this.image = image;
     }
 
     toTileDTO(): TileDTO {
         const originalTileDTO = this.tileDTO;
-        originalTileDTO.tileLayout.rotation = this.rotation;
+        originalTileDTO.tileLayout.rotation = this.rotation / 90;
         return originalTileDTO;
     }
-
 }

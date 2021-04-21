@@ -7,4 +7,5 @@ export interface GameDTO {
     gameState: GameStateDTO;
     tiles: Map<number, Map<number, TileDTO>>;
     players: PlayerDTO[];
+    playerFiguresLeft: Map<string, number>;
 }

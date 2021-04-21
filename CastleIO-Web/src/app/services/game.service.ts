@@ -61,6 +61,12 @@ export class GameService {
         });
     }
 
+    getMatchingTileRotations(tileDTO, x: number, y: number): Observable<any> {
+        return this.http.post(this.gameUrl + 'tile/rotations', tileDTO, {
+            params: {x: x.toString(), y: y.toString()}
+        });
+    }
+
     skipPhase(playerId: string): Observable<any> {
         return this.http.post(this.gameUrl + 'skip', {}, {
             params: {

@@ -20,9 +20,12 @@ export class LandingComponent implements OnInit {
     isLobbyPublic: boolean;
     publicLobbies: PublicLobby[];
 
-    constructor(private apiService: ApiService,
-                private localStorageService: LocalStorageService,
-                private router: Router) {
+    constructor(
+        private apiService: ApiService,
+        private localStorageService: LocalStorageService,
+
+        private router: Router
+    ) {
     }
 
     ngOnInit(): void {

@@ -1,4 +1,4 @@
-import {Component, isDevMode, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -6,7 +6,8 @@ import {DrawnTileService} from '../services/drawn-tile.service';
 import {EventService} from '../services/events/event.service';
 import {Game} from '../models/game';
 import {GameBoardService} from '../services/game-board.service';
-import {GameBoardComponent} from './game-board/game-board.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
     selector: 'app-game',
@@ -14,22 +15,21 @@ import {GameBoardComponent} from './game-board/game-board.component';
     styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit, OnDestroy {
-    @ViewChild(GameBoardComponent) gameBoardComponent: GameBoardComponent;
-
     gameId: string;
     playerId: string;
-    resetAllowed = isDevMode();
 
     game: Game;
 
     constructor(
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
         private localStorageService: LocalStorageService,
         private gameService: GameService,
         private gameBoardService: GameBoardService,
         private drawnTileService: DrawnTileService,
-        private eventService: EventService
+        private eventService: EventService,
+
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private snackBar: MatSnackBar
     ) {
     }
 
@@ -44,10 +44,14 @@ export class GameComponent implements OnInit, OnDestroy {
             this.eventService.subscribeToServerUpdates(this.gameId, this.playerId);
             this.gameService.getGame(this.playerId).subscribe(game => {
                 this.game = game;
-                this.gameBoardService.tiles.next(game.tiles);
+                this.gameBoardService.addTilesFromMap(game.tiles);
                 this.keepGameUpToDate();
                 if (game.timeToPlaceTile()) {
                     this.drawnTileService.getDrawnTile(this.playerId);
+                }
+            }, (error: HttpErrorResponse) => {
+                if (error.status === 500) {
+                    this.redirectIfGameDoesNotExist();
                 }
             });
         }
@@ -63,26 +67,24 @@ export class GameComponent implements OnInit, OnDestroy {
         this.eventService.tilePlaced.subscribe(tile => {
 
         });
-    }
-
-    drawTile(): void {
-        this.drawnTileService.drawTile(this.playerId);
-    }
-
-    placeTile(): void {
-        this.gameBoardComponent.placeTile(this.playerId);
-    }
-
-    skipPhase(): void {
-        this.gameService.skipPhase(this.playerId).subscribe();
-    }
-
-    resetGame(): void {
-        this.gameService.resetGame().subscribe();
+        this.eventService.activePlayerSwitched.subscribe(player => {
+           this.game.gameState.player = player;
+        });
+        this.gameBoardService.figuresLeft.next(this.game.getOwnFiguresLeft());
     }
 
     private redirectUnauthenticatedPlayer(): void {
-        this.router.navigate(['']);
+        this.snackBar.open('You are not part of this game.', '', {duration: 3000});
+        setTimeout(() => {
+            this.router.navigate(['']);
+        }, 3000);
+    }
+
+    private redirectIfGameDoesNotExist(): void {
+        this.snackBar.open('This game does not exist.', '', {duration: 3000});
+        setTimeout(() => {
+            this.router.navigate(['']);
+        }, 3000);
     }
 
     ngOnDestroy(): void {

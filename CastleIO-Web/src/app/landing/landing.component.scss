@@ -1,13 +1,14 @@
 @import "../../styles";
+
 .background {
     position: fixed;
     top: 0;
     left: 0;
     z-index: -5;
-    width: 100vw;
+    width: 50vw;
     height: 100vh;
-    mask: url("../../assets/images/landing_bg.svg") 0 40px no-repeat;
-    mask-size: 130vw;
+    mask: url("../../assets/images/landing_bg.svg") 0 0 no-repeat;
+    mask-size: 100% auto;
     background-color: mat-color($CastleIO-Web-accent, 100);
 
     @media (max-width: 1000px) {

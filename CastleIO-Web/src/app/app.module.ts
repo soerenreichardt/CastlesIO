@@ -22,9 +22,10 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import { GameComponent } from './game/game.component';
-import { GameBoardComponent } from './game/game-board/game-board.component';
 import { GamePeepzComponent } from './game/game-peepz/game-peepz.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { GameBoardCanvasComponent } from './game/game-board/game-board-canvas/game-board-canvas.component';
+import { GameBoardControlsComponent } from './game/game-board/game-board-controls/game-board-controls.component';
 
 @NgModule({
     declarations: [
@@ -34,8 +35,9 @@ import {MatDialogModule} from '@angular/material/dialog';
         CreatePlayerComponent,
         ModalDirective,
         GameComponent,
-        GameBoardComponent,
-        GamePeepzComponent
+        GamePeepzComponent,
+        GameBoardCanvasComponent,
+        GameBoardControlsComponent
     ],
     imports: [
         BrowserModule,

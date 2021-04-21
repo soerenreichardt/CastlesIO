@@ -1,7 +1,7 @@
 <app-create-player *ngIf="!playerId"
                    (joinLobby)="joinLobby($event)"
                    [lobbyId]="lobbyId"></app-create-player>
-<div class="content" *ngIf="lobby">
+<div class="flex-card-area" *ngIf="lobby">
     <div class="players card">
         <h2>{{lobby.lobbyName}}</h2>
         <div class="card-content">
@@ -95,7 +95,7 @@
     <p class="label">
         Invite Link
     </p>
-    <p class="link">
+    <p class="link" (click)="copyUrlToClipboard()">
         {{inviteLink}}
     </p>
     <button mat-icon-button color="accent" title="Click to copy the invite link" (click)="copyUrlToClipboard()">

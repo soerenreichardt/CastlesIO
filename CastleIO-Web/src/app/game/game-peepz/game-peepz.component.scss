@@ -1,4 +1,20 @@
-.turn-state {
-    margin-left: 15px;
+@import "../../../styles";
+.game-peepz-content {
+    mask: url("../../../assets/images/player-names_bg.svg") 0 bottom no-repeat;
+    mask-size: 100% auto;
+    background-color: mat-color($CastleIO-Web-accent, 100);
 
+    .players {
+        padding: 40px;
+
+        h4 {
+            margin-left: -16px;
+        }
+    }
+
+    .turn-state {
+        margin-left: 10px;
+        margin-top: -10px;
+    }
 }
+

@@ -16,7 +16,7 @@ $CastleIO-Web-primary: mat-palette($mat-grey);
 $CastleIO-Web-accent: mat-palette($mat-blue-gray, 600, 200, 900);
 
 // The warn palette is optional (defaults to red).
-$CastleIO-Web-warn: mat-palette($mat-red);
+$CastleIO-Web-warn: mat-palette($mat-pink);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
@@ -42,11 +42,14 @@ $CastleIO-Web-theme: mat-light-theme((
     letter-spacing: .06em;
 }
 
-html, body { height: 100%; }
+html, body {
+    height: 100%;
+}
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
     background-color: mat-color($CastleIO-Web-primary, 200);
+    overflow-x: hidden;
 }
 
 h2 {
@@ -55,7 +58,7 @@ h2 {
 }
 
 .card {
-    margin: 0px auto;
+    margin: 0 auto;
     width: 300px;
     padding: 2em 0;
 
@@ -87,16 +90,19 @@ h2 {
     position: absolute;
 }
 
-.content {
-    max-width: 100vw;
+.flex-card-area {
+    position: absolute;
+    top: 200px;
+    left: 0;
+    width: 100vw;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 0 3em;
 
-    @media (max-width: 800px) {
-        padding: 0px;
+    @media (max-width: 600px) {
+        padding: 0;
     }
 }
 
