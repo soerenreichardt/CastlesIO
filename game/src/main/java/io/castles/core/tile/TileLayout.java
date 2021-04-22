@@ -21,6 +21,8 @@ public interface TileLayout {
 
     <T> T getContent();
 
+    <T> T getResolvedContent();
+
     default void rotate(int times) {
         if (times < 0) {
             times = NUM_EDGES - (Math.abs(times) % NUM_EDGES);

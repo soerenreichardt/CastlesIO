@@ -71,7 +71,7 @@ public class Graph {
 
     private void createTileInternalGraph(Tile tile) {
         MatrixTileLayout tileLayout = tile.getTileLayout();
-        Matrix<TileContent> contentMatrix = tileLayout.getContent();
+        Matrix<TileContent> contentMatrix = tileLayout.getResolvedContent();
         int rows = contentMatrix.getRows();
         int columns = contentMatrix.getColumns();
 
@@ -123,7 +123,7 @@ public class Graph {
         // Positions in smaller edges are mapped to one or more positions in larger edges
         Map<Integer, List<Integer>> tileContentEdgeIndicesMapping = new HashMap<>();
         MatrixTileLayout.compareTileEdgesWithIndex(tileContentEdge, neighborContentEdge, (lhsEdge, lhsIndex, rhsEdge, rhsIndex) -> {
-            if (lhsEdge == tileContent && rhsEdge == tileContent) {
+            if (lhsEdge.matches(tileContent) && rhsEdge.matches(tileContent)) {
                 tileContentEdgeIndicesMapping.computeIfAbsent(lhsIndex, __ -> new ArrayList<>()).add(rhsIndex);
             }
             return true;

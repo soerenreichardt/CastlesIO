@@ -75,6 +75,17 @@ public class MatrixTileLayout extends AbstractTileLayout {
         return contentMatrix;
     }
 
+    @Override
+    public Matrix<TileContent> getResolvedContent() {
+        TileContent[] resolvedContent = new TileContent[contentMatrix.getValues().length];
+        for (int row = 0; row < contentMatrix.getRows(); row++) {
+            for (int column = 0; column < contentMatrix.getColumns(); column++) {
+                resolvedContent[contentMatrix.positionInArray(row, column)] = getResolvedContentAt(row, column);
+            }
+        }
+        return new Matrix<>(contentMatrix.getRows(), contentMatrix.getColumns(), resolvedContent);
+    }
+
     /**
      * Computes the position of an index pointing to a tile edge
      * of the underlying matrix.
@@ -136,23 +147,24 @@ public class MatrixTileLayout extends AbstractTileLayout {
                 smallEdge = lhs;
                 largeEdge = rhs;
             }
-            int sizeDifference = largeEdge.length - smallEdge.length - 1;
 
             // match center
             int largeHalf = largeEdge.length / 2;
             int smallHalf = smallEdge.length / 2;
-            if (!consumer.accept(largeEdge[largeHalf], largeHalf, smallEdge[smallHalf], smallHalf)) {
+            if (!consumer.accept(smallEdge[smallHalf], smallHalf, largeEdge[largeHalf], largeHalf)) {
                 return false;
             }
 
-            for (int smallIndex = 0; smallIndex < smallEdge.length / 2; smallIndex++) {
+            int sizeDifference = (largeEdge.length - smallEdge.length) / 2 + 1;
+            for (int smallIndex = 0; smallIndex < smallHalf; smallIndex++) {
                 for (int largeIndex = 0; largeIndex < sizeDifference; largeIndex++) {
-                    int upperSmallIndex = smallHalf + smallIndex + 1;
-                    int upperLargeIndex = largeHalf + (smallIndex * 2) + largeIndex + 1;
+                    int upperSmallIndex = smallHalf + (smallIndex + 1);
+                    int upperLargeIndex = largeHalf + ((smallIndex * sizeDifference) + largeIndex + 1);
+                    if (upperLargeIndex >= largeEdge.length) continue;
                     boolean upperHalf = consumer.accept(smallEdge[upperSmallIndex], upperSmallIndex, largeEdge[upperLargeIndex], upperLargeIndex);
 
-                    int lowerSmallIndex = smallHalf - smallIndex + 1;
-                    int lowerLargeIndex = largeHalf - (smallIndex * 2) + largeIndex + 1;
+                    int lowerSmallIndex = smallHalf - (smallIndex + 1);
+                    int lowerLargeIndex = largeHalf - ((smallIndex * sizeDifference) + largeIndex + 1);
                     boolean lowerHalf = consumer.accept(smallEdge[lowerSmallIndex], lowerSmallIndex, largeEdge[lowerLargeIndex], lowerLargeIndex);
                     if (!(upperHalf || lowerHalf)) {
                         return false;

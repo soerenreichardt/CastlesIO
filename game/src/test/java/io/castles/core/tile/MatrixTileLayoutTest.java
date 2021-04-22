@@ -146,8 +146,6 @@ class MatrixTileLayoutTest {
         assertThat(tileLayout.matches(largeTileLayout, TileLayout.LEFT)).isTrue();
         assertThat(tileLayout.matches(largeTileLayout, TileLayout.BOTTOM)).isFalse();
         assertThat(tileLayout.matches(largeTileLayout, TileLayout.TOP)).isFalse();
-        largeTileLayout.rotate();
-        assertThat(tileLayout.matches(largeTileLayout, TileLayout.TOP)).isFalse();
 
         Matrix<TileContent> matrix7 = new Matrix<>(7, 7, new TileContent[]{
                 TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
@@ -165,6 +163,8 @@ class MatrixTileLayoutTest {
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.LEFT)).isTrue();
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.TOP)).isFalse();
         assertThat(tileLayout.matches(evenLargerTileLayout, TileLayout.BOTTOM)).isFalse();
+
+        assertThat(largeTileLayout.matches(evenLargerTileLayout, TileLayout.LEFT)).isTrue();
     }
 
     @Test

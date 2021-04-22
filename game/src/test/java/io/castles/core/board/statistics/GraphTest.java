@@ -125,4 +125,49 @@ class GraphTest {
         assertThat(graph.relationships().get(new Graph.Node(startTile.getX(), startTile.getY(), 1, 2)))
                 .containsExactly(new Graph.Node(nextTile.getX(), nextTile.getY(), 2, 1));
     }
+
+    @Test
+    void shouldConnectGraphsOfDifferentlySizedTiles() {
+        Matrix<TileContent> startMatrix = new Matrix<>(3, 3, new TileContent[]{
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.STREET, TileContent.GRAS
+        });
+        var startTileLayout = new MatrixTileLayout(startMatrix);
+        var board = Board.withSpecificTile(startTileLayout);
+
+        var streetGraph = new Graph(TileContent.STREET);
+        var grasGraph = new Graph(TileContent.GRAS);
+        streetGraph.fromTile(board.getTile(0, 0));
+        grasGraph.fromTile(board.getTile(0, 0));
+
+        Matrix<TileContent> nextMatrix = new Matrix<>(5, 5, new TileContent[]{
+                TileContent.SHARED, TileContent.GRAS, TileContent.STREET, TileContent.GRAS, TileContent.GRAS,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.STREET, TileContent.GRAS, TileContent.GRAS,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.STREET, TileContent.GRAS, TileContent.GRAS,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.STREET, TileContent.GRAS, TileContent.GRAS,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.STREET, TileContent.GRAS, TileContent.GRAS
+        });
+        var nextTileLayout = new MatrixTileLayout(nextMatrix);
+        var nextTile = new Tile(nextTileLayout);
+        board.insertTileToBoard(nextTile, 0, -1);
+
+        streetGraph.fromTile(nextTile);
+        grasGraph.fromTile(nextTile);
+
+        assertThat(streetGraph.relationships().get(new Graph.Node(0, 0, 2, 1)))
+                .contains(new Graph.Node(0, -1, 0, 2));
+
+        assertThat(grasGraph.relationships().get(new Graph.Node(0, 0, 2, 0)))
+                .contains(
+                        new Graph.Node(0, -1, 0, 0),
+                        new Graph.Node(0, -1, 0, 1)
+                );
+
+        assertThat(grasGraph.relationships().get(new Graph.Node(0, 0, 2, 2)))
+                .contains(
+                        new Graph.Node(0, -1, 0, 3),
+                        new Graph.Node(0, -1, 0, 4)
+                );
+    }
 }
