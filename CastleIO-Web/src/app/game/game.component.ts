@@ -64,8 +64,8 @@ export class GameComponent implements OnInit, OnDestroy {
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;
         });
-        this.eventService.tilePlaced.subscribe(tile => {
-
+        this.eventService.tilePlaced.subscribe(placedTile => {
+            this.gameBoardService.addPlacedTile(placedTile);
         });
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;

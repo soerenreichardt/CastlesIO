@@ -45,7 +45,9 @@ export class GameBoardControlsComponent implements OnInit {
             this.drawnTile.toTileDTO(),
             this.drawnTile.gameLocation.x,
             this.drawnTile.gameLocation.y
-        ).subscribe();
+        ).subscribe(() => {
+            this.drawnTileService.drawnTile.next(undefined);
+        });
     }
 
     placeFigure(): void {
@@ -53,7 +55,7 @@ export class GameBoardControlsComponent implements OnInit {
     }
 
     skipPhase(): void {
-
+        this.gameService.skipPhase(this.game.myId).subscribe();
     }
 
     resetGame(): void {

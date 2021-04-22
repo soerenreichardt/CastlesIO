@@ -41,24 +41,35 @@ export class GameBoardCanvasComponent implements OnInit {
             });
 
             this.gameBoardService.board.subscribe(board => {
-                this.board = board;
-                this.resetOffset();
+                if (board) {
+                    this.board = board;
+                    this.resetOffset();
+                }
             });
 
             this.drawnTileService.drawnTile.subscribe(drawnTile => {
-                this.drawnTile = drawnTile;
-                this.drawnTile.validRotationsChanged.subscribe( () => {
-                    if (this.drawnTile.validRotations.length === 0) {
-                        this.render();
-                    } else {
-                        this.rotateDrawnTileIfRotationInvalid();
-                    }
-                });
+                if (drawnTile) {
+                    this.drawnTile = drawnTile;
+                    this.drawnTile.validRotationsChanged.subscribe( () => {
+                        if (this.drawnTile.validRotations.length === 0) {
+                            this.render();
+                        } else {
+                            this.rotateDrawnTileIfRotationInvalid();
+                        }
+                    });
+                } else {
+                    this.drawnTile.validRotationsChanged.unsubscribe();
+                    this.drawnTile = null;
+                }
                 this.render();
             });
 
             this.gameBoardService.figuresLeft.subscribe( figuresLeft => {
                 this.figuresLeft = figuresLeft;
+                this.render();
+            });
+
+            this.gameBoardService.renderBoard.subscribe(() => {
                 this.render();
             });
         });
