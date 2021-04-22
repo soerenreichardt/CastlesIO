@@ -11,7 +11,9 @@ export class BoardTile {
 
     constructor(tileDTO: TileDTO, x: number, y: number, image: HTMLImageElement) {
         this.id = tileDTO.id;
-        this.gameLocation = {x, y};
+        this.gameLocation = {
+            x,
+            y: -y};
         this.rotation = tileDTO.tileLayout.rotation * 90;
         this.tileDTO = tileDTO;
         this.image = image;

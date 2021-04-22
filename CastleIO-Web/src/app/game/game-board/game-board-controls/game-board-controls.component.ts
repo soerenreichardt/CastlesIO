@@ -44,7 +44,7 @@ export class GameBoardControlsComponent implements OnInit {
             this.game.myId,
             this.drawnTile.toTileDTO(),
             this.drawnTile.gameLocation.x,
-            this.drawnTile.gameLocation.y
+            -this.drawnTile.gameLocation.y
         ).subscribe(() => {
             this.drawnTileService.drawnTile.next(undefined);
         });

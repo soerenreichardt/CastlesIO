@@ -26,7 +26,7 @@ export class GameBoardService {
         const {x, y} = tile.gameLocation;
         tileDTO.tileLayout.rotation = 0;
 
-        return this.gameService.getMatchingTileRotations(tileDTO, x, y);
+        return this.gameService.getMatchingTileRotations(tileDTO, x, -y);
     }
 
     placeTile(playerId: string, tile: BoardTile): void {
