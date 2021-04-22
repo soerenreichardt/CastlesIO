@@ -15,19 +15,13 @@ public enum TileContent {
             return CASTLE.getId();
         }
     },
-    GRAS_AND_CASTLE(merge(GRAS, CASTLE), false),
-    GRAS_AND_STREET(merge(GRAS, STREET), false);
+    GRAS_AND_CASTLE(merge(GRAS, CASTLE)),
+    GRAS_AND_STREET(merge(GRAS, STREET));
 
     private final int id;
-    private final boolean visible;
 
     TileContent(int id) {
-        this(id, true);
-    }
-
-    TileContent(int id, boolean visible) {
         this.id = id;
-        this.visible = visible;
     }
 
     int getId() {
