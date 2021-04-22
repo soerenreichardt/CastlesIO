@@ -259,11 +259,11 @@ public class Board implements Lifecycle {
     }
 
     private Optional<Tile> getTopNeighbor(int x, int y) {
-        return getNeighbors(x, y + 1);
+        return getNeighbors(x, y - 1);
     }
 
     private Optional<Tile> getBottomNeighbor(int x, int y) {
-        return getNeighbors(x, y - 1);
+        return getNeighbors(x, y + 1);
     }
 
     private Optional<Tile> getNeighbors(int x, int y) {
