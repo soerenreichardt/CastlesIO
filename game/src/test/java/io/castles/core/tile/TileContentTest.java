@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.castles.core.tile.TileContent.*;
@@ -43,7 +44,10 @@ public class TileContentTest {
                 Arguments.of(GRAS, GRAS_AND_CASTLE),
                 Arguments.of(GRAS, GRAS_AND_STREET),
                 Arguments.of(CASTLE, GRAS_AND_CASTLE),
-                Arguments.of(STREET, GRAS_AND_STREET)
+                Arguments.of(STREET, GRAS_AND_STREET),
+                Arguments.of(DISCONNECTED, DISCONNECTED),
+                Arguments.of(DISCONNECTED, CASTLE),
+                Arguments.of(DISCONNECTED, GRAS_AND_CASTLE)
         );
     }
 
@@ -51,6 +55,7 @@ public class TileContentTest {
     @MethodSource("matchingContents")
     void shouldMatchOtherTiles(TileContent lhs, TileContent rhs) {
         assertThat(lhs.matches(rhs)).isTrue();
+        assertThat(rhs.matches(lhs)).isTrue();
     }
 
     static Stream<Arguments> nonMatchingContents() {
@@ -76,8 +81,9 @@ public class TileContentTest {
     void disconnectedShouldMatchCastleAndDisconnected() {
         assertThat(DISCONNECTED.matches(CASTLE)).isTrue();
         assertThat(DISCONNECTED.matches(DISCONNECTED)).isTrue();
+        var excludes = Set.of(CASTLE, DISCONNECTED, GRAS_AND_CASTLE);
         Arrays.stream(TileContent.values())
-                .filter(content -> content != CASTLE && content != DISCONNECTED)
+                .filter(content -> !excludes.contains(content))
                 .forEach(content -> assertThat(DISCONNECTED.matches(content)).isFalse());
     }
 }

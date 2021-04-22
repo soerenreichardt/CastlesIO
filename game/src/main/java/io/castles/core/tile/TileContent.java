@@ -11,23 +11,17 @@ public enum TileContent {
     SHARED(4),
     DISCONNECTED(5) {
         @Override
-        public boolean matches(TileContent other) {
-            return other == CASTLE || other == DISCONNECTED;
+        int getId() {
+            return CASTLE.getId();
         }
     },
-    GRAS_AND_CASTLE(merge(GRAS, CASTLE), false),
-    GRAS_AND_STREET(merge(GRAS, STREET), false);
+    GRAS_AND_CASTLE(merge(GRAS, CASTLE)),
+    GRAS_AND_STREET(merge(GRAS, STREET));
 
     private final int id;
-    private final boolean visible;
 
     TileContent(int id) {
-        this(id, true);
-    }
-
-    TileContent(int id, boolean visible) {
         this.id = id;
-        this.visible = visible;
     }
 
     int getId() {
@@ -42,7 +36,7 @@ public enum TileContent {
         if (other.getId() < 0) {
             return (1 << getId() & other.getId()) != 0;
         }
-        return this == other;
+        return getId() == other.getId();
     }
 
     static TileContent getById(int id) {

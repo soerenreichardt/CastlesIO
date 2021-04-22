@@ -170,4 +170,20 @@ class GraphTest {
                         new Graph.Node(0, -1, 0, 4)
                 );
     }
+
+    @Test
+    void shouldTreatDisconnectedRegionsCorrectly() {
+        var disconnectedMatrix = new Matrix<>(3, 3, new TileContent[]{
+                TileContent.DISCONNECTED, TileContent.CASTLE, TileContent.GRAS,
+                TileContent.CASTLE, TileContent.GRAS, TileContent.GRAS,
+                TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+        });
+        var disconnectedTile = new Tile(new MatrixTileLayout(disconnectedMatrix));
+        disconnectedTile.insertToBoard(0, 0);
+        var castleGraph = new Graph(TileContent.CASTLE);
+        castleGraph.fromTile(disconnectedTile);
+
+        assertThat(castleGraph.nodes().size()).isEqualTo(2);
+        assertThat(castleGraph.relationships()).isEmpty();
+    }
 }
