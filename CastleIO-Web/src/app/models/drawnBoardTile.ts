@@ -1,6 +1,5 @@
 import {BoardTile} from './boardTile';
 import {TileDTO} from './dtos/tile-dto';
-import {Point} from '@angular/cdk/drag-drop';
 import {Subject} from 'rxjs';
 
 export class DrawnBoardTile extends BoardTile{

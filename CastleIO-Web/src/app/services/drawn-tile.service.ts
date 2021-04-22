@@ -23,19 +23,6 @@ export class DrawnTileService {
         });
     }
 
-    debugDrawTile(): void {
-        const tileId = Math.ceil(Math.random() * 19);
-        const debugTileDTO = {
-            id: tileId,
-            tileLayout: {
-                rotation: 0,
-                content: undefined
-            }
-        };
-
-        this.setDrawnTileFromDTO(debugTileDTO);
-    }
-
     getDrawnTile(playerId: string): void {
         this.gameService.getDrawnTile(playerId).subscribe(tileDTO => {
             this.setDrawnTileFromDTO(tileDTO);

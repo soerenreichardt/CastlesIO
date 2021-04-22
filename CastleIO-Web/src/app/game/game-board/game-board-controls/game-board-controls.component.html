@@ -9,6 +9,7 @@
             *ngIf="game.timeToPlaceTile()"
             mat-flat-button
             color="accent"
+            [disabled]="!drawnTilePositionValid()"
             (click)="placeTile()">Place Tile</button>
 
     <button class="button"
@@ -25,10 +26,6 @@
             (click)="null">Place Figure</button>
 
     <div class="debug-controls" *ngIf="isDevMode">
-        <button class="action-button"
-                mat-flat-button
-                color="warn"
-                (click)="debugDrawTile()">Draw Tile</button>
         <button class="reset-button"
                 mat-flat-button color="warn"
                 (click)="resetGame()">reset</button>

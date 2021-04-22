@@ -5,12 +5,13 @@ import {BoardTile} from '../models/boardTile';
 import {GameService} from './game.service';
 import {TileGraphics} from '../models/tile-graphics.type';
 import {SvgService} from '../game/game-board/svg.service';
+import {Board} from '../models/board';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameBoardService {
-    tiles = new ReplaySubject<BoardTile[]>();
+    board = new ReplaySubject<Board>();
     figuresLeft = new ReplaySubject<number>();
 
     constructor(
@@ -49,7 +50,8 @@ export class GameBoardService {
             });
         });
         Promise.all(imageLoadPromises).then(() => {
-            this.tiles.next(boardTiles);
+            const board = new Board(boardTiles);
+            this.board.next(board);
             const elapsedTime = Date.now() - startTime;
             console.log(`Converted tiles map and loaded tile images in ${elapsedTime}ms.`);
         });

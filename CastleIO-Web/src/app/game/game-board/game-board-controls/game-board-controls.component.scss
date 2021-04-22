@@ -11,6 +11,10 @@
     background-color: mat-color($CastleIO-Web-accent, 200);
 
     button {
-        margin: 0 20px;
+        margin-right: 20px;
+    }
+
+    .debug-controls {
+        margin-left: 20px;
     }
 }

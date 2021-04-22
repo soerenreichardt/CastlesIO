@@ -1,5 +1,6 @@
 import {BoardTile} from './boardTile';
 import {Point} from '@angular/cdk/drag-drop';
+import {DrawnBoardTile} from './drawnBoardTile';
 
 export class Board {
     offset: Point;
@@ -29,6 +30,23 @@ export class Board {
     isTaken(gamePosition: Point): boolean {
         return this.tiles.some(tile => {
             return tile.gameLocation.x === gamePosition.x && tile.gameLocation.y === gamePosition.y;
+        });
+    }
+
+    doesTileHaveNeighbors(drawnTile: DrawnBoardTile): boolean {
+        if (!drawnTile.wasMovedToGameBoard) {
+            return false;
+        }
+
+        return this.tiles.some(tile => {
+            if (tile.gameLocation.x === drawnTile.gameLocation.x) {
+                return tile.gameLocation.y === drawnTile.gameLocation.y + 1 ||
+                    tile.gameLocation.y === drawnTile.gameLocation.y - 1;
+            }
+            if (tile.gameLocation.y === drawnTile.gameLocation.y) {
+                return tile.gameLocation.x === drawnTile.gameLocation.x + 1 ||
+                    tile.gameLocation.x === drawnTile.gameLocation.x - 1;
+            }
         });
     }
 
