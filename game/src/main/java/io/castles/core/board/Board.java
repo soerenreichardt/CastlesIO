@@ -5,7 +5,7 @@ import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.core.tile.TileLayout;
-import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
@@ -137,8 +137,8 @@ public class Board implements Lifecycle {
         listener.currentState(tiles);
     }
 
-    public void placeFigureOnTile(Figure figure) throws GrasRegionOccupiedException {
-        validateFigurePlacement(figure, figures);
+    public void placeFigureOnTile(Figure figure) throws RegionOccupiedException {
+        getBoardGraph().validateFigurePlacement(figure, figures);
         figures.add(figure);
     }
 
@@ -165,14 +165,6 @@ public class Board implements Lifecycle {
                     )
             );
         }
-    }
-
-    private void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws GrasRegionOccupiedException {
-        var figurePosition = figure.getPosition();
-        if (!boardGraph.nodeExistsOnGraphOfType(TileContent.GRAS, figurePosition.getX(), figurePosition.getY(), figurePosition.getRow(), figurePosition.getColumn())) {
-            throw new IllegalArgumentException("Tile region needs to be of type GRAS");
-        }
-        boardGraph.validateUniqueFigurePositionInWcc(figure, existingFigures);
     }
 
     private Tile[] getNeighborsOfPosition(int x, int y) {

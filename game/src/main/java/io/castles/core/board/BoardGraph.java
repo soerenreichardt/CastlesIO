@@ -7,7 +7,7 @@ import io.castles.core.tile.Figure;
 import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
-import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.RegionOccupiedException;
 import lombok.Value;
 
 import java.util.*;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class BoardGraph implements BoardListener {
 
     public static final int UNCLOSED_STREET = -1;
+    public static final Set<TileContent> VALID_FIGURE_REGIONS = Set.of(TileContent.GRAS, TileContent.CASTLE);
 
     private final List<Graph> graphs;
     private final TileLookup tileLookup;
@@ -54,9 +55,12 @@ public class BoardGraph implements BoardListener {
         initialize();
     }
 
-    public boolean nodeExistsOnGraphOfType(TileContent tileContent, int x, int y, int row, int column) {
+    public Optional<Graph> getGraphThatContainsNode(int x, int y, int row, int column) {
         var node = new Graph.Node(x, y, row, column);
-        return filterGraphsForContent(tileContent).nodes().contains(node);
+        return graphs
+                .stream()
+                .filter(graph -> graph.nodes().contains(node))
+                .findFirst();
     }
 
     public int getStreetLength(Tile tile, int row, int column) {
@@ -88,13 +92,23 @@ public class BoardGraph implements BoardListener {
             : UNCLOSED_STREET;
     }
 
-    public void validateUniqueFigurePositionInWcc(Figure figureToPlace, Collection<Figure> existingFigures) throws GrasRegionOccupiedException {
-        var wcc = new Wcc(filterGraphsForContent(TileContent.GRAS));
+    public void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws RegionOccupiedException {
+        var figurePosition = figure.getPosition();
+        var graphContainingFigure = getGraphThatContainsNode(figurePosition.getX(), figurePosition.getY(), figurePosition.getRow(), figurePosition.getColumn());
+        if (graphContainingFigure.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Tile region type needs to be one of [%s]", VALID_FIGURE_REGIONS.stream().map(TileContent::name).collect(Collectors.joining(", "))));
+        }
+
+        validateUniqueFigurePositionInWcc(graphContainingFigure.get(), figure, existingFigures);
+    }
+
+    private void validateUniqueFigurePositionInWcc(Graph graph, Figure figureToPlace, Collection<Figure> existingFigures) throws RegionOccupiedException {
+        var wcc = new Wcc(graph);
         wcc.compute();
 
         for (var existingFigure : existingFigures) {
             if (wcc.sameComponent(figureToPlace.getPosition(), existingFigure.getPosition())) {
-                throw new GrasRegionOccupiedException("Gras region occupied by other figure");
+                throw new RegionOccupiedException(graph.tileContent());
             }
         }
     }
