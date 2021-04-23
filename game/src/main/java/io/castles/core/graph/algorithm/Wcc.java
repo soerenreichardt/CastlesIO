@@ -12,7 +12,7 @@ public class Wcc {
 
     public Wcc(Graph graph) {
         this.graph = graph;
-        this.components = initialCompnents();
+        this.components = initialComponents();
     }
 
     public void compute() {
@@ -57,7 +57,7 @@ public class Wcc {
         return component;
     }
 
-    private Map<Graph.Node, Graph.Node> initialCompnents() {
+    private Map<Graph.Node, Graph.Node> initialComponents() {
         var components = new HashMap<Graph.Node, Graph.Node>();
         graph.nodes().forEach(node -> components.put(node, node));
         return components;
