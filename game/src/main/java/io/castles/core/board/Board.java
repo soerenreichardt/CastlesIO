@@ -9,7 +9,6 @@ import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.game.Lifecycle;
 import org.jetbrains.annotations.TestOnly;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board implements Lifecycle {
@@ -109,24 +108,8 @@ public class Board implements Lifecycle {
 
         Tile[] neighbors = getNeighborsOfPosition(tile.getX(), tile.getY());
 
-        if (!doesTileHaveNeighbors(tile, neighbors)) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
-                            tile.getX(),
-                            tile.getY()
-                    )
-            );
-        };
-        if (!doesTileMatch(tile, neighbors)) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Tile at position (%d|%d) has incompatible borders to its surrounding.",
-                            tile.getX(),
-                            tile.getY()
-                    )
-            );
-        }
+        validateHasNeighbors(tile, neighbors);
+        validateMatchingNeighbors(tile, neighbors);
 
         setNeighborsFromAndToTile(tile, neighbors);
 
@@ -139,7 +122,7 @@ public class Board implements Lifecycle {
 
         for(var i = 0; i <= 3; i++) {
             Tile[] neighbors = getNeighborsOfPosition(x, y);
-            if (doesTileMatch(tile, neighbors)) {
+            if (tileMatchesNeighbors(tile, neighbors)) {
                 matchingRotations.add(i);
             }
             tile.rotate();
@@ -157,6 +140,31 @@ public class Board implements Lifecycle {
     public void placeFigureOnTile(Figure figure) throws GrasRegionOccupiedException {
         validateFigurePlacement(figure, figures);
         figures.add(figure);
+    }
+
+    private void validateHasNeighbors(Tile tile, Tile[] neighbors) {
+        if (!hasNeighbors(tile, neighbors)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        }
+        ;
+    }
+
+    private void validateMatchingNeighbors(Tile tile, Tile[] neighbors) {
+        if (!tileMatchesNeighbors(tile, neighbors)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Tile at position (%d|%d) has incompatible borders to its surrounding.",
+                            tile.getX(),
+                            tile.getY()
+                    )
+            );
+        }
     }
 
     private void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws GrasRegionOccupiedException {
@@ -178,7 +186,7 @@ public class Board implements Lifecycle {
         return neighbors;
     }
 
-    private boolean doesTileHaveNeighbors(Tile tile, Tile[] neighbors) {
+    private boolean hasNeighbors(Tile tile, Tile[] neighbors) {
         boolean hasNoNeighbor = neighbors[TileLayout.LEFT] == null
                 && neighbors[TileLayout.RIGHT] == null
                 && neighbors[TileLayout.TOP] == null
@@ -187,7 +195,7 @@ public class Board implements Lifecycle {
         return !hasNoNeighbor;
     }
 
-    private boolean doesTileMatch(Tile tile, Tile[] neighbors) {
+    private boolean tileMatchesNeighbors(Tile tile, Tile[] neighbors) {
         boolean leftMatching = tile.matches(neighbors[TileLayout.LEFT], TileLayout.LEFT);
         boolean rightMatching = tile.matches(neighbors[TileLayout.RIGHT], TileLayout.RIGHT);
         boolean topMatching = tile.matches(neighbors[TileLayout.TOP], TileLayout.TOP);
