@@ -4,7 +4,7 @@ import io.castles.core.board.Board;
 import io.castles.core.board.BoardGraph;
 import io.castles.core.graph.Graph;
 import io.castles.core.tile.*;
-import io.castles.exceptions.GrasRegionOccupiedException;
+import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +92,7 @@ class BoardGraphTest {
         }
 
         @Test
-        void shouldBeAbleToPlaceValidFigure() throws GrasRegionOccupiedException {
+        void shouldBeAbleToPlaceValidFigure() throws RegionOccupiedException {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
             Matrix<TileContent> streetEndMatrix = new Matrix<>(3, 3, new TileContent[]{
@@ -104,11 +104,18 @@ class BoardGraphTest {
 
             board.insertTileToBoard(rightTile, 1, 0);
 
-            board.getBoardGraph().validateUniqueFigurePositionInWcc(
+            // place on gras
+            board.getBoardGraph().validateFigurePlacement(
                     new Figure(new Graph.Node(1, 0, 0, 2), p2),
                     List.of(
                             new Figure(new Graph.Node(0, 0, 0, 2), p1)
                     )
+            );
+
+            // place on castle
+            board.getBoardGraph().validateFigurePlacement(
+                    new Figure(new Graph.Node(1, 0, 0, 1), p2),
+                    List.of()
             );
         }
 
@@ -117,15 +124,38 @@ class BoardGraphTest {
                 "-1, 0, 0, 0",
                 "0, 0, 2, 0"
         })
-        void shouldDetectOtherFiguresInWcc(int tileX, int tileY, int tileRow, int tileColumn) {
+        void shouldDetectOtherFiguresOnGrasInWcc(int tileX, int tileY, int tileRow, int tileColumn) {
             var p1 = new Player("P1");
             var p2 = new Player("P2");
-            assertThatThrownBy(() -> board.getBoardGraph().validateUniqueFigurePositionInWcc(
+
+            assertThatThrownBy(() -> board.getBoardGraph().validateFigurePlacement(
                     new Figure(new Graph.Node(tileX, tileY, tileRow, tileColumn), p2),
                     List.of(
                             new Figure(new Graph.Node(0, 0, 0, 2), p1)
                     )
-            )).isInstanceOf(GrasRegionOccupiedException.class);
+            )).isInstanceOf(RegionOccupiedException.class);
+        }
+
+        @Test
+        void shouldDetectOtherFiguresOnCastleInWcc() {
+            var p1 = new Player("P1");
+            var p2 = new Player("P2");
+
+            Matrix<TileContent> streetEndMatrix = new Matrix<>(3, 3, new TileContent[]{
+                    TileContent.GRAS, TileContent.CASTLE, TileContent.GRAS,
+                    TileContent.STREET, TileContent.CASTLE, TileContent.STREET,
+                    TileContent.GRAS, TileContent.CASTLE, TileContent.GRAS
+            });
+            var rightTile = new Tile(new MatrixTileLayout(streetEndMatrix));
+
+            board.insertTileToBoard(rightTile, 1, 0);
+
+            assertThatThrownBy(() -> board.getBoardGraph().validateFigurePlacement(
+                    new Figure(new Graph.Node(1, 0, 0, 1), p2),
+                    List.of(
+                            new Figure(new Graph.Node(1, 0, 1, 1), p1)
+                    )
+            )).isInstanceOf(RegionOccupiedException.class);
         }
 
     }

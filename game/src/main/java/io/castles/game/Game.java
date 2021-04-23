@@ -3,8 +3,8 @@ package io.castles.game;
 import io.castles.core.board.Board;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
-import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.exceptions.NoFiguresLeftException;
+import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.events.EventHandler;
 import io.castles.game.events.GameEvent;
 import io.castles.game.events.StatefulObject;
@@ -155,17 +155,17 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.board.getMatchingRotations(tile, x, y);
     }
 
-    public void placeFigure(Player player, Tile tile, int row, int column) throws GrasRegionOccupiedException, NoFiguresLeftException {
+    public void placeFigure(Player player, Tile tile, int row, int column) throws RegionOccupiedException, NoFiguresLeftException {
         var figuresLeft = playerFiguresLeft.get(player);
         if (figuresLeft == 0) {
             throw new NoFiguresLeftException(player);
         }
 
-        Optional<GrasRegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {
+        Optional<RegionOccupiedException> innerException = gameAction(player, GameState.PLACE_FIGURE, () -> {
             try {
                 board.placeFigureOnTile(Figure.create(player, tile, row, column));
                 triggerLocalEvent(getId(), GameEvent.FIGURE_PLACED, player, tile, row, column);
-            } catch (GrasRegionOccupiedException e) {
+            } catch (RegionOccupiedException e) {
                 return Optional.of(e);
             }
             return Optional.empty();

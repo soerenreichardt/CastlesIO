@@ -2,8 +2,8 @@ package io.castles.game;
 
 import io.castles.core.GameMode;
 import io.castles.core.tile.Figure;
-import io.castles.exceptions.GrasRegionOccupiedException;
 import io.castles.exceptions.NoFiguresLeftException;
+import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.events.GameEvent;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,25 +103,25 @@ class GameTest {
         }
 
         @Test
-        void shouldBeAbleToPlaceFigure() throws GrasRegionOccupiedException, NoFiguresLeftException {
+        void shouldBeAbleToPlaceFigure() throws RegionOccupiedException, NoFiguresLeftException {
             game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
             assertThat(game.getFigures().size()).isEqualTo(1);
             assertThat(game.getFigures().get(0)).isEqualTo(Figure.create(activePlayer, game.getStartTile(), 0, 0));
         }
 
         @Test
-        void shouldThrowWhenPlacingIllegalFigure() throws GrasRegionOccupiedException, NoFiguresLeftException {
+        void shouldThrowWhenPlacingIllegalFigure() throws RegionOccupiedException, NoFiguresLeftException {
             game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
             var nextPlayer = game.getActivePlayer();
             assertThat(nextPlayer).isNotEqualTo(activePlayer);
 
             game.setGameState(GameState.PLACE_FIGURE);
             assertThatThrownBy(() -> game.placeFigure(nextPlayer, game.getStartTile(), 0, 0))
-                    .isInstanceOf(GrasRegionOccupiedException.class);
+                    .isInstanceOf(RegionOccupiedException.class);
         }
 
         @Test
-        void shouldRemoveAvailableFigureWhenPlacing() throws GrasRegionOccupiedException, NoFiguresLeftException {
+        void shouldRemoveAvailableFigureWhenPlacing() throws RegionOccupiedException, NoFiguresLeftException {
             assertThat(game.getFiguresLeftForPlayer(activePlayer)).isEqualTo(Game.FIGURES_PER_PLAYER);
             game.placeFigure(activePlayer, game.getStartTile(), 0, 0);
             assertThat(game.getFiguresLeftForPlayer(activePlayer)).isEqualTo(Game.FIGURES_PER_PLAYER - 1);
