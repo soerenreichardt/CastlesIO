@@ -81,6 +81,7 @@ public class BoardGraph implements BoardListener {
     }
 
     public Set<Set<Graph.Node>> closedStreets(Tile tile) {
+        // TODO: add cycle detection for streets
         return closedRegions(tile, filterGraphsForContent(TileContent.STREET));
     }
 

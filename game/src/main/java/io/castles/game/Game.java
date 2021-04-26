@@ -38,7 +38,7 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
-        this.board.getBoardGraph().registerEventCallback(this::onBoardGraphEvent);
+        this.board.getBoardGraph().registerEventCallback(this::onRegionClosed);
         this.playerFiguresLeft = new HashMap<>();
 
         players.forEach(player -> playerFiguresLeft.put(player, FIGURES_PER_PLAYER));
@@ -212,7 +212,43 @@ public class Game extends StatefulObject implements PlayerContainer {
         }
     }
 
-    private void onBoardGraphEvent(TileContent regionType, Set<Set<Graph.Node>> closedRegions) {
+    private void onRegionClosed(TileContent regionType, Set<Set<Graph.Node>> closedRegions) {
+        var figures = board.getFigures();
 
+        for (Set<Graph.Node> closedRegion : closedRegions) {
+            Map<Player, Integer> figuresInRegion = new HashMap<>();
+            Set<Figure> figuresToRemove = new HashSet<>();
+            for (Figure figure : figures) {
+                if (closedRegion.contains(figure.getPosition())) {
+                    figuresInRegion.computeIfAbsent(figure.getOwner(), player -> figuresInRegion.getOrDefault(player, 0) + 1);
+                    figuresToRemove.add(figure);
+                }
+            }
+
+            var playersWithMostFiguresInRegion = findPlayersWithMostFiguresInRegion(figuresInRegion);
+            // assign winning points
+            figures.removeAll(figuresToRemove);
+        }
+    }
+
+    private static Set<Player> findPlayersWithMostFiguresInRegion(Map<Player, Integer> figuresInRegion) {
+        var comparator = Comparator.<Map.Entry<Player, Integer>>comparingInt(Map.Entry::getValue).reversed();
+        var sortedMapEntries = figuresInRegion
+                .entrySet()
+                .stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
+
+        var entryIterator = sortedMapEntries.iterator();
+        var playerWithMostFigures = entryIterator.next();
+
+        Set<Player> playersWithMostFigures = new HashSet<>();
+        playersWithMostFigures.add(playerWithMostFigures.getKey());
+
+        Map.Entry<Player, Integer> nextEntry;
+        while ((nextEntry = entryIterator.next()).getValue().intValue() == playerWithMostFigures.getValue().intValue()) {
+            playersWithMostFigures.add(nextEntry.getKey());
+        }
+        return playersWithMostFigures;
     }
 }
