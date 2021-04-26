@@ -1,8 +1,10 @@
 package io.castles.game;
 
 import io.castles.core.board.Board;
+import io.castles.core.graph.Graph;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileContent;
 import io.castles.exceptions.NoFiguresLeftException;
 import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.events.EventHandler;
@@ -36,6 +38,7 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
+        this.board.getBoardGraph().registerEventCallback(this::onBoardGraphEvent);
         this.playerFiguresLeft = new HashMap<>();
 
         players.forEach(player -> playerFiguresLeft.put(player, FIGURES_PER_PLAYER));
@@ -124,6 +127,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.playerFiguresLeft;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
@@ -205,7 +212,7 @@ public class Game extends StatefulObject implements PlayerContainer {
         }
     }
 
-    public String getName() {
-        return this.name;
+    private void onBoardGraphEvent(TileContent regionType, Set<Set<Graph.Node>> closedRegions) {
+
     }
 }
