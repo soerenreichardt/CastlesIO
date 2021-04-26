@@ -3,10 +3,7 @@ package io.castles.core.board;
 import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.AbstractBreadthFirstSearch;
 import io.castles.core.graph.algorithm.GraphBfs;
-import io.castles.core.tile.MatrixTileLayout;
-import io.castles.core.tile.Tile;
-import io.castles.core.tile.TileContent;
-import io.castles.core.tile.TileLayout;
+import io.castles.core.tile.*;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,22 +20,16 @@ public class ClosedCastlesTracker {
     }
 
     public Set<Graph.Node> closedCastleNodes(Tile tile) {
-        var tileLayout = tile.<MatrixTileLayout>getTileLayout();
-        var contentMatrix = tileLayout.getContent();
 
-        Set<Graph.Node> startPositions = new HashSet<>();
-        for (int row = 0; row < contentMatrix.getRows(); row++) {
-            for (int column = 0; column < contentMatrix.getColumns(); column++) {
-                if (contentMatrix.get(row, column) == TileContent.CASTLE) {
-                    startPositions.add(new Graph.Node(tile.getX(), tile.getY(), row, column));
-                }
-            }
-        }
+        // Find all matrix elements of type CASTLE.
+        // They will be treated as start positions for the closed castles search.
+        // This is necessary, as one tile can have multiple disconnected castles.
+        Set<Graph.Node> startPositions = getCastleFieldsOfTile(tile);
 
         Set<Graph.Node> seenNodes = new HashSet<>();
         Set<Graph.Node> closedCastleNodes = new HashSet<>();
         var graphBfs = new GraphBfs(graph);
-        var nodeVisitor = new NodeVisitor(tileLookup, seenNodes);
+        var nodeVisitor = new ClosedCastleNodeVisitor(tileLookup, seenNodes);
         for (Graph.Node startPosition : startPositions) {
             if (seenNodes.contains(startPosition)) {
                 continue;
@@ -51,13 +42,32 @@ public class ClosedCastlesTracker {
         return closedCastleNodes;
     }
 
-    static class NodeVisitor implements AbstractBreadthFirstSearch.BfsVisitor<Graph.Node> {
+    private Set<Graph.Node> getCastleFieldsOfTile(Tile tile) {
+        Set<Graph.Node> startPositions = new HashSet<>();
+        Matrix<TileContent> contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();
+        for (int row = 0; row < contentMatrix.getRows(); row++) {
+            for (int column = 0; column < contentMatrix.getColumns(); column++) {
+                if (contentMatrix.get(row, column) == TileContent.CASTLE) {
+                    startPositions.add(new Graph.Node(tile.getX(), tile.getY(), row, column));
+                }
+            }
+        }
+        return startPositions;
+    }
+
+    /**
+     * Visits nodes of a BFS traversal and computes whether a castle is closed or not.
+     * This is done by checking for every castle node if it marks the end of the board so far.
+     * A castle is considered NOT closed, iff one or more of the castle nodes in the graph have
+     * less than 4 neighbors and the board doesn't continue in the direction of all of the missing neighbors.
+     */
+    static class ClosedCastleNodeVisitor implements AbstractBreadthFirstSearch.BfsVisitor<Graph.Node> {
 
         private final BoardGraph.TileLookup tileLookup;
         private final Set<Graph.Node> seenNodes;
         private boolean castleClosed;
 
-        NodeVisitor(BoardGraph.TileLookup tileLookup, Set<Graph.Node> seenNodes) {
+        ClosedCastleNodeVisitor(BoardGraph.TileLookup tileLookup, Set<Graph.Node> seenNodes) {
             this.tileLookup = tileLookup;
             this.seenNodes = seenNodes;
             this.castleClosed = true;
@@ -78,7 +88,7 @@ public class ClosedCastlesTracker {
             var tile = tileLookup.resolve(node.getX(), node.getY());
 
             if (tile.<MatrixTileLayout>getTileLayout().getContent().get(node.getRow(), node.getColumn()) == TileContent.SHARED) {
-                return false;
+                return true;
             }
 
             var contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();

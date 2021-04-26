@@ -167,8 +167,7 @@ public class Graph {
                 int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
                 Node target = new Node(largeTile.getX(), largeTile.getY(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
 
-                if (!(smallTile.<MatrixTileLayout>getTileLayout().getContent().get(source.getRow(), source.getColumn()) == TileContent.DISCONNECTED)
-                    && !(largeTile.<MatrixTileLayout>getTileLayout().getContent().get(target.getRow(), target.getColumn()) == TileContent.DISCONNECTED)) {
+                if (!isDisconnected(smallTile, source.getRow(), source.getColumn()) && !isDisconnected(largeTile, target.getRow(), target.getColumn())) {
                     if (!nodes.contains(source) || !nodes.contains(target)) {
                         throw new IllegalStateException("Computed node not found in list of nodes");
                     }
@@ -176,6 +175,10 @@ public class Graph {
                 }
             });
         });
+    }
+
+    private static boolean isDisconnected(Tile tile, int row, int column) {
+        return tile.<MatrixTileLayout>getTileLayout().getContent().get(row, column) == TileContent.DISCONNECTED;
     }
 
     @Value
