@@ -64,8 +64,8 @@ public class BoardGraph implements BoardListener {
 
     public Set<Set<Graph.Node>> closedCastles(Tile tile) {
         var castleGraph = filterGraphsForContent(TileContent.CASTLE);
-        var closedCastlesTracker = new ClosedCastlesTracker(castleGraph, tileLookup);
-        var closedCastleNodes = closedCastlesTracker.closedCastleNodes(tile);
+        var closedCastlesTracker = new ClosedRegionsTracker(castleGraph, tileLookup);
+        var closedCastleNodes = closedCastlesTracker.closedRegionNodes(tile);
 
         var graphBfs = new GraphBfs(castleGraph);
         Set<Set<Graph.Node>> closedCastles = new HashSet<>();
@@ -80,8 +80,8 @@ public class BoardGraph implements BoardListener {
     public Set<Set<Graph.Node>> closedStreets(Tile tile) {
         Graph graph = filterGraphsForContent(TileContent.STREET);
 
-        var closedCastlesTracker = new ClosedCastlesTracker(graph, tileLookup);
-        var closedStreetNodes = closedCastlesTracker.closedCastleNodes(tile);
+        var closedCastlesTracker = new ClosedRegionsTracker(graph, tileLookup);
+        var closedStreetNodes = closedCastlesTracker.closedRegionNodes(tile);
         var graphBfs = new GraphBfs(graph);
         Set<Set<Graph.Node>> closedStreets = new HashSet<>();
         for (Graph.Node closedStreetNode : closedStreetNodes) {
