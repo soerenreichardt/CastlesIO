@@ -63,6 +63,21 @@ public class BoardGraph implements BoardListener {
                 .findFirst();
     }
 
+    public Set<Set<Graph.Node>> closedCastles(Tile tile) {
+        var castleGraph = filterGraphsForContent(TileContent.CASTLE);
+        var closedCastlesTracker = new ClosedCastlesTracker(castleGraph, tileLookup);
+        var closedCastleNodes = closedCastlesTracker.closedCastleNodes(tile);
+
+        var graphBfs = new GraphBfs(castleGraph);
+        Set<Set<Graph.Node>> closedCastles = new HashSet<>();
+        for (Graph.Node closedCastleNode : closedCastleNodes) {
+            Set<Graph.Node> closedCastleComponent = new HashSet<>();
+            closedCastles.add(closedCastleComponent);
+            graphBfs.compute(closedCastleNode, (node, neighbors) -> closedCastleComponent.add(node));
+        }
+        return closedCastles;
+    }
+
     public int getStreetLength(Tile tile, int row, int column) {
         Graph graph = filterGraphsForContent(TileContent.STREET);
 

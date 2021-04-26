@@ -52,7 +52,7 @@ public class Board implements Lifecycle {
         this.tiles = new HashMap<>();
         this.tileProducer = tileProducer;
         this.boardListeners = new ArrayList<>();
-        this.boardGraph = new BoardGraph(this::getTile);
+        this.boardGraph = new BoardGraph(this::getTileOrNull);
         this.figures = new ArrayList<>();
 
         initialize();
@@ -81,13 +81,21 @@ public class Board implements Lifecycle {
     }
 
     public Tile getTile(int x, int y) {
+        var tileOrNull = getTileOrNull(x, y);
+        if (tileOrNull != null) {
+            return tileOrNull;
+        }
+        throw new IllegalArgumentException(String.format("No tile was found at position (%d|%d).", x, y));
+    }
+
+    private Tile getTileOrNull(int x, int y) {
         if (tiles.containsKey(x)) {
             var innerTiles = tiles.get(x);
             if (innerTiles.containsKey(y)) {
                 return innerTiles.get(y);
             }
         }
-        throw new IllegalArgumentException(String.format("No tile was found at position (%d|%d).", x, y));
+        return null;
     }
 
     public Map<Integer, Map<Integer, Tile>> getTiles() {
