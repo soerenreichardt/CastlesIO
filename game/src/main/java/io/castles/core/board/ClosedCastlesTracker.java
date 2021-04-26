@@ -47,7 +47,7 @@ public class ClosedCastlesTracker {
         Matrix<TileContent> contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();
         for (int row = 0; row < contentMatrix.getRows(); row++) {
             for (int column = 0; column < contentMatrix.getColumns(); column++) {
-                if (contentMatrix.get(row, column) == TileContent.CASTLE) {
+                if (contentMatrix.get(row, column) == graph.tileContent()) {
                     startPositions.add(new Graph.Node(tile.getX(), tile.getY(), row, column));
                 }
             }
@@ -87,11 +87,12 @@ public class ClosedCastlesTracker {
 
             var tile = tileLookup.resolve(node.getX(), node.getY());
 
-            if (tile.<MatrixTileLayout>getTileLayout().getContent().get(node.getRow(), node.getColumn()) == TileContent.SHARED) {
+            var tileLayout = tile.<MatrixTileLayout>getTileLayout();
+            if (tileLayout.getContent().get(node.getRow(), node.getColumn()) == TileContent.SHARED) {
                 return true;
             }
 
-            var contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();
+            var contentMatrix = tileLayout.getContent();
 
             var rows = contentMatrix.getRows();
             var columns = contentMatrix.getColumns();
@@ -99,26 +100,27 @@ public class ClosedCastlesTracker {
             var row = node.getRow();
             var column = node.getColumn();
 
+            var activeRotation = tileLayout.getActiveRotation();
             if (row == 0) {
-                if (tile.getNeighbors()[TileLayout.TOP] == null) {
+                if (tile.getNeighbors()[activeRotation[TileLayout.TOP]] == null) {
                     this.castleClosed = false;
                     return false;
                 }
             }
             if (column == 0) {
-                if (tile.getNeighbors()[TileLayout.LEFT] == null) {
+                if (tile.getNeighbors()[activeRotation[TileLayout.LEFT]] == null) {
                     this.castleClosed = false;
                     return false;
                 }
             }
             if (row == rows - 1) {
-                if (tile.getNeighbors()[TileLayout.BOTTOM] == null) {
+                if (tile.getNeighbors()[activeRotation[TileLayout.BOTTOM]] == null) {
                     this.castleClosed = false;
                     return false;
                 }
             }
             if (column == columns - 1) {
-                if (tile.getNeighbors()[TileLayout.RIGHT] == null) {
+                if (tile.getNeighbors()[activeRotation[TileLayout.RIGHT]] == null) {
                     this.castleClosed = false;
                     return false;
                 }

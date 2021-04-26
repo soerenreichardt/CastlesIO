@@ -49,7 +49,7 @@ class BoardGraphTest {
         board.insertTileToBoard(leftTile, -1, 0);
         board.insertTileToBoard(rightTile, 1, 0);
 
-        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0), 1, 1);
+        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0));
         assertThat(streetLength).isEqualTo(3);
     }
 
@@ -65,7 +65,7 @@ class BoardGraphTest {
         Board board = Board.withSpecificTile(startLayout);
         board.insertTileToBoard(leftTile, -1, 0);
 
-        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0), 1, 1);
+        int streetLength = board.getBoardGraph().getStreetLength(board.getTile(0, 0));
         assertThat(streetLength).isEqualTo(BoardGraph.UNCLOSED_STREET);
     }
 

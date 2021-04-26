@@ -11,7 +11,6 @@ import io.castles.exceptions.RegionOccupiedException;
 import lombok.Value;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class BoardGraph implements BoardListener {
@@ -78,33 +77,34 @@ public class BoardGraph implements BoardListener {
         return closedCastles;
     }
 
-    public int getStreetLength(Tile tile, int row, int column) {
+    public Set<Set<Graph.Node>> closedStreets(Tile tile) {
         Graph graph = filterGraphsForContent(TileContent.STREET);
 
-        GraphBfs graphBfs = new GraphBfs(graph);
-        Graph.Node startNode = new Graph.Node(tile.getX(), tile.getY(), row, column);
-        if (!graph.nodes().contains(startNode)) {
-            throw new IllegalArgumentException(String.format("No node %s was found in graph.", startNode));
+        var closedCastlesTracker = new ClosedCastlesTracker(graph, tileLookup);
+        var closedStreetNodes = closedCastlesTracker.closedCastleNodes(tile);
+        var graphBfs = new GraphBfs(graph);
+        Set<Set<Graph.Node>> closedStreets = new HashSet<>();
+        for (Graph.Node closedStreetNode : closedStreetNodes) {
+            Set<Graph.Node> closedCastleComponent = new HashSet<>();
+            closedStreets.add(closedCastleComponent);
+            graphBfs.compute(closedStreetNode, (node, neighbors) -> closedCastleComponent.add(node));
         }
-        Set<Position> distinctTileIds = new HashSet<>();
-        AtomicBoolean closedStreet = new AtomicBoolean(true);
-        graphBfs.compute(startNode, (node, neighbors) -> {
-            distinctTileIds.add(new Position(node.getX(), node.getY()));
+        return closedStreets;
+    }
 
-            // The neighbors of a street end have to be empty,
-            // otherwise the traversal should go on
-            if (neighbors.isEmpty()) {
-                // Street ends are always in the middle of a tile
-                if (!nodeEndsInMiddleOfTile(node, node.getX(), node.getY())) {
-                    closedStreet.set(false);
-                }
-            }
-            return true;
-        });
+    public int distinctTilesInNodeSet(Set<Graph.Node> nodes) {
+        return nodes.stream()
+                .map(node -> tileLookup.resolve(node.getX(), node.getY()))
+                .collect(Collectors.toSet())
+                .size();
+    }
 
-        return closedStreet.get()
-            ? distinctTileIds.size()
-            : UNCLOSED_STREET;
+    public int getStreetLength(Tile tile) {
+        var closedStreets = closedStreets(tile);
+
+        return closedStreets.isEmpty()
+                ? UNCLOSED_STREET
+                : distinctTilesInNodeSet(closedStreets.iterator().next());
     }
 
     public void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws RegionOccupiedException {
