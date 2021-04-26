@@ -166,12 +166,19 @@ public class Graph {
                 Matrix<TileContent> largeMatrix = largeLayout.getContent();
                 int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
                 Node target = new Node(largeTile.getX(), largeTile.getY(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
-                if (!nodes.contains(source) || !nodes.contains(target)) {
-                    throw new IllegalStateException("Computed node not found in list of nodes");
+
+                if (!isDisconnected(smallTile, source.getRow(), source.getColumn()) && !isDisconnected(largeTile, target.getRow(), target.getColumn())) {
+                    if (!nodes.contains(source) || !nodes.contains(target)) {
+                        throw new IllegalStateException("Computed node not found in list of nodes");
+                    }
+                    addRelationship(source, target);
                 }
-                addRelationship(source, target);
             });
         });
+    }
+
+    private static boolean isDisconnected(Tile tile, int row, int column) {
+        return tile.<MatrixTileLayout>getTileLayout().getContent().get(row, column) == TileContent.DISCONNECTED;
     }
 
     @Value

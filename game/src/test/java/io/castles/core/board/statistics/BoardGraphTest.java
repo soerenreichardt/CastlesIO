@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -157,6 +158,102 @@ class BoardGraphTest {
                     )
             )).isInstanceOf(RegionOccupiedException.class);
         }
+    }
 
+    @Nested
+    class CastleComponents {
+
+        Board board;
+        BoardGraph boardGraph;
+
+        @BeforeEach
+        void setup() {
+            var tileContentMatrix = new Matrix<>(3, 3, new TileContent[]{
+                    TileContent.GRAS, TileContent.GRAS, TileContent.SHARED,
+                    TileContent.GRAS, TileContent.GRAS, TileContent.CASTLE,
+                    TileContent.GRAS, TileContent.GRAS, TileContent.SHARED
+            });
+            this.board = Board.withSpecificTile(new MatrixTileLayout(tileContentMatrix));
+            this.boardGraph = board.getBoardGraph();
+            assertThat(boardGraph.closedCastles(board.getTile(0, 0))).isEmpty();
+        }
+
+        @Test
+        void shouldDetectSingleClosedCastle() {
+            var tileContentMatrix = new Matrix<>(3, 3, new TileContent[]{
+                    TileContent.SHARED, TileContent.GRAS, TileContent.GRAS,
+                    TileContent.CASTLE, TileContent.GRAS, TileContent.GRAS,
+                    TileContent.SHARED, TileContent.GRAS, TileContent.GRAS
+            });
+            var tile = new Tile(new MatrixTileLayout(tileContentMatrix));
+            board.insertTileToBoard(tile, 1, 0);
+            var closedCastles = boardGraph.closedCastles(tile);
+            assertThat(closedCastles.size()).isEqualTo(1);
+            assertThat(closedCastles.iterator().next()).containsExactlyInAnyOrder(
+                    new Graph.Node(0, 0, 0, 2),
+                    new Graph.Node(0, 0, 1, 2),
+                    new Graph.Node(0, 0, 2, 2),
+
+                    new Graph.Node(1, 0, 0, 0),
+                    new Graph.Node(1, 0, 1, 0),
+                    new Graph.Node(1, 0, 2, 0)
+            );
+        }
+
+        @Test
+        void shouldDetectUnclosedCastle() {
+            var tileContentMatrix = new Matrix<>(3, 3, new TileContent[]{
+                    TileContent.SHARED, TileContent.CASTLE, TileContent.CASTLE,
+                    TileContent.CASTLE, TileContent.CASTLE, TileContent.CASTLE,
+                    TileContent.SHARED, TileContent.CASTLE, TileContent.CASTLE
+            });
+            var tile = new Tile(new MatrixTileLayout(tileContentMatrix));
+            board.insertTileToBoard(tile, 1, 0);
+            var closedCastles = boardGraph.closedCastles(tile);
+            assertThat(closedCastles).isEmpty();
+        }
+
+        @Test
+        void shouldDetectMultipleClosedCastles() {
+            var grasMatrix = new Matrix<>(1, 1, new TileContent[]{TileContent.GRAS});
+            var grasTile = new Tile(new MatrixTileLayout(grasMatrix));
+            board.insertTileToBoard(grasTile, 0, -1);
+
+            var singleCastleMatrix = new Matrix<>(3, 3, new TileContent[] {
+                    TileContent.SHARED, TileContent.CASTLE, TileContent.SHARED,
+                    TileContent.GRAS, TileContent.GRAS, TileContent.GRAS,
+                    TileContent.GRAS, TileContent.GRAS, TileContent.GRAS
+            });
+            var singleCastleTile = new Tile(new MatrixTileLayout(singleCastleMatrix));
+
+            var doubleCastleMatrix = new Matrix<>(3, 3, new TileContent[] {
+                    TileContent.SHARED, TileContent.GRAS, TileContent.GRAS,
+                    TileContent.CASTLE, TileContent.GRAS, TileContent.GRAS,
+                    TileContent.DISCONNECTED, TileContent.CASTLE, TileContent.SHARED
+            });
+            var doubleCastleTile = new Tile(new MatrixTileLayout(doubleCastleMatrix));
+
+            board.insertTileToBoard(singleCastleTile, 1, -1);
+            board.insertTileToBoard(doubleCastleTile, 1, 0);
+
+            var closedCastles = boardGraph.closedCastles(doubleCastleTile);
+            assertThat(closedCastles.size()).isEqualTo(2);
+            assertThat(closedCastles).contains(
+                    Set.of(
+                            new Graph.Node(0, 0, 0, 2),
+                            new Graph.Node(0, 0, 1, 2),
+                            new Graph.Node(0, 0, 2, 2),
+                            new Graph.Node(1, 0, 0, 0),
+                            new Graph.Node(1, 0, 1, 0)
+                    ),
+                    Set.of(
+                            new Graph.Node(1, 0, 2, 1),
+                            new Graph.Node(1, 0, 2, 2),
+                            new Graph.Node(1, -1, 0, 0),
+                            new Graph.Node(1, -1, 0, 1),
+                            new Graph.Node(1, -1, 0, 2)
+                    )
+            );
+        }
     }
 }
