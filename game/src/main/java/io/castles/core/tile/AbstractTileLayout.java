@@ -40,6 +40,10 @@ public abstract class AbstractTileLayout implements TileLayout {
         return this.rotation;
     }
 
+    public int[] getActiveRotation() {
+        return this.activeRotation;
+    }
+
     private int rotatedDirection(int direction) {
         return activeRotation[direction];
     }

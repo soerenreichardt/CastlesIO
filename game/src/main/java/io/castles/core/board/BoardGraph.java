@@ -4,14 +4,12 @@ import io.castles.core.graph.Graph;
 import io.castles.core.graph.algorithm.GraphBfs;
 import io.castles.core.graph.algorithm.Wcc;
 import io.castles.core.tile.Figure;
-import io.castles.core.tile.MatrixTileLayout;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
 import io.castles.exceptions.RegionOccupiedException;
 import lombok.Value;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class BoardGraph implements BoardListener {
@@ -64,47 +62,26 @@ public class BoardGraph implements BoardListener {
     }
 
     public Set<Set<Graph.Node>> closedCastles(Tile tile) {
-        var castleGraph = filterGraphsForContent(TileContent.CASTLE);
-        var closedCastlesTracker = new ClosedCastlesTracker(castleGraph, tileLookup);
-        var closedCastleNodes = closedCastlesTracker.closedCastleNodes(tile);
-
-        var graphBfs = new GraphBfs(castleGraph);
-        Set<Set<Graph.Node>> closedCastles = new HashSet<>();
-        for (Graph.Node closedCastleNode : closedCastleNodes) {
-            Set<Graph.Node> closedCastleComponent = new HashSet<>();
-            closedCastles.add(closedCastleComponent);
-            graphBfs.compute(closedCastleNode, (node, neighbors) -> closedCastleComponent.add(node));
-        }
-        return closedCastles;
+        return closedRegions(tile, filterGraphsForContent(TileContent.CASTLE));
     }
 
-    public int getStreetLength(Tile tile, int row, int column) {
-        Graph graph = filterGraphsForContent(TileContent.STREET);
+    public Set<Set<Graph.Node>> closedStreets(Tile tile) {
+        return closedRegions(tile, filterGraphsForContent(TileContent.STREET));
+    }
 
-        GraphBfs graphBfs = new GraphBfs(graph);
-        Graph.Node startNode = new Graph.Node(tile.getX(), tile.getY(), row, column);
-        if (!graph.nodes().contains(startNode)) {
-            throw new IllegalArgumentException(String.format("No node %s was found in graph.", startNode));
-        }
-        Set<Position> distinctTileIds = new HashSet<>();
-        AtomicBoolean closedStreet = new AtomicBoolean(true);
-        graphBfs.compute(startNode, (node, neighbors) -> {
-            distinctTileIds.add(new Position(node.getX(), node.getY()));
+    public int distinctTilesInNodeSet(Set<Graph.Node> nodes) {
+        return nodes.stream()
+                .map(node -> tileLookup.resolve(node.getX(), node.getY()))
+                .collect(Collectors.toSet())
+                .size();
+    }
 
-            // The neighbors of a street end have to be empty,
-            // otherwise the traversal should go on
-            if (neighbors.isEmpty()) {
-                // Street ends are always in the middle of a tile
-                if (!nodeEndsInMiddleOfTile(node, node.getX(), node.getY())) {
-                    closedStreet.set(false);
-                }
-            }
-            return true;
-        });
+    public int getStreetLength(Tile tile) {
+        var closedStreets = closedStreets(tile);
 
-        return closedStreet.get()
-            ? distinctTileIds.size()
-            : UNCLOSED_STREET;
+        return closedStreets.isEmpty()
+                ? UNCLOSED_STREET
+                : distinctTilesInNodeSet(closedStreets.iterator().next());
     }
 
     public void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws RegionOccupiedException {
@@ -135,14 +112,18 @@ public class BoardGraph implements BoardListener {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("No graph was found for TileContent %s", TileContent.STREET)));
     }
 
-    private boolean nodeEndsInMiddleOfTile(Graph.Node node, int x, int y) {
-        var sinkTile = tileLookup.resolve(x, y);
-        var tileMatrix = sinkTile.<MatrixTileLayout>getTileLayout().getContent();
-        var streetEndsOnEdge = node.getColumn() == 0
-                || node.getRow() == 0
-                || node.getRow() == tileMatrix.getRows() - 1
-                || node.getColumn() == tileMatrix.getColumns() - 1;
-        return !streetEndsOnEdge;
+    private Set<Set<Graph.Node>> closedRegions(Tile tile, Graph castleGraph) {
+        var closedCastlesTracker = new ClosedRegionsTracker(castleGraph, tileLookup);
+        var closedCastleNodes = closedCastlesTracker.closedRegionNodes(tile);
+
+        var graphBfs = new GraphBfs(castleGraph);
+        Set<Set<Graph.Node>> closedCastles = new HashSet<>();
+        for (Graph.Node closedCastleNode : closedCastleNodes) {
+            Set<Graph.Node> closedCastleComponent = new HashSet<>();
+            closedCastles.add(closedCastleComponent);
+            graphBfs.compute(closedCastleNode, (node, neighbors) -> closedCastleComponent.add(node));
+        }
+        return closedCastles;
     }
 
     public interface TileLookup {

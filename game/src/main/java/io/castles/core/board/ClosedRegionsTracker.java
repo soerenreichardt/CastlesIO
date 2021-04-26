@@ -9,45 +9,45 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClosedCastlesTracker {
+public class ClosedRegionsTracker {
 
     private final Graph graph;
     private final BoardGraph.TileLookup tileLookup;
 
-    public ClosedCastlesTracker(Graph graph, BoardGraph.TileLookup tileLookup) {
+    public ClosedRegionsTracker(Graph graph, BoardGraph.TileLookup tileLookup) {
         this.graph = graph;
         this.tileLookup = tileLookup;
     }
 
-    public Set<Graph.Node> closedCastleNodes(Tile tile) {
+    public Set<Graph.Node> closedRegionNodes(Tile tile) {
 
-        // Find all matrix elements of type CASTLE.
-        // They will be treated as start positions for the closed castles search.
-        // This is necessary, as one tile can have multiple disconnected castles.
-        Set<Graph.Node> startPositions = getCastleFieldsOfTile(tile);
+        // Find all matrix elements of the TileContent the corresponding graph supports.
+        // They will be treated as start positions for the closed regions search.
+        // This is necessary, as one tile can have multiple disconnected regions of a specific TileContent.
+        Set<Graph.Node> startPositions = filterFieldsOfRegionTypeInTile(tile);
 
         Set<Graph.Node> seenNodes = new HashSet<>();
-        Set<Graph.Node> closedCastleNodes = new HashSet<>();
+        Set<Graph.Node> closedRegionNodes = new HashSet<>();
         var graphBfs = new GraphBfs(graph);
-        var nodeVisitor = new ClosedCastleNodeVisitor(tileLookup, seenNodes);
+        var nodeVisitor = new ClosedRegionNodeVisitor(tileLookup, seenNodes);
         for (Graph.Node startPosition : startPositions) {
             if (seenNodes.contains(startPosition)) {
                 continue;
             }
             graphBfs.compute(startPosition, nodeVisitor);
-            if (nodeVisitor.castleClosed()) {
-                closedCastleNodes.add(startPosition);
+            if (nodeVisitor.regionClosed()) {
+                closedRegionNodes.add(startPosition);
             }
         }
-        return closedCastleNodes;
+        return closedRegionNodes;
     }
 
-    private Set<Graph.Node> getCastleFieldsOfTile(Tile tile) {
+    private Set<Graph.Node> filterFieldsOfRegionTypeInTile(Tile tile) {
         Set<Graph.Node> startPositions = new HashSet<>();
         Matrix<TileContent> contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();
         for (int row = 0; row < contentMatrix.getRows(); row++) {
             for (int column = 0; column < contentMatrix.getColumns(); column++) {
-                if (contentMatrix.get(row, column) == TileContent.CASTLE) {
+                if (contentMatrix.get(row, column) == graph.tileContent()) {
                     startPositions.add(new Graph.Node(tile.getX(), tile.getY(), row, column));
                 }
             }
@@ -56,25 +56,25 @@ public class ClosedCastlesTracker {
     }
 
     /**
-     * Visits nodes of a BFS traversal and computes whether a castle is closed or not.
-     * This is done by checking for every castle node if it marks the end of the board so far.
-     * A castle is considered NOT closed, iff one or more of the castle nodes in the graph have
+     * Visits nodes of a BFS traversal and computes whether a region is closed or not.
+     * This is done by checking for every node of a specific TileContent if it marks the end of the board so far.
+     * A region is considered NOT closed, iff one or more of the region nodes in the graph have
      * less than 4 neighbors and the board doesn't continue in the direction of all of the missing neighbors.
      */
-    static class ClosedCastleNodeVisitor implements AbstractBreadthFirstSearch.BfsVisitor<Graph.Node> {
+    static class ClosedRegionNodeVisitor implements AbstractBreadthFirstSearch.BfsVisitor<Graph.Node> {
 
         private final BoardGraph.TileLookup tileLookup;
         private final Set<Graph.Node> seenNodes;
-        private boolean castleClosed;
+        private boolean regionClosed;
 
-        ClosedCastleNodeVisitor(BoardGraph.TileLookup tileLookup, Set<Graph.Node> seenNodes) {
+        ClosedRegionNodeVisitor(BoardGraph.TileLookup tileLookup, Set<Graph.Node> seenNodes) {
             this.tileLookup = tileLookup;
             this.seenNodes = seenNodes;
-            this.castleClosed = true;
+            this.regionClosed = true;
         }
 
-        boolean castleClosed() {
-            return castleClosed;
+        boolean regionClosed() {
+            return regionClosed;
         }
 
         @Override
@@ -87,11 +87,12 @@ public class ClosedCastlesTracker {
 
             var tile = tileLookup.resolve(node.getX(), node.getY());
 
-            if (tile.<MatrixTileLayout>getTileLayout().getContent().get(node.getRow(), node.getColumn()) == TileContent.SHARED) {
+            var tileLayout = tile.<MatrixTileLayout>getTileLayout();
+            if (tileLayout.getContent().get(node.getRow(), node.getColumn()) == TileContent.SHARED) {
                 return true;
             }
 
-            var contentMatrix = tile.<MatrixTileLayout>getTileLayout().getContent();
+            var contentMatrix = tileLayout.getContent();
 
             var rows = contentMatrix.getRows();
             var columns = contentMatrix.getColumns();
@@ -99,27 +100,28 @@ public class ClosedCastlesTracker {
             var row = node.getRow();
             var column = node.getColumn();
 
+            var activeRotation = tileLayout.getActiveRotation();
             if (row == 0) {
-                if (tile.getNeighbors()[TileLayout.TOP] == null) {
-                    this.castleClosed = false;
+                if (tile.getNeighbors()[activeRotation[TileLayout.TOP]] == null) {
+                    this.regionClosed = false;
                     return false;
                 }
             }
             if (column == 0) {
-                if (tile.getNeighbors()[TileLayout.LEFT] == null) {
-                    this.castleClosed = false;
+                if (tile.getNeighbors()[activeRotation[TileLayout.LEFT]] == null) {
+                    this.regionClosed = false;
                     return false;
                 }
             }
             if (row == rows - 1) {
-                if (tile.getNeighbors()[TileLayout.BOTTOM] == null) {
-                    this.castleClosed = false;
+                if (tile.getNeighbors()[activeRotation[TileLayout.BOTTOM]] == null) {
+                    this.regionClosed = false;
                     return false;
                 }
             }
             if (column == columns - 1) {
-                if (tile.getNeighbors()[TileLayout.RIGHT] == null) {
-                    this.castleClosed = false;
+                if (tile.getNeighbors()[activeRotation[TileLayout.RIGHT]] == null) {
+                    this.regionClosed = false;
                     return false;
                 }
             }
