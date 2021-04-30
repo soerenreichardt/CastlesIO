@@ -39,6 +39,10 @@ public class Tile {
         return new Tile(tileLayout);
     }
 
+    public static Tile fromMatrix(Matrix<TileContent> contentMatrix) {
+        return new Tile(new MatrixTileLayout(contentMatrix));
+    }
+
     public Tile(TileLayout tileLayout) {
         this(getNewId(), tileLayout);
     }

@@ -151,7 +151,7 @@ public class Board implements Lifecycle {
     }
 
     private void validateHasNeighbors(Tile tile, Tile[] neighbors) {
-        if (!hasNeighbors(tile, neighbors)) {
+        if (!hasNeighbors(neighbors)) {
             throw new IllegalArgumentException(
                     String.format(
                             "A tile needs at least one neighbor but no neighbors were found at position (%d|%d).",
@@ -186,7 +186,7 @@ public class Board implements Lifecycle {
         return neighbors;
     }
 
-    private boolean hasNeighbors(Tile tile, Tile[] neighbors) {
+    private boolean hasNeighbors(Tile[] neighbors) {
         boolean hasNoNeighbor = neighbors[TileLayout.LEFT] == null
                 && neighbors[TileLayout.RIGHT] == null
                 && neighbors[TileLayout.TOP] == null

@@ -19,15 +19,26 @@ public class BoardGraph implements BoardListener {
 
     private final List<Graph> graphs;
     private final TileLookup tileLookup;
+    private final List<BoardGraphEventCallback> eventCallbacks;
 
     public BoardGraph(TileLookup tileLookup) {
         this.tileLookup = tileLookup;
         this.graphs = new ArrayList<>();
+        this.eventCallbacks = new ArrayList<>();
     }
 
     @Override
     public void onTileAdded(Tile tile) {
         graphs.forEach(graph -> graph.fromTile(tile));
+        var closedCastles = closedCastles(tile);
+        var closedStreets = closedStreets(tile);
+
+        if (!closedCastles.isEmpty()) {
+            eventCallbacks.forEach(callback -> callback.onRegionClosed(TileContent.CASTLE, closedCastles));
+        }
+        if (!closedStreets.isEmpty()) {
+            eventCallbacks.forEach(callback -> callback.onRegionClosed(TileContent.STREET, closedStreets));
+        }
     }
 
     @Override
@@ -53,6 +64,10 @@ public class BoardGraph implements BoardListener {
         initialize();
     }
 
+    public void registerEventCallback(BoardGraphEventCallback callback) {
+        this.eventCallbacks.add(callback);
+    }
+
     public Optional<Graph> getGraphThatContainsNode(int x, int y, int row, int column) {
         var node = new Graph.Node(x, y, row, column);
         return graphs
@@ -66,14 +81,14 @@ public class BoardGraph implements BoardListener {
     }
 
     public Set<Set<Graph.Node>> closedStreets(Tile tile) {
+        // TODO: add cycle detection for streets
         return closedRegions(tile, filterGraphsForContent(TileContent.STREET));
     }
 
-    public int distinctTilesInNodeSet(Set<Graph.Node> nodes) {
+    public Set<Tile> distinctTilesInNodeSet(Set<Graph.Node> nodes) {
         return nodes.stream()
                 .map(node -> tileLookup.resolve(node.getX(), node.getY()))
-                .collect(Collectors.toSet())
-                .size();
+                .collect(Collectors.toSet());
     }
 
     public int getStreetLength(Tile tile) {
@@ -81,7 +96,7 @@ public class BoardGraph implements BoardListener {
 
         return closedStreets.isEmpty()
                 ? UNCLOSED_STREET
-                : distinctTilesInNodeSet(closedStreets.iterator().next());
+                : distinctTilesInNodeSet(closedStreets.iterator().next()).size();
     }
 
     public void validateFigurePlacement(Figure figure, Collection<Figure> existingFigures) throws RegionOccupiedException {
@@ -126,8 +141,14 @@ public class BoardGraph implements BoardListener {
         return closedCastles;
     }
 
+    @FunctionalInterface
     public interface TileLookup {
         Tile resolve(int x, int y);
+    }
+
+    @FunctionalInterface
+    public interface BoardGraphEventCallback {
+        void onRegionClosed(TileContent regionType, Set<Set<Graph.Node>> closedRegions);
     }
 
     @Value

@@ -1,8 +1,10 @@
 package io.castles.game;
 
 import io.castles.core.board.Board;
+import io.castles.core.graph.Graph;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileContent;
 import io.castles.exceptions.NoFiguresLeftException;
 import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.events.EventHandler;
@@ -23,6 +25,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     private final Board board;
     private final GameSettings settings;
     private final Map<Player, Integer> playerFiguresLeft;
+    private final ScoreBoard scoreBoard;
 
     private Tile drawnTile;
 
@@ -36,7 +39,9 @@ public class Game extends StatefulObject implements PlayerContainer {
         // shuffle the order of players.
         this.gameLogic = new GameLogic(getId(), settings.getGameMode(), new LinkedList<>(players), eventHandler);
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
+        this.board.getBoardGraph().registerEventCallback(this::onRegionClosed);
         this.playerFiguresLeft = new HashMap<>();
+        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players);
 
         players.forEach(player -> playerFiguresLeft.put(player, FIGURES_PER_PLAYER));
     }
@@ -124,6 +129,14 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.playerFiguresLeft;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public ScoreBoard getScoreBoard() {
+        return this.scoreBoard;
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
@@ -134,6 +147,11 @@ public class Game extends StatefulObject implements PlayerContainer {
     @TestOnly
     void setFiguresLeftForPlayer(Player player, int figuresLeft) {
         this.playerFiguresLeft.put(player, figuresLeft);
+    }
+
+    @TestOnly
+    public void setDrawnTile(Tile tile) {
+        this.drawnTile = tile;
     }
 
     // ========== ACTIONS =========
@@ -205,7 +223,20 @@ public class Game extends StatefulObject implements PlayerContainer {
         }
     }
 
-    public String getName() {
-        return this.name;
+    private void onRegionClosed(TileContent regionType, Set<Set<Graph.Node>> closedRegions) {
+        var figures = board.getFigures();
+        for (Set<Graph.Node> closedRegion : closedRegions) {
+            var figuresToRemove = scoreBoard.assignScoresForClosedRegion(regionType, closedRegion, figures);
+            returnFiguresToPlayerPools(figuresToRemove);
+        }
+    }
+
+    private void returnFiguresToPlayerPools(Set<Figure> figures) {
+        figures.forEach(figure -> {
+            var owner = figure.getOwner();
+            var figuresLeftForPlayer = playerFiguresLeft.get(owner);
+            playerFiguresLeft.put(owner, figuresLeftForPlayer + 1);
+            board.getFigures().remove(figure);
+        });
     }
 }
