@@ -133,6 +133,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.name;
     }
 
+    public ScoreBoard getScoreBoard() {
+        return this.scoreBoard;
+    }
+
     @TestOnly
     void setGameState(GameState gameState) {
         while(gameLogic.getGameState() != gameState) {
@@ -143,6 +147,11 @@ public class Game extends StatefulObject implements PlayerContainer {
     @TestOnly
     void setFiguresLeftForPlayer(Player player, int figuresLeft) {
         this.playerFiguresLeft.put(player, figuresLeft);
+    }
+
+    @TestOnly
+    public void setDrawnTile(Tile tile) {
+        this.drawnTile = tile;
     }
 
     // ========== ACTIONS =========
