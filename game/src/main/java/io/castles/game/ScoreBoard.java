@@ -34,6 +34,10 @@ public class ScoreBoard {
         players.forEach(player -> addScoreForPlayer(player, score));
     }
 
+    public int getScoreForPlayer(Player player) {
+        return playerScores.get(player);
+    }
+
     public Set<Figure> assignScoresForClosedRegion(TileContent regionType, Set<Graph.Node> closedRegion, List<Figure> figures) {
         Map<Player, Integer> figuresInRegion = new HashMap<>();
         Set<Figure> figuresToRemove = new HashSet<>();
@@ -72,7 +76,7 @@ public class ScoreBoard {
         playersWithMostFigures.add(playerWithMostFigures.getKey());
 
         Map.Entry<Player, Integer> nextEntry;
-        while ((nextEntry = entryIterator.next()).getValue().intValue() == playerWithMostFigures.getValue().intValue()) {
+        while (entryIterator.hasNext() && (nextEntry = entryIterator.next()).getValue().intValue() == playerWithMostFigures.getValue().intValue()) {
             playersWithMostFigures.add(nextEntry.getKey());
         }
         return playersWithMostFigures;
