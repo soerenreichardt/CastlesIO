@@ -53,12 +53,24 @@ class ScoreBoardTest {
                 new Graph.Node(0, 0, 1, 2),
                 new Graph.Node(1, 0, 1, 0)
         );
-        var player = players.iterator().next();
-        var playerFigure = new Figure(new Graph.Node(1, 0, 1, 0), player);
-        var figuresToRemove = scoreBoard.assignScoresForClosedRegion(TileContent.CASTLE, closedRegionNodeSet, List.of(playerFigure));
+        var playerIterator = players.iterator();
+        var player = playerIterator.next();
+        var otherPlayer = playerIterator.next();
 
-        assertThat(figuresToRemove).contains(playerFigure);
+        // Check that only the player with the most figures takes the points
+        var playerFigure1 = new Figure(new Graph.Node(1, 0, 1, 0), player);
+        var playerFigure2 = new Figure(new Graph.Node(0, 0, 1, 2), player);
+        var otherPlayerFigure = new Figure(new Graph.Node(0, 0, 1, 2), otherPlayer);
+
+        var figuresToRemove = scoreBoard.assignScoresForClosedRegion(
+                TileContent.CASTLE,
+                closedRegionNodeSet,
+                List.of(playerFigure1, playerFigure2, otherPlayerFigure)
+        );
+
+        assertThat(figuresToRemove).contains(playerFigure1);
         assertThat(scoreBoard.getScoreForPlayer(player)).isEqualTo(4);
+        assertThat(scoreBoard.getScoreForPlayer(otherPlayer)).isEqualTo(0);
     }
 
 }

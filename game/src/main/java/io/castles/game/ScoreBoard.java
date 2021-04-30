@@ -43,7 +43,7 @@ public class ScoreBoard {
         Set<Figure> figuresToRemove = new HashSet<>();
         for (Figure figure : figures) {
             if (closedRegion.contains(figure.getPosition())) {
-                figuresInRegion.computeIfAbsent(figure.getOwner(), player -> figuresInRegion.getOrDefault(player, 0) + 1);
+                figuresInRegion.put(figure.getOwner(), figuresInRegion.getOrDefault(figure.getOwner(), 0) + 1);
                 figuresToRemove.add(figure);
             }
         }
