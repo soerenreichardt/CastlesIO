@@ -41,7 +41,7 @@ public class Game extends StatefulObject implements PlayerContainer {
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
         this.board.getBoardGraph().registerEventCallback(this::onRegionClosed);
         this.playerFiguresLeft = new HashMap<>();
-        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players);
+        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players, eventHandler);
 
         players.forEach(player -> playerFiguresLeft.put(player, FIGURES_PER_PLAYER));
     }
@@ -60,6 +60,8 @@ public class Game extends StatefulObject implements PlayerContainer {
     protected void init() {
         triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
         gameLogic.initialize();
+        gameLogic.setGameEndCondition(() -> !board.hasNextTile());
+        eventHandler().registerLocalEventConsumer(getId(), scoreBoard);
     }
 
     @Override
@@ -157,7 +159,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     // ========== ACTIONS =========
 
     public Tile drawTile(Player player) {
-        drawnTile = gameAction(player, GameState.DRAW, board::getNewTile);
+        drawnTile = gameAction(player, GameState.DRAW, board::getNextTile);
         return drawnTile;
     }
 

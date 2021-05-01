@@ -88,6 +88,11 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.FIGURE_PLACED.name(), new FigureDTO(owner.getId(), tile.getX(), tile.getY(), row, column)));
     }
 
+    @Override
+    public void onGameEnd() {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.GAME_END.name(), null));
+    }
+
     private void createPlayerEmitter(Player player) {
         playerEmitters.create(player.getId());
     }

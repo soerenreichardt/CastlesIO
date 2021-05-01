@@ -3,6 +3,7 @@ package io.castles.game;
 import io.castles.core.board.Board;
 import io.castles.core.graph.Graph;
 import io.castles.core.tile.*;
+import io.castles.game.events.EventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ class ScoreBoardTest {
         });
         this.board = Board.withSpecificTile(new MatrixTileLayout(startMatrix));
         this.players = Set.of(new Player("P1"), new Player("P2"));
-        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players);
+        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players, new EventHandler());
     }
 
     @Test

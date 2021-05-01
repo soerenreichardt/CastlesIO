@@ -1,6 +1,8 @@
 package io.castles.game;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +24,8 @@ class GameStateTest {
 
         assertFalse(GameState.NEXT_PLAYER.isInitializationStep());
         assertFalse(GameState.NEXT_PLAYER.isSkippable());
+
+        assertTrue(GameState.GAME_END.isEndStep());
     }
 
     @Test
@@ -31,6 +35,13 @@ class GameStateTest {
         assertEquals(GameState.PLACE_FIGURE, GameState.PLACE_TILE.advance());
         assertEquals(GameState.NEXT_PLAYER, GameState.PLACE_FIGURE.advance());
         assertEquals(GameState.DRAW, GameState.NEXT_PLAYER.advance());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = GameState.class)
+    void shouldAdvanceToEndGame(GameState gameState) {
+        gameState.endGame();
+        assertEquals(GameState.GAME_END, gameState.advance());
     }
 
 }
