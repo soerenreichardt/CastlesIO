@@ -5,11 +5,13 @@ import io.castles.core.graph.Graph;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
+import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEventConsumer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ScoreBoard {
+public class ScoreBoard extends GameEventConsumer.Adapter {
 
     private static final Map<TileContent, Integer> TILE_CONTENT_VALUE = Map.of(
             TileContent.STREET, 1,
@@ -18,12 +20,20 @@ public class ScoreBoard {
 
     private final Map<Player, Integer> playerScores;
     private final BoardGraph boardGraph;
+    private final EventHandler eventHandler;
 
-    public ScoreBoard(BoardGraph boardGraph, Set<Player> players) {
+    public ScoreBoard(BoardGraph boardGraph, Set<Player> players, EventHandler eventHandler) {
         this.boardGraph = boardGraph;
         this.playerScores = new HashMap<>();
+        this.eventHandler = eventHandler;
 
         players.forEach(player -> playerScores.put(player, 0));
+    }
+
+    @Override
+    public void onGameEnd() {
+        // TODO: compute pawn scores on gras regions
+        // TODO: compute winning player and trigger event
     }
 
     public void addScoreForPlayer(Player player, int score) {
