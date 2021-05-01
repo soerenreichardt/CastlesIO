@@ -84,7 +84,7 @@ class GraphTest {
         var startTile = board.getTile(0, 0);
         grasGraph.fromTile(startTile);
 
-        var tile = board.getNewTile();
+        var tile = board.getNextTile();
         board.insertTileToBoard(tile, 0, 1);
         grasGraph.fromTile(board.getTile(0, 1));
 

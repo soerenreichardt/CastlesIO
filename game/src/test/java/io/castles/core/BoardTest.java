@@ -81,7 +81,7 @@ class BoardTest {
     @Test
     void shouldCreateNewTiles() {
         Board board = Board.withStaticTile(TileContent.GRAS);
-        Tile newTile = board.getNewTile();
+        Tile newTile = board.getNextTile();
         assertNotNull(newTile);
     }
 

@@ -1,6 +1,7 @@
 package io.castles.core.board;
 
 import io.castles.core.GameMode;
+import io.castles.core.board.TileIterators.TileIterator;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
@@ -14,7 +15,7 @@ import java.util.*;
 public class Board implements Lifecycle {
 
     private final Map<Integer, Map<Integer, Tile>> tiles;
-    private final TileProducer tileProducer;
+    private final TileIterator tileIterator;
     private final List<BoardListener> boardListeners;
     private final BoardGraph boardGraph;
     private final List<Figure> figures;
@@ -34,23 +35,23 @@ public class Board implements Lifecycle {
     }
 
     public static Board withPredefinedTiles(List<Tile> tiles) {
-        var rng = new Random();
-        return new Board(() -> tiles.get(rng.nextInt(tiles.size())));
+        return new Board(new TileIterators.RandomList(tiles));
     }
 
     @TestOnly
     public static Board withStaticTile(TileContent border) {
-        return new Board(() -> Tile.drawStatic(border));
+
+        return new Board(new TileIterators.Static(Tile.drawStatic(border)));
     }
 
     @TestOnly
     public static Board withSpecificTile(TileLayout layout) {
-        return new Board(() -> new Tile(layout));
+        return new Board(new TileIterators.Static(new Tile(layout)));
     }
 
-    private Board(TileProducer tileProducer) {
+    private Board(TileIterator tileIterator) {
         this.tiles = new HashMap<>();
-        this.tileProducer = tileProducer;
+        this.tileIterator = tileIterator;
         this.boardListeners = new ArrayList<>();
         this.boardGraph = new BoardGraph(this::getTileOrNull);
         this.figures = new ArrayList<>();
@@ -61,7 +62,10 @@ public class Board implements Lifecycle {
     @Override
     public void initialize() {
         addBoardListener(boardGraph);
-        setInitialTile(tileProducer.get());
+        if (!tileIterator.hasNext()) {
+            throw new RuntimeException("Could not draw initial tile.");
+        }
+        setInitialTile(tileIterator.next());
     }
 
     @Override
@@ -76,8 +80,12 @@ public class Board implements Lifecycle {
         return this.boardGraph;
     }
 
-    public Tile getNewTile() {
-        return tileProducer.get();
+    public boolean hasNextTile() {
+        return tileIterator.hasNext();
+    }
+
+    public Tile getNextTile() {
+        return tileIterator.next();
     }
 
     public Tile getTile(int x, int y) {
@@ -267,9 +275,5 @@ public class Board implements Lifecycle {
             }
         }
         return Optional.empty();
-    }
-
-    interface TileProducer {
-        Tile get();
     }
 }

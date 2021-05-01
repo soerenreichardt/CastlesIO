@@ -157,7 +157,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     // ========== ACTIONS =========
 
     public Tile drawTile(Player player) {
-        drawnTile = gameAction(player, GameState.DRAW, board::getNewTile);
+        drawnTile = gameAction(player, GameState.DRAW, board::getNextTile);
         return drawnTile;
     }
 
