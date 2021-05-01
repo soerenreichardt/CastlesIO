@@ -62,6 +62,11 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
         collect(GameEvent.FIGURE_PLACED.name(), owner, tile, row, column);
     }
 
+    @Override
+    public void onGameEnd() {
+        collect(GameEvent.GAME_END.name());
+    }
+
     public void collect(String event, Object... data) {
         events.computeIfAbsent(event, __ -> new ArrayList<>()).add(stringFrom(data));
     }

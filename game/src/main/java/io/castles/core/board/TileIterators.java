@@ -3,6 +3,7 @@ package io.castles.core.board;
 import io.castles.core.tile.Tile;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class TileIterators {
         private final Random random;
 
         public RandomList(List<Tile> tileList) {
-            this.tileList = tileList;
+            this.tileList = new LinkedList<>(tileList);
             this.random = new Random();
         }
 

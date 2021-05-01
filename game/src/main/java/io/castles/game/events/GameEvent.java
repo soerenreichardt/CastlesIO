@@ -11,5 +11,6 @@ public enum GameEvent {
     PHASE_SWITCHED,
     ACTIVE_PLAYER_SWITCHED,
     TILE_PLACED,
-    FIGURE_PLACED
+    FIGURE_PLACED,
+    GAME_END
 }

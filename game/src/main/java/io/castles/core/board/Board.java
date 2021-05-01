@@ -40,7 +40,6 @@ public class Board implements Lifecycle {
 
     @TestOnly
     public static Board withStaticTile(TileContent border) {
-
         return new Board(new TileIterators.Static(Tile.drawStatic(border)));
     }
 

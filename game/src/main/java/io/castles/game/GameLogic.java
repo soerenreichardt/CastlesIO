@@ -30,6 +30,7 @@ public class GameLogic extends StatefulObject {
         this.eventHandler = eventHandler;
         this.gameState = GameState.START;
         this.activePlayer = chooseRandomStartPlayer();
+        this.gameEndCondition = () -> false;
     }
 
     @Override
@@ -80,9 +81,10 @@ public class GameLogic extends StatefulObject {
     }
 
     private void checkGameEndCondition() {
-        if (gameEndCondition.getAsBoolean()) {
+        if (!gameEndCondition.getAsBoolean()) {
             gameState.endGame();
             nextPhase();
+            triggerLocalEvent(getId(), GameEvent.GAME_END);
         }
     }
 }

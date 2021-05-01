@@ -1,12 +1,16 @@
 package io.castles.game.events;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Tile;
+import io.castles.core.tile.TileContent;
 import io.castles.game.*;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,7 +101,7 @@ class EventHandlerTest {
             assertThat(eventConsumer.events()).containsKey(GameEvent.PHASE_SWITCHED.name());
             assertThat(eventConsumer.events()).containsKey(GameEvent.ACTIVE_PLAYER_SWITCHED.name());
 
-            assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(String.join(", ", GameState.START.toString(), GameState.DRAW.toString()));
+            assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(CollectingEventConsumer.stringFrom(GameState.START.toString(), GameState.DRAW.toString()));
             assertThat(eventConsumer.events().get(GameEvent.ACTIVE_PLAYER_SWITCHED.name())).contains(game.getActivePlayer().toString());
         }
 
@@ -110,8 +114,21 @@ class EventHandlerTest {
             void setup() {
                 var player = new Player("P1");
                 gameLobby.addPlayer(player);
-                gameLobby.setGameMode(GameMode.DEBUG);
+                gameLobby.setGameMode(GameMode.ORIGINAL);
+                gameLobby.setTileList(List.of(Tile.drawStatic(TileContent.GRAS), Tile.drawStatic(TileContent.GRAS)));
                 game = server.startGame(gameLobby.getId());
+                eventConsumer.reset();
+            }
+
+            @Test
+            void shouldTriggerGameEnd() {
+                var activePlayer = game.getActivePlayer();
+                var tile = game.drawTile(activePlayer);
+                game.placeTile(activePlayer, tile, 1, 0);
+                game.skipPhase(activePlayer);
+
+                assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(CollectingEventConsumer.stringFrom(GameState.NEXT_PLAYER.toString(), GameState.GAME_END.toString()));
+                assertThat(eventConsumer.events()).containsKey(GameEvent.GAME_END.name());
             }
         }
     }
