@@ -47,6 +47,7 @@ public enum GameState {
 
     public GameState advance() {
         if (gameEnd) {
+            gameEnd = false;
             return GAME_END;
         }
 

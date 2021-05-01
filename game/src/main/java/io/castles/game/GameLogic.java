@@ -62,9 +62,14 @@ public class GameLogic extends StatefulObject {
         this.gameState = gameState.advance();
         triggerLocalEvent(getId(), GameEvent.PHASE_SWITCHED, previousGameState, gameState);
         if (gameState == GameState.NEXT_PLAYER) {
-            checkGameEndCondition();
-            nextPlayer();
-            nextPhase();
+            if (gameEndCondition.getAsBoolean()) {
+                gameState.endGame();
+                nextPhase();
+                triggerLocalEvent(getId(), GameEvent.GAME_END);
+            } else {
+                nextPlayer();
+                nextPhase();
+            }
         }
     }
 
@@ -80,11 +85,4 @@ public class GameLogic extends StatefulObject {
         triggerLocalEvent(getId(), GameEvent.ACTIVE_PLAYER_SWITCHED, activePlayer);
     }
 
-    private void checkGameEndCondition() {
-        if (!gameEndCondition.getAsBoolean()) {
-            gameState.endGame();
-            nextPhase();
-            triggerLocalEvent(getId(), GameEvent.GAME_END);
-        }
-    }
 }
