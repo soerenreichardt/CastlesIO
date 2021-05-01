@@ -9,6 +9,7 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 @Getter
 public class GameLogic extends StatefulObject {
@@ -20,6 +21,7 @@ public class GameLogic extends StatefulObject {
     private GameState gameState;
     private Player activePlayer;
     private int activePlayerIndex;
+    private BooleanSupplier gameEndCondition;
 
     public GameLogic(UUID id, GameMode gameMode, List<Player> players, EventHandler eventHandler) {
         super(id, eventHandler);
@@ -44,6 +46,10 @@ public class GameLogic extends StatefulObject {
         initialize();
     }
 
+    public void setGameEndCondition(BooleanSupplier endCondition) {
+        this.gameEndCondition = endCondition;
+    }
+
     public void skipPhase() {
         if (!gameState.isSkippable()) {
             throw new IllegalArgumentException(String.format("Unable to skip phase %s", gameState));
@@ -55,6 +61,7 @@ public class GameLogic extends StatefulObject {
         this.gameState = gameState.advance();
         triggerLocalEvent(getId(), GameEvent.PHASE_SWITCHED, previousGameState, gameState);
         if (gameState == GameState.NEXT_PLAYER) {
+            checkGameEndCondition();
             nextPlayer();
             nextPhase();
         }
@@ -70,5 +77,12 @@ public class GameLogic extends StatefulObject {
         this.activePlayerIndex = (activePlayerIndex + 1) % players.size();
         this.activePlayer = players.get(activePlayerIndex);
         triggerLocalEvent(getId(), GameEvent.ACTIVE_PLAYER_SWITCHED, activePlayer);
+    }
+
+    private void checkGameEndCondition() {
+        if (gameEndCondition.getAsBoolean()) {
+            gameState.endGame();
+            nextPhase();
+        }
     }
 }

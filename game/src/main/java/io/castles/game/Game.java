@@ -60,6 +60,7 @@ public class Game extends StatefulObject implements PlayerContainer {
     protected void init() {
         triggerLocalEvent(getId(), GameEvent.GAME_STARTED, this);
         gameLogic.initialize();
+        gameLogic.setGameEndCondition(board::hasNextTile);
     }
 
     @Override
