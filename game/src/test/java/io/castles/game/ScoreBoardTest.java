@@ -74,4 +74,16 @@ class ScoreBoardTest {
         assertThat(scoreBoard.getScoreForPlayer(otherPlayer)).isEqualTo(0);
     }
 
+    @Test
+    void shouldNotFailWhenNoFiguresAreSet() {
+        scoreBoard.assignScoresForClosedRegion(
+                TileContent.CASTLE,
+                Set.of(
+                        new Graph.Node(0, 0, 1, 2),
+                        new Graph.Node(1, 0, 1, 0)
+                ),
+                List.of()
+        );
+    }
+
 }

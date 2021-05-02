@@ -80,6 +80,11 @@ public class ScoreBoard extends GameEventConsumer.Adapter {
                 .collect(Collectors.toList());
 
         var entryIterator = sortedMapEntries.iterator();
+
+        if (!entryIterator.hasNext()) {
+            return Set.of();
+        }
+
         var playerWithMostFigures = entryIterator.next();
 
         Set<Player> playersWithMostFigures = new HashSet<>();
