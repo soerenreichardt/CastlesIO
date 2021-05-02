@@ -67,8 +67,8 @@ export class GameComponent implements OnInit, OnDestroy {
            this.game.gameState.player = player;
            this.applicationRef.tick();
         });
-        this.eventService.tilePlaced.subscribe(placedTile => {
-            this.gameBoardService.addPlacedTile(placedTile);
+        this.eventService.tilePlaced.subscribe(tilePlacedDTO => {
+            this.gameBoardService.addPlacedTile(tilePlacedDTO.placedTile);
         });
         this.gameBoardService.figuresLeft.next(this.game.getOwnFiguresLeft());
     }

@@ -20,7 +20,7 @@ public interface GameEventConsumer {
 
     void onPhaseSwitched(GameState from, GameState to);
 
-    void onTilePlaced(Tile tile, int x, int y);
+    void onTilePlaced(Tile tile, int x, int y, int tilesLeft);
 
     void onFigurePlaced(Player owner, Tile tile, int row, int column);
 
@@ -58,7 +58,7 @@ public interface GameEventConsumer {
         }
 
         @Override
-        public void onTilePlaced(Tile tile, int x, int y) {
+        public void onTilePlaced(Tile tile, int x, int y, int tilesLeft) {
 
         }
 

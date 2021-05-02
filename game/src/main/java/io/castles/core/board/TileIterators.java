@@ -9,7 +9,9 @@ import java.util.Random;
 
 public class TileIterators {
 
-    public interface TileIterator extends Iterator<Tile> {}
+    public interface TileIterator extends Iterator<Tile> {
+        int getNumTilesLeft();
+    }
 
     static class RandomList implements TileIterator {
 
@@ -19,6 +21,11 @@ public class TileIterators {
         public RandomList(List<Tile> tileList) {
             this.tileList = new LinkedList<>(tileList);
             this.random = new Random();
+        }
+
+        @Override
+        public int getNumTilesLeft() {
+            return tileList.size();
         }
 
         @Override
@@ -50,6 +57,11 @@ public class TileIterators {
         @Override
         public Tile next() {
             return tile;
+        }
+
+        @Override
+        public int getNumTilesLeft() {
+            return 1;
         }
     }
 
