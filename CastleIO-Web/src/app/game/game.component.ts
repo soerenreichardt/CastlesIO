@@ -8,6 +8,7 @@ import {Game} from '../models/game';
 import {GameBoardService} from '../services/game-board.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
+import {GamePeepzService} from '../services/game-peepz.service';
 
 @Component({
     selector: 'app-game',
@@ -24,6 +25,7 @@ export class GameComponent implements OnInit, OnDestroy {
         private localStorageService: LocalStorageService,
         private gameService: GameService,
         private gameBoardService: GameBoardService,
+        private gamePeepzService: GamePeepzService,
         private drawnTileService: DrawnTileService,
         private eventService: EventService,
 
@@ -46,7 +48,9 @@ export class GameComponent implements OnInit, OnDestroy {
             this.gameService.getGame(this.playerId).subscribe(game => {
                 this.game = game;
                 this.gameBoardService.addTilesFromMap(game.tiles);
+                this.gamePeepzService.tilesLeft.next(game.tilesLeft);
                 this.keepGameUpToDate();
+
                 if (game.timeToPlaceTile()) {
                     this.drawnTileService.getDrawnTile(this.playerId);
                 }
@@ -63,13 +67,17 @@ export class GameComponent implements OnInit, OnDestroy {
             this.game.gameState.state = phase;
             this.applicationRef.tick();
         });
+
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;
            this.applicationRef.tick();
         });
+
         this.eventService.tilePlaced.subscribe(tilePlacedDTO => {
             this.gameBoardService.addPlacedTile(tilePlacedDTO.placedTile);
+            this.gamePeepzService.tilesLeft.next(tilePlacedDTO.tilesLeft);
         });
+
         this.gameBoardService.figuresLeft.next(this.game.getOwnFiguresLeft());
     }
 
