@@ -79,8 +79,10 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     }
 
     @Override
-    public void onTilePlaced(Tile tile, int x, int y) {
-        sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), new PlacedTileDTO(TileDTO.from(tile), x, y)));
+    public void onTilePlaced(Tile tile, int x, int y, int tilesLeft) {
+        var placedTileDTO = new PlacedTileDTO(TileDTO.from(tile), x, y);
+        var tilePlacedDTO = new TilePlacedDTO(placedTileDTO, tilesLeft);
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), tilePlacedDTO));
     }
 
     @Override

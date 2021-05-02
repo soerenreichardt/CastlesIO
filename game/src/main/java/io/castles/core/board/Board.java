@@ -87,6 +87,10 @@ public class Board implements Lifecycle {
         return tileIterator.next();
     }
 
+    public int getNumTilesLeft() {
+        return tileIterator.getNumTilesLeft();
+    }
+
     public Tile getTile(int x, int y) {
         var tileOrNull = getTileOrNull(x, y);
         if (tileOrNull != null) {

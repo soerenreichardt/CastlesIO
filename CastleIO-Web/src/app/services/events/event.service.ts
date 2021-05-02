@@ -10,6 +10,7 @@ import {PhaseSwitchDTO} from '../../models/dtos/phase-switch-dto.interface';
 import {TileDTO} from '../../models/dtos/tile-dto';
 import {GameStates} from '../../models/game-states.enum';
 import {PlacedTileDTO} from '../../models/dtos/placed-tile-dto.interface';
+import {TilePlacedDTO} from '../../models/dtos/tile-placed-dto.interface';
 
 enum Events {
     // Server Events
@@ -80,7 +81,7 @@ interface ActivePlayerSwitched {
 
 interface TilePlaced {
     event: Events.TilePlaced;
-    payload: PlacedTileDTO;
+    payload: TilePlacedDTO;
 }
 
 type EventType = PlayerAdded |
@@ -110,7 +111,7 @@ export class EventService {
     gameStarted = new ReplaySubject<GameStartDTO>();
     phaseSwitched = new ReplaySubject<GameStates>();
     activePlayerSwitched = new ReplaySubject<PlayerDTO>();
-    tilePlaced = new ReplaySubject<PlacedTileDTO>();
+    tilePlaced = new ReplaySubject<TilePlacedDTO>();
 
 
     constructor(private router: Router) {

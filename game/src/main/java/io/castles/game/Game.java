@@ -103,6 +103,10 @@ public class Game extends StatefulObject implements PlayerContainer {
         return this.drawnTile;
     }
 
+    public int getGameBoardNumTilesLeft() {
+        return this.board.getNumTilesLeft();
+    }
+
     public Map<Integer, Map<Integer, Tile>> getGameBoardTileMap() {
         return this.board.getTiles();
     }
@@ -166,7 +170,8 @@ public class Game extends StatefulObject implements PlayerContainer {
     public void placeTile(Player player, Tile tile, int x, int y) {
         gameAction(player, GameState.PLACE_TILE, () -> {
             this.board.insertTileToBoard(tile, x, y);
-            triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y);
+            var tilesLeft = getGameBoardNumTilesLeft();
+            triggerLocalEvent(getId(), GameEvent.TILE_PLACED, tile, x, y, tilesLeft);
         });
         drawnTile = null;
     }

@@ -10,6 +10,7 @@ export class Game {
     gameState: GameStateDTO;
     tiles: Map<number, Map<number, TileDTO>>;
     playerFiguresLeft: Map<string, number>;
+    tilesLeft: number;
 
     myId: string;
 
@@ -20,6 +21,7 @@ export class Game {
         this.tiles = gameDTO.tiles;
         this.playerFiguresLeft = gameDTO.playerFiguresLeft;
         this.myId = playerId;
+        this.tilesLeft = gameDTO.tilesLeft;
     }
 
     timeToDrawTile(): boolean {

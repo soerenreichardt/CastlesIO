@@ -63,7 +63,7 @@ class GameTest {
         assertThat(game.getCurrentGameState()).isEqualTo(GameState.PLACE_FIGURE);
 
         assertThat(eventConsumer.events()).containsKey(GameEvent.TILE_PLACED.name());
-        assertThat(eventConsumer.events().get(GameEvent.TILE_PLACED.name())).contains(stringFrom(tile, 0, 1));
+        assertThat(eventConsumer.events().get(GameEvent.TILE_PLACED.name())).contains(stringFrom(tile, 0, 1, 1));
     }
 
     @Test

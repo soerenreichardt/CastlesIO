@@ -51,7 +51,8 @@ public class DTOSerializationTest {
                             new GameStateDTO(GameState.DRAW, player),
                             Map.of(0, Map.of(1, TileDTO.from(tile))),
                             List.of(player),
-                            Map.of(player.getId(), 7)
+                            Map.of(player.getId(), 7),
+                            1
                     ))
                 ),
                 deserializableDTOs()

@@ -8,4 +8,5 @@ export interface GameDTO {
     tiles: Map<number, Map<number, TileDTO>>;
     players: PlayerDTO[];
     playerFiguresLeft: Map<string, number>;
+    tilesLeft: number;
 }

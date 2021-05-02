@@ -3,18 +3,28 @@
     mask: url("../../../assets/images/player-names_bg.svg") 0 bottom no-repeat;
     mask-size: 100% auto;
     background-color: mat-color($CastleIO-Web-accent, 100);
+    padding: 40px;
 
     .players {
-        padding: 40px;
-
         h4 {
             margin-left: -16px;
         }
     }
 
+    mat-divider {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
     .turn-state {
         margin-left: 10px;
         margin-top: -10px;
+    }
+
+    .game-information {
+        span {
+            font-weight: lighter;
+        }
     }
 }
 

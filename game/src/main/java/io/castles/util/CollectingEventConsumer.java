@@ -53,8 +53,8 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
     }
 
     @Override
-    public void onTilePlaced(Tile tile, int x, int y) {
-        collect(GameEvent.TILE_PLACED.name(), tile, x, y);
+    public void onTilePlaced(Tile tile, int x, int y, int tilesLeft) {
+        collect(GameEvent.TILE_PLACED.name(), tile, x, y, tilesLeft);
     }
 
     @Override
