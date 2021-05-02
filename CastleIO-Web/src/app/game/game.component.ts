@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameService} from '../services/game.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -29,7 +29,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private applicationRef: ApplicationRef
     ) {
     }
 
@@ -60,15 +61,14 @@ export class GameComponent implements OnInit, OnDestroy {
     keepGameUpToDate(): void {
         this.eventService.phaseSwitched.subscribe(phase => {
             this.game.gameState.state = phase;
+            this.applicationRef.tick();
         });
         this.eventService.activePlayerSwitched.subscribe(player => {
            this.game.gameState.player = player;
+           this.applicationRef.tick();
         });
-        this.eventService.tilePlaced.subscribe(tile => {
-
-        });
-        this.eventService.activePlayerSwitched.subscribe(player => {
-           this.game.gameState.player = player;
+        this.eventService.tilePlaced.subscribe(placedTile => {
+            this.gameBoardService.addPlacedTile(placedTile);
         });
         this.gameBoardService.figuresLeft.next(this.game.getOwnFiguresLeft());
     }

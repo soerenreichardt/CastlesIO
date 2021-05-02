@@ -40,25 +40,36 @@ export class GameBoardCanvasComponent implements OnInit {
                 this.resetOffset();
             });
 
-            this.gameBoardService.tiles.subscribe(tiles => {
-                this.board = new Board(tiles);
-                this.resetOffset();
+            this.gameBoardService.board.subscribe(board => {
+                if (board) {
+                    this.board = board;
+                    this.resetOffset();
+                }
             });
 
             this.drawnTileService.drawnTile.subscribe(drawnTile => {
-                this.drawnTile = drawnTile;
-                this.drawnTile.validRotationsChanged.subscribe( () => {
-                    if (this.drawnTile.validRotations.length === 0) {
-                        this.render();
-                    } else {
-                        this.rotateDrawnTileIfRotationInvalid();
-                    }
-                });
+                if (drawnTile) {
+                    this.drawnTile = drawnTile;
+                    this.drawnTile.validRotationsChanged.subscribe( () => {
+                        if (this.drawnTile.validRotations.length === 0) {
+                            this.render();
+                        } else {
+                            this.rotateDrawnTileIfRotationInvalid();
+                        }
+                    });
+                } else {
+                    this.drawnTile.validRotationsChanged.unsubscribe();
+                    this.drawnTile = null;
+                }
                 this.render();
             });
 
             this.gameBoardService.figuresLeft.subscribe( figuresLeft => {
                 this.figuresLeft = figuresLeft;
+                this.render();
+            });
+
+            this.gameBoardService.renderBoard.subscribe(() => {
                 this.render();
             });
         });
@@ -71,8 +82,7 @@ export class GameBoardCanvasComponent implements OnInit {
             this.correctCanvasSize();
 
             this.context = this.canvasElement.getContext('2d');
-            this.context.strokeStyle = '#e91e63';
-            this.context.lineWidth = 4;
+            this.context.lineWidth = 2;
 
             this.canvas.call(
                 d3.drag()
@@ -257,7 +267,8 @@ export class GameBoardCanvasComponent implements OnInit {
             y: this.canvasElement.offsetHeight - 320
         };
         this.context.drawImage(this.drawAreaBg, drawAreaPosition.x, drawAreaPosition.y, 400, 300);
-        this.context.clearRect(25, this.canvasElement.offsetHeight - 245, 110, 110);
+        const drawnTileInitPosition = this.getDrawnTileInitialPosition();
+        this.context.clearRect(drawnTileInitPosition.x - 55, drawnTileInitPosition.y - 55, 110, 110);
         this.renderFigures();
     }
 
@@ -266,11 +277,11 @@ export class GameBoardCanvasComponent implements OnInit {
 
         if (figureMask) {
             this.figuresService.getFigures().forEach((figure, index) => {
-                let xPos = 150 + (index * 50);
+                let xPos = 170 + (index * 50);
                 let yPos = this.canvasElement.offsetHeight - 235;
                 if (index > 2) {
                     yPos = this.canvasElement.offsetHeight - 185;
-                    xPos = 150 + (index - 3) * 50;
+                    xPos = 170 + (index - 3) * 50;
                 }
 
                 this.context.drawImage(
@@ -309,6 +320,11 @@ export class GameBoardCanvasComponent implements OnInit {
             scale);
 
         if (!this.drawnTile.dragging && this.drawnTile.validRotations.length === 0) {
+            this.context.strokeStyle = '#e91e63';
+        } else {
+            this.context.strokeStyle = '#333333';
+        }
+        if (this.drawnTile.wasMovedToGameBoard) {
             this.context.strokeRect(
                 drawTilePosition.x - scale / 2,
                 drawTilePosition.y - scale / 2,
@@ -348,7 +364,7 @@ export class GameBoardCanvasComponent implements OnInit {
 
     private getDrawnTileInitialPosition(): Point {
         return {
-            x: 80,
+            x: 100,
             y: this.canvasElement.offsetHeight - 190
         };
     }
