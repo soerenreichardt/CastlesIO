@@ -41,7 +41,7 @@ public class Game extends StatefulObject implements PlayerContainer {
         this.board = Board.create(settings.getGameMode(), settings.getTileList());
         this.board.getBoardGraph().registerEventCallback(this::onRegionClosed);
         this.playerFiguresLeft = new HashMap<>();
-        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players, eventHandler);
+        this.scoreBoard = ScoreBoard.create(board, players, eventHandler);
 
         players.forEach(player -> playerFiguresLeft.put(player, FIGURES_PER_PLAYER));
     }

@@ -21,10 +21,13 @@ public class BoardGraph implements BoardListener {
     private final TileLookup tileLookup;
     private final List<BoardGraphEventCallback> eventCallbacks;
 
+    private final Set<Set<Graph.Node>> closedCastles;
+
     public BoardGraph(TileLookup tileLookup) {
         this.tileLookup = tileLookup;
         this.graphs = new ArrayList<>();
         this.eventCallbacks = new ArrayList<>();
+        this.closedCastles = new HashSet<>();
     }
 
     @Override
@@ -34,6 +37,7 @@ public class BoardGraph implements BoardListener {
         var closedStreets = closedStreets(tile);
 
         if (!closedCastles.isEmpty()) {
+            this.closedCastles.addAll(closedCastles);
             eventCallbacks.forEach(callback -> callback.onRegionClosed(TileContent.CASTLE, closedCastles));
         }
         if (!closedStreets.isEmpty()) {
@@ -62,6 +66,14 @@ public class BoardGraph implements BoardListener {
     public void restart() {
         graphs.clear();
         initialize();
+    }
+
+    public List<AdjacentClosedCastlesToGrasComponentComputer.ClosedCastlesForGrasComponent> closedCastlesAdjacentToGraphComponent() {
+        return new AdjacentClosedCastlesToGrasComponentComputer(
+                filterGraphsForContent(TileContent.GRAS),
+                closedCastles,
+                tileLookup
+        ).compute();
     }
 
     public void registerEventCallback(BoardGraphEventCallback callback) {
