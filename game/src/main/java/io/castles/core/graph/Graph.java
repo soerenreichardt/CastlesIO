@@ -167,7 +167,9 @@ public class Graph {
                 int resolvedLargeMatrixIndex = largeLayout.getResolvedPositionInMatrix(largeIndex, largeDirection);
                 Node target = new Node(largeTile.getX(), largeTile.getY(), largeMatrix.getRowFromIndex(resolvedLargeMatrixIndex), largeMatrix.getColumnFromIndex(resolvedLargeMatrixIndex));
 
-                if (!isDisconnected(smallTile, source.getRow(), source.getColumn()) && !isDisconnected(largeTile, target.getRow(), target.getColumn())) {
+                var isNotDisconnected = isNotDisconnected(smallTile, source.getRow(), source.getColumn()) && isNotDisconnected(largeTile, target.getRow(), target.getColumn());
+                var isNotShared = isNotShared(smallTile, source.getRow(), source.getColumn()) && isNotDisconnected(largeTile, target.getRow(), target.getColumn());
+                if (isNotDisconnected && isNotShared) {
                     if (!nodes.contains(source) || !nodes.contains(target)) {
                         throw new IllegalStateException("Computed node not found in list of nodes");
                     }
@@ -177,8 +179,12 @@ public class Graph {
         });
     }
 
-    private static boolean isDisconnected(Tile tile, int row, int column) {
-        return tile.<MatrixTileLayout>getTileLayout().getContent().get(row, column) == TileContent.DISCONNECTED;
+    private static boolean isNotDisconnected(Tile tile, int row, int column) {
+        return tile.<MatrixTileLayout>getTileLayout().getContent().get(row, column) != TileContent.DISCONNECTED;
+    }
+
+    private static boolean isNotShared(Tile tile, int row, int column) {
+        return tile.<MatrixTileLayout>getTileLayout().getContent().get(row, column) != TileContent.SHARED;
     }
 
     @Value

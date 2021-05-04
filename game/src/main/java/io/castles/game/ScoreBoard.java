@@ -1,5 +1,6 @@
 package io.castles.game;
 
+import io.castles.core.board.Board;
 import io.castles.core.board.BoardGraph;
 import io.castles.core.graph.Graph;
 import io.castles.core.tile.Figure;
@@ -15,15 +16,22 @@ public class ScoreBoard extends GameEventConsumer.Adapter {
 
     private static final Map<TileContent, Integer> TILE_CONTENT_VALUE = Map.of(
             TileContent.STREET, 1,
-            TileContent.CASTLE, 2
+            TileContent.CASTLE, 2,
+            TileContent.GRAS, 3
     );
 
     private final Map<Player, Integer> playerScores;
     private final BoardGraph boardGraph;
+    private final List<Figure> figures;
     private final EventHandler eventHandler;
 
-    public ScoreBoard(BoardGraph boardGraph, Set<Player> players, EventHandler eventHandler) {
+    public static ScoreBoard create(Board board, Set<Player> players, EventHandler eventHandler) {
+        return new ScoreBoard(board.getBoardGraph(), board.getFigures(), players, eventHandler);
+    }
+
+    ScoreBoard(BoardGraph boardGraph, List<Figure> figures, Set<Player> players, EventHandler eventHandler) {
         this.boardGraph = boardGraph;
+        this.figures = figures;
         this.playerScores = new HashMap<>();
         this.eventHandler = eventHandler;
 
@@ -32,8 +40,16 @@ public class ScoreBoard extends GameEventConsumer.Adapter {
 
     @Override
     public void onGameEnd() {
-        // TODO: compute pawn scores on gras regions
+        computePawnScores(figures);
         // TODO: compute winning player and trigger event
+    }
+
+    public void computePawnScores(List<Figure> figures) {
+        var closedCastlesPerGrasComponents = boardGraph.closedCastlesAdjacentToGraphComponent();
+        closedCastlesPerGrasComponents.forEach(closedCastlesForGrasComponent -> {
+            var grasComponent = closedCastlesForGrasComponent.getGrasComponent();
+            assignScoresForClosedRegion(TileContent.GRAS, grasComponent, figures);
+        });
     }
 
     public void addScoreForPlayer(Player player, int score) {

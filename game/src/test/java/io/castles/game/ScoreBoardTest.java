@@ -27,7 +27,7 @@ class ScoreBoardTest {
         });
         this.board = Board.withSpecificTile(new MatrixTileLayout(startMatrix));
         this.players = Set.of(new Player("P1"), new Player("P2"));
-        this.scoreBoard = new ScoreBoard(board.getBoardGraph(), players, new EventHandler());
+        this.scoreBoard = ScoreBoard.create(board, players, new EventHandler());
     }
 
     @Test
