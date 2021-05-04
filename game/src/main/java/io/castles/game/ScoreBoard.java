@@ -6,8 +6,9 @@ import io.castles.core.graph.Graph;
 import io.castles.core.tile.Figure;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
-import io.castles.game.events.EventHandler;
+import io.castles.game.events.GameEvent;
 import io.castles.game.events.GameEventConsumer;
+import io.castles.game.events.LocalEventHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,13 +24,13 @@ public class ScoreBoard extends GameEventConsumer.Adapter {
     private final Map<Player, Integer> playerScores;
     private final BoardGraph boardGraph;
     private final List<Figure> figures;
-    private final EventHandler eventHandler;
+    private final LocalEventHandler eventHandler;
 
-    public static ScoreBoard create(Board board, Set<Player> players, EventHandler eventHandler) {
+    public static ScoreBoard create(Board board, Set<Player> players, LocalEventHandler eventHandler) {
         return new ScoreBoard(board.getBoardGraph(), board.getFigures(), players, eventHandler);
     }
 
-    ScoreBoard(BoardGraph boardGraph, List<Figure> figures, Set<Player> players, EventHandler eventHandler) {
+    ScoreBoard(BoardGraph boardGraph, List<Figure> figures, Set<Player> players, LocalEventHandler eventHandler) {
         this.boardGraph = boardGraph;
         this.figures = figures;
         this.playerScores = new HashMap<>();

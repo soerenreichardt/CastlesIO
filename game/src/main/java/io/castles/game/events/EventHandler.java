@@ -15,8 +15,12 @@ public class EventHandler implements EventProducer<GameEvent> {
     private final Map<UUID, List<GameEventConsumer>> localEventCallbacks;
 
     public EventHandler() {
-        this.globalEventCallbacks = new ArrayList<>();
-        this.localEventCallbacks = new ConcurrentHashMap<>();
+        this(new ArrayList<>(), new ConcurrentHashMap<>());
+    }
+
+    protected EventHandler(List<GlobalEventConsumer> globalEventCallbacks, Map<UUID, List<GameEventConsumer>> localEventCallbacks) {
+        this.globalEventCallbacks = globalEventCallbacks;
+        this.localEventCallbacks = localEventCallbacks;
     }
 
     public void registerGlobalEventConsumer(GlobalEventConsumer callback) {
@@ -50,5 +54,9 @@ public class EventHandler implements EventProducer<GameEvent> {
                 case GAME_END -> eventConsumers.forEach(GameEventConsumer::onGameEnd);
             }
         }
+    }
+
+    public LocalEventHandler toLocalEventHandlerCopy(UUID id) {
+        return new LocalEventHandler(id, localEventCallbacks);
     }
 }
