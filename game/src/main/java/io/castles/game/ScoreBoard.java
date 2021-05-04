@@ -55,6 +55,7 @@ public class ScoreBoard extends GameEventConsumer.Adapter {
 
     public void addScoreForPlayer(Player player, int score) {
         playerScores.put(player, playerScores.get(player) + score);
+        eventHandler.triggerLocalEvent(GameEvent.SCORE_CHANGED, playerScores.get(player));
     }
 
     public void addScoreForPlayers(Set<Player> players, int score) {

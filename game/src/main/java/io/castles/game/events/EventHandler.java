@@ -51,6 +51,7 @@ public class EventHandler implements EventProducer<GameEvent> {
                 case ACTIVE_PLAYER_SWITCHED -> eventConsumers.forEach(consumer -> consumer.onActivePlayerSwitched((Player) objects[0]));
                 case TILE_PLACED -> eventConsumers.forEach(consumer -> consumer.onTilePlaced((Tile) objects[0], (int) objects[1], (int) objects[2], (int) objects[3]));
                 case FIGURE_PLACED -> eventConsumers.forEach(consumer -> consumer.onFigurePlaced((Player) objects[0], (Tile) objects[1], (int) objects[2], (int) objects[3]));
+                case SCORE_CHANGED -> eventConsumers.forEach(consumer -> consumer.onScoresChanged((Player) objects[0], (int) objects[1]));
                 case GAME_END -> eventConsumers.forEach(GameEventConsumer::onGameEnd);
             }
         }

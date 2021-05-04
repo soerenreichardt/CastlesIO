@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +28,7 @@ class ScoreBoardTest {
         });
         this.board = Board.withSpecificTile(new MatrixTileLayout(startMatrix));
         this.players = Set.of(new Player("P1"), new Player("P2"));
-        this.scoreBoard = ScoreBoard.create(board, players, new EventHandler());
+        this.scoreBoard = ScoreBoard.create(board, players, new EventHandler().toLocalEventHandlerCopy(UUID.randomUUID()));
     }
 
     @Test

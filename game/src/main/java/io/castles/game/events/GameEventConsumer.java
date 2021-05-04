@@ -24,6 +24,8 @@ public interface GameEventConsumer {
 
     void onFigurePlaced(Player owner, Tile tile, int row, int column);
 
+    void onScoresChanged(Player player, int newScore);
+
     void onGameEnd();
 
     class Adapter implements GameEventConsumer {
@@ -64,6 +66,11 @@ public interface GameEventConsumer {
 
         @Override
         public void onFigurePlaced(Player owner, Tile tile, int row, int column) {
+
+        }
+
+        @Override
+        public void onScoresChanged(Player player, int newScore) {
 
         }
 
