@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class DTOSerializationTest {
 
-
     static PlayerDTO player = PlayerDTO.from(new Player("P1"));
     static GameLobbySettings lobbySettings = GameLobbySettings.builder().build();
     static GameSettings gameSettings = GameSettings.from(GameLobbySettings.builder().gameMode(GameMode.DEBUG).build());
@@ -31,6 +30,7 @@ public class DTOSerializationTest {
         insertedTile.insertToBoard(0, 0);
     }
     static GameLobby gameLobby = new GameLobby("Test", player.toPlayer(), new EventHandler());
+    static PlacedTileDTO placedTile = new PlacedTileDTO(TileDTO.from(tile), 0, 1);
 
     private static Stream<Arguments> serializableDTOs() {
         return Stream.concat(
@@ -44,7 +44,8 @@ public class DTOSerializationTest {
                     Arguments.of("TileDTO", TileDTO.class, TileDTO.from(tile)),
                     Arguments.of("TileLayoutDTO", TileLayoutDTO.class, TileLayoutDTO.from(tile.getTileLayout())),
                     Arguments.of("PhaseSwitchDTO", PhaseSwitchDTO.class, new PhaseSwitchDTO(GameState.START, GameState.DRAW)),
-                    Arguments.of("PlacedTileDTO", PlacedTileDTO.class, new PlacedTileDTO(TileDTO.from(tile), 0, 1)),
+                    Arguments.of("PlacedTileDTO", PlacedTileDTO.class, placedTile),
+                    Arguments.of("TilePlacedDTO", TilePlacedDTO.class, new TilePlacedDTO(placedTile, 12)),
                     Arguments.of("GameSettingsDTO", GameSettingsDTO.class, GameSettingsDTO.from(gameSettings)),
                     Arguments.of("GameDTO", GameDTO.class, new GameDTO(
                             "Some pretty game name",

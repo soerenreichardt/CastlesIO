@@ -80,6 +80,7 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onTilePlaced(Tile tile, int x, int y, int tilesLeft) {
+        // TODO: rework this. We don't need both DTOs. Also tileLeft might not be relevant for the backend if it simply subtracts one on each tile placed event.
         var placedTileDTO = new PlacedTileDTO(TileDTO.from(tile), x, y);
         var tilePlacedDTO = new TilePlacedDTO(placedTileDTO, tilesLeft);
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), tilePlacedDTO));
