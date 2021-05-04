@@ -54,7 +54,8 @@ public class DTOSerializationTest {
                             List.of(player),
                             Map.of(player.getId(), 7),
                             1
-                    ))
+                    )),
+                    Arguments.of("ScoreChangedDTO", ScoreChangedDTO.class, new ScoreChangedDTO(player, 5))
                 ),
                 deserializableDTOs()
         );

@@ -93,7 +93,7 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onScoresChanged(Player player, int newScore) {
-        // TODO
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.SCORE_CHANGED.name(), new ScoreChangedDTO(PlayerDTO.from(player), newScore)));
     }
 
     @Override
