@@ -109,6 +109,13 @@ public class BoardGraph implements BoardListener {
         validateUniqueFigurePositionInWcc(graphContainingFigure.get(), figure, existingFigures);
     }
 
+    public Graph filterGraphsForContent(TileContent tileContent) {
+        return graphs.stream()
+                .filter(g -> g.tileContent() == tileContent)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("No graph was found for TileContent %s", TileContent.STREET)));
+    }
+
     private void validateUniqueFigurePositionInWcc(Graph graph, Figure figureToPlace, Collection<Figure> existingFigures) throws RegionOccupiedException {
         var wcc = new Wcc(graph);
         wcc.compute();
@@ -118,13 +125,6 @@ public class BoardGraph implements BoardListener {
                 throw new RegionOccupiedException(graph.tileContent());
             }
         }
-    }
-
-    private Graph filterGraphsForContent(TileContent tileContent) {
-        return graphs.stream()
-                .filter(g -> g.tileContent() == tileContent)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("No graph was found for TileContent %s", TileContent.STREET)));
     }
 
     private Set<Set<Graph.Node>> closedRegions(Tile tile, Graph castleGraph) {

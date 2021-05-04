@@ -3,7 +3,10 @@ package io.castles.core.graph.algorithm;
 import io.castles.core.graph.Graph;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Wcc {
 
@@ -46,6 +49,19 @@ public class Wcc {
                 return false;
             }
         }
+    }
+
+    public Map<Integer, Set<Graph.Node>> getNodesByComponent() {
+        Map<Integer, Set<Graph.Node>> nodesByComponent = new HashMap<>();
+        Map<Graph.Node, Integer> componentIdMapping = new HashMap<>();
+        AtomicInteger componentId = new AtomicInteger(0);
+
+        components.forEach((node, parent) -> {
+            var component = find(parent);
+            componentIdMapping.computeIfAbsent(component, __ -> componentId.getAndIncrement());
+            nodesByComponent.computeIfAbsent(componentIdMapping.get(component), __ -> new HashSet<>()).add(node);
+        });
+        return nodesByComponent;
     }
 
     private Graph.Node find(Graph.Node node) {
