@@ -1,8 +1,11 @@
 package io.castles.game.events;
 
 import io.castles.core.GameMode;
+import io.castles.core.tile.Matrix;
 import io.castles.core.tile.Tile;
 import io.castles.core.tile.TileContent;
+import io.castles.exceptions.NoFiguresLeftException;
+import io.castles.exceptions.RegionOccupiedException;
 import io.castles.game.*;
 import io.castles.util.CollectingEventConsumer;
 import org.junit.jupiter.api.AfterEach;
@@ -106,7 +109,7 @@ class EventHandlerTest {
         }
 
         @Nested
-        class ForGame {
+        class ForGameEnd {
 
             Game game;
 
@@ -129,6 +132,54 @@ class EventHandlerTest {
 
                 assertThat(eventConsumer.events().get(GameEvent.PHASE_SWITCHED.name())).contains(CollectingEventConsumer.stringFrom(GameState.NEXT_PLAYER.toString(), GameState.GAME_END.toString()));
                 assertThat(eventConsumer.events()).containsKey(GameEvent.GAME_END.name());
+            }
+        }
+
+        @Nested
+        class ForScores {
+
+            Game game;
+
+            @BeforeEach
+            void setup() {
+                var player = new Player("P1");
+                gameLobby.addPlayer(player);
+                gameLobby.setGameMode(GameMode.DEBUG);
+                game = server.startGame(gameLobby.getId());
+                eventConsumer.reset();
+            }
+
+            @Test
+            void shouldTriggerFigurePlacedAndScoring() throws NoFiguresLeftException, RegionOccupiedException {
+                var startingPlayer = game.getActivePlayer();
+                game.drawTile(startingPlayer);
+                var contentMatrix = new Matrix<>(3, 3, new TileContent[]{
+                        TileContent.GRAS, TileContent.GRAS, TileContent.SHARED,
+                        TileContent.GRAS, TileContent.GRAS, TileContent.CASTLE,
+                        TileContent.GRAS, TileContent.GRAS, TileContent.SHARED
+                });
+                var firstTile = Tile.fromMatrix(contentMatrix);
+                game.setDrawnTile(firstTile);
+                game.placeTile(startingPlayer, firstTile, 1, 0);
+                game.placeFigure(startingPlayer, firstTile, 1, 2);
+
+                assertThat(eventConsumer.events()).containsKey(GameEvent.FIGURE_PLACED.name());
+                assertThat(eventConsumer.events().get(GameEvent.FIGURE_PLACED.name())).contains(
+                        CollectingEventConsumer.stringFrom(startingPlayer, firstTile, 1, 2)
+                );
+
+                var secondPlayer = game.getActivePlayer();
+                game.drawTile(secondPlayer);
+                var secondTile = Tile.fromMatrix(contentMatrix);
+                secondTile.rotate();
+                secondTile.rotate();
+                game.setDrawnTile(secondTile);
+                game.placeTile(secondPlayer, secondTile, 2, 0);
+
+                assertThat(eventConsumer.events()).containsKey(GameEvent.SCORE_CHANGED.name());
+                assertThat(eventConsumer.events().get(GameEvent.SCORE_CHANGED.name())).contains(
+                        CollectingEventConsumer.stringFrom(startingPlayer, 4)
+                );
             }
         }
     }
