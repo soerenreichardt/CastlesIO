@@ -80,6 +80,7 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
 
     @Override
     public void onTilePlaced(Tile tile, int x, int y, int tilesLeft) {
+        // TODO: rework this. We don't need both DTOs. Also tileLeft might not be relevant for the backend if it simply subtracts one on each tile placed event.
         var placedTileDTO = new PlacedTileDTO(TileDTO.from(tile), x, y);
         var tilePlacedDTO = new TilePlacedDTO(placedTileDTO, tilesLeft);
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.TILE_PLACED.name(), tilePlacedDTO));
@@ -88,6 +89,11 @@ public class EmittingEventConsumer implements ServerEventConsumer, GameEventCons
     @Override
     public void onFigurePlaced(Player owner, Tile tile, int row, int column) {
         sendToAllPlayers(new EventMessageDTO<>(GameEvent.FIGURE_PLACED.name(), new FigureDTO(owner.getId(), tile.getX(), tile.getY(), row, column)));
+    }
+
+    @Override
+    public void onScoresChanged(Player player, int newScore) {
+        sendToAllPlayers(new EventMessageDTO<>(GameEvent.SCORE_CHANGED.name(), new ScoreChangedDTO(PlayerDTO.from(player), newScore)));
     }
 
     @Override

@@ -12,5 +12,6 @@ public enum GameEvent {
     ACTIVE_PLAYER_SWITCHED,
     TILE_PLACED,
     FIGURE_PLACED,
+    SCORE_CHANGED,
     GAME_END
 }

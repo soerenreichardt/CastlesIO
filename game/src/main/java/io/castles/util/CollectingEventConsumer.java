@@ -63,6 +63,11 @@ public class CollectingEventConsumer implements GameEventConsumer, GlobalEventCo
     }
 
     @Override
+    public void onScoresChanged(Player player, int newScore) {
+        collect(GameEvent.SCORE_CHANGED.name(), player, newScore);
+    }
+
+    @Override
     public void onGameEnd() {
         collect(GameEvent.GAME_END.name());
     }
